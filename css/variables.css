@@ -1,0 +1,166 @@
+/* ==========================================================================
+   VARIABLES.CSS
+   Design tokens extracted from the approved HM UNIQUE Website Concept PDF.
+   This file is the single source of truth for every color, spacing, radius,
+   shadow, and type value used across the site. No other file should hard
+   code a raw color/px value that belongs here.
+
+   NOTE: exact brand hex codes and the confirmed font family are pending
+   final source-file confirmation (see Phase 1 Recommendation #1). The
+   values below are the closest analytical match to the concept PDF and
+   are isolated here so a future correction only requires editing this
+   one file.
+   ========================================================================== */
+
+:root {
+  /* ---------------------------------------------------------------------
+     COLOR — PRIMARY
+     --------------------------------------------------------------------- */
+  --color-navy-900: #0e2b3b;   /* deepest navy — header, hero, dark bands */
+  --color-navy-800: #10334533; /* not used directly, kept for reference   */
+  --color-navy-800-solid: #123244; /* footer background                  */
+  --color-navy-700: #163a4d;   /* hover state on navy surfaces           */
+
+  /* COLOR — ACCENT */
+  --color-teal-500: #1aa6a0;   /* primary accent — links, eyebrows, active states */
+  --color-teal-600: #158f8a;   /* hover/active state of teal accent      */
+  --color-teal-100: #e6f6f5;   /* tinted teal background (success box)   */
+
+  /* COLOR — CTA GOLD (secondary accent, used sparingly) */
+  --color-gold-500: #f2a83c;
+  --color-gold-600: #dd9527;
+
+  /* COLOR — NEUTRAL */
+  --color-white: #ffffff;
+  --color-surface-light: #f6f8f9;
+  --color-surface-alt: #eef2f3;
+  --color-border: #e3e7ea;
+  --color-text-heading: #10181f;
+  --color-text-body: #5b6670;
+  --color-text-muted: #8a939a;
+  --color-text-on-dark: #ffffff;
+  --color-text-on-dark-muted: #c3d3d8;
+
+  /* COLOR — SEMANTIC */
+  --color-success: #2fae4e;
+  --color-error: #e0453a;
+  --color-error-tint: #fbe9e8;
+
+  /* COLOR — OVERLAYS (all rgba() values used anywhere in the project
+     must be tokenized here — no raw rgba()/hex outside this file) */
+  --overlay-navy-40: rgba(14, 43, 59, 0.4);
+  --overlay-navy-50: rgba(14, 43, 59, 0.5);
+  --overlay-navy-55: rgba(14, 43, 59, 0.55);
+  --overlay-white-08: rgba(255, 255, 255, 0.08);
+  --overlay-white-10: rgba(255, 255, 255, 0.1);
+  --overlay-white-12: rgba(255, 255, 255, 0.12);
+  --overlay-white-40: rgba(255, 255, 255, 0.4);
+  --overlay-white-50: rgba(255, 255, 255, 0.5);
+
+  /* COLOR — THIRD-PARTY BRAND (fixed by the platform's own brand
+     guidelines, not part of HM UNIQUE's palette — kept here, not
+     inline in components.css, so it is still the single audited
+     source of every color in the project) */
+  --color-whatsapp-brand: #25d366;
+
+  /* ---------------------------------------------------------------------
+     TYPOGRAPHY
+     --------------------------------------------------------------------- */
+  --font-heading: "Poppins", "Segoe UI", Arial, sans-serif;
+  --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+
+  --fs-h1: clamp(1.9rem, 1.4rem + 2.2vw, 3rem);
+  --fs-h2: clamp(1.5rem, 1.2rem + 1.4vw, 2.125rem);
+  --fs-h3: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  --fs-h4: 1.125rem;
+  --fs-body-lg: 1.0625rem;
+  --fs-body: 1rem;
+  --fs-body-sm: 0.9375rem;
+  --fs-label: 0.8125rem;
+  --fs-eyebrow: 0.75rem;
+
+  --lh-heading: 1.25;
+  --lh-body: 1.6;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --ls-eyebrow: 0.08em;
+
+  /* ---------------------------------------------------------------------
+     SPACING SCALE (4px base unit)
+     --------------------------------------------------------------------- */
+  --space-1: 0.25rem;   /* 4px  */
+  --space-2: 0.5rem;    /* 8px  */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+  --space-8: 4rem;      /* 64px */
+  --space-9: 6rem;      /* 96px */
+
+  --section-padding-y: var(--space-8);
+  --section-padding-y-sm: var(--space-6);
+
+  /* ---------------------------------------------------------------------
+     CONTAINERS & GRID
+     --------------------------------------------------------------------- */
+  --container-max: 1320px;
+  --container-gutter: 1.5rem;
+  --container-gutter-sm: 1rem;
+  --grid-gap: var(--space-5);
+
+  /* ---------------------------------------------------------------------
+     RADIUS
+     --------------------------------------------------------------------- */
+  --radius-sm: 6px;    /* inputs, buttons   */
+  --radius-md: 12px;   /* cards             */
+  --radius-lg: 20px;   /* hero/banner/modal */
+  --radius-pill: 999px;
+
+  /* ---------------------------------------------------------------------
+     SHADOWS
+     --------------------------------------------------------------------- */
+  --shadow-sm: 0 2px 6px rgba(16, 24, 31, 0.06);
+  --shadow-md: 0 4px 12px rgba(16, 24, 31, 0.08);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 31, 0.14);
+  --shadow-modal: 0 20px 60px rgba(14, 43, 59, 0.35);
+
+  /* ---------------------------------------------------------------------
+     TRANSITIONS
+     --------------------------------------------------------------------- */
+  --transition-fast: 150ms ease;
+  --transition-base: 220ms ease;
+  --transition-slow: 350ms ease;
+
+  /* ---------------------------------------------------------------------
+     Z-INDEX SCALE
+     --------------------------------------------------------------------- */
+  --z-header: 500;
+  --z-dropdown: 520;
+  --z-mobile-nav: 600;
+  --z-floating-buttons: 650;
+  --z-scroll-top: 650;
+  --z-modal-overlay: 900;
+  --z-modal: 910;
+
+  /* ---------------------------------------------------------------------
+     BREAKPOINT REFERENCE (informational only — CSS custom properties
+     cannot be used inside @media queries, actual values live in
+     responsive.css; kept here so both files are derived from one
+     documented source of truth)
+
+     Mobile-first — base styles below (no media query) target Mobile.
+     Every breakpoint below is a min-width, progressively enhancing
+     the layout upward. Standardized 5-tier list, no internal splits:
+
+     Mobile       : 0px     (default, no media query)
+     Large Mobile : >= 480px
+     Tablet       : >= 768px
+     Laptop       : >= 992px
+     Desktop      : >= 1200px
+     --------------------------------------------------------------------- */
+}

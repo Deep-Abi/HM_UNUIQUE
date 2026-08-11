@@ -1,0 +1,163 @@
+/* ==========================================================================
+   pages/home.css
+   Home-page-only styles: the hero banner + carousel, and the category
+   card component (per Phase 1 §1.8, Category card is Home-exclusive —
+   category pages use product cards instead, styled in components.css).
+   Nothing here redefines a shared component's core look. No @media
+   rules live here — all breakpoint logic is centralized in
+   responsive.css.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------
+   HERO — mobile-first: single column by default (content stacks above
+   the media). responsive.css switches this to the two-column layout
+   from the concept at Tablet+.
+   --------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  background-color: var(--color-navy-900);
+  overflow: hidden;
+  padding-block: var(--space-7);
+}
+
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-teal-500);
+  margin-bottom: var(--space-3);
+}
+
+.hero__title {
+  margin-bottom: var(--space-4);
+}
+
+.hero__desc {
+  max-width: 46ch;
+  margin-bottom: var(--space-5);
+}
+
+.hero__badges {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.hero__media {
+  position: relative;
+}
+
+.hero__slider {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.hero__slider-track {
+  display: flex;
+  transition: transform var(--transition-slow);
+}
+
+.hero__slide {
+  flex: 0 0 100%;
+  width: 100%;
+}
+
+.hero__slide .aspect-box {
+  border-radius: var(--radius-lg);
+}
+
+.hero__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.hero__nav--prev {
+  left: var(--space-3);
+}
+.hero__nav--next {
+  right: var(--space-3);
+}
+
+.hero__dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.hero__dots button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--overlay-white-40);
+  transition: background-color var(--transition-fast), width var(--transition-fast);
+}
+.hero__dots button.is-active {
+  background-color: var(--color-teal-500);
+  width: 22px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------------------------------------------------------------------
+   CATEGORY CARD (Home-only — see Phase 1 §1.8 reusable-component table)
+   --------------------------------------------------------------------- */
+.category-card {
+  text-align: left;
+}
+
+.category-card__media {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  background-color: var(--color-surface-light);
+}
+
+.category-card__title {
+  margin-bottom: var(--space-2);
+}
+
+.category-card__desc {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+  margin-bottom: var(--space-4);
+}
+
+/* ---------------------------------------------------------------------
+   FEATURED PRODUCTS — section header row (heading + "View All" link)
+   --------------------------------------------------------------------- */
+.section-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* Overrides .section-heading's own margin-bottom for this specific
+   context. A bare utility class (e.g. .mb-0) would NOT reliably win
+   here: the client-mandated CSS load order places utilities.css
+   BEFORE components.css, so a same-specificity utility class loses
+   the cascade tie against .section-heading's margin-bottom. A scoped
+   selector in this page-specific file — which loads last of all —
+   is the correct, order-safe way to override it. */
+.section-header-row .section-heading {
+  margin-bottom: 0;
+}

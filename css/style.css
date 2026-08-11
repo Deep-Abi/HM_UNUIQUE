@@ -1,0 +1,278 @@
+/* ==========================================================================
+   STYLE.CSS
+   Base layer: reset, typography, and the shared container/grid system.
+   Loaded immediately after variables.css. Contains no component-specific
+   rules — those live in components.css / header.css / footer.css.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. RESET / NORMALIZE
+   --------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-body);
+  background-color: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Reduced-motion support lives in ONE place only — responsive.css —
+   to avoid the duplicate-media-query issue of declaring it in both
+   style.css and animations.css. */
+
+/* ---------------------------------------------------------------------
+   2. ACCESSIBILITY — FOCUS STATES
+   --------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: var(--space-4);
+  z-index: 999;
+  background: var(--color-navy-900);
+  color: var(--color-white);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-sm);
+  transition: top var(--transition-base);
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* ---------------------------------------------------------------------
+   3. TYPOGRAPHY
+   --------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  color: var(--color-text-heading);
+}
+
+h1 {
+  font-size: var(--fs-h1);
+}
+h2 {
+  font-size: var(--fs-h2);
+}
+h3 {
+  font-size: var(--fs-h3);
+}
+h4 {
+  font-size: var(--fs-h4);
+}
+
+p {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-body);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Text that sits on dark navy sections (hero, footer, dark bands) */
+.text-on-dark {
+  color: var(--color-text-on-dark);
+}
+.text-on-dark p,
+.text-on-dark .section-heading__subtitle {
+  color: var(--color-text-on-dark-muted);
+}
+.text-on-dark h1,
+.text-on-dark h2,
+.text-on-dark h3,
+.text-on-dark h4 {
+  color: var(--color-text-on-dark);
+}
+
+/* Keyword highlight span used inside hero/section headings
+   (e.g. "Electricals, Electronics, Hardwares & Industrial Tools") */
+.text-accent {
+  color: var(--color-teal-500);
+}
+
+/* ---------------------------------------------------------------------
+   4. CONTAINER / GRID SYSTEM (mobile-first)
+   Base state below is the MOBILE layout — every grid stacks to a
+   single column by default. Columns are progressively added at
+   larger breakpoints in responsive.css only; this file never
+   contains a @media query.
+   --------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-gutter);
+}
+
+.container--narrow {
+  max-width: 960px;
+}
+
+.container--wide {
+  max-width: 1440px;
+}
+
+/* Generic responsive grid — mobile default is always a single column;
+   .grid--2 through .grid--6 describe the DESKTOP column count the
+   grid grows into as breakpoints in responsive.css are reached. */
+.grid {
+  display: grid;
+  gap: var(--grid-gap);
+  grid-template-columns: 1fr;
+}
+
+.grid--2,
+.grid--3,
+.grid--4,
+.grid--5,
+.grid--6 {
+  grid-template-columns: 1fr;
+}
+
+.grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.flex {
+  display: flex;
+}
+.flex--center {
+  align-items: center;
+  justify-content: center;
+}
+.flex--between {
+  align-items: center;
+  justify-content: space-between;
+}
+.flex--wrap {
+  flex-wrap: wrap;
+}
+.flex--gap-2 {
+  gap: var(--space-2);
+}
+.flex--gap-3 {
+  gap: var(--space-3);
+}
+.flex--gap-4 {
+  gap: var(--space-4);
+}
+
+/* ---------------------------------------------------------------------
+   5. SECTION SCAFFOLDING (mobile-first)
+   Mobile gets the smaller, --section-padding-y-sm-equivalent spacing
+   by default; responsive.css scales it up at Tablet/Laptop/Desktop.
+   --------------------------------------------------------------------- */
+.section {
+  padding-block: var(--space-6);
+}
+
+.section--sm {
+  padding-block: var(--space-5);
+}
+
+.section--light {
+  background-color: var(--color-white);
+}
+
+.section--surface {
+  background-color: var(--color-surface-light);
+}
+
+.section--dark {
+  background-color: var(--color-navy-900);
+}
+
+/* Main content landmark receives top offset equal to the fixed header
+   height so anchored/breadcrumb content never sits underneath it */
+main {
+  display: block;
+}

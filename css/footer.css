@@ -1,0 +1,124 @@
+/* ==========================================================================
+   FOOTER.CSS
+   Four-column footer + bottom bar. Identical on every page — only
+   category/link hrefs and the current-year value differ (year is set
+   by main.js so it never goes stale).
+   ========================================================================== */
+
+.site-footer {
+  background-color: var(--color-navy-800-solid);
+  color: var(--color-text-on-dark-muted);
+}
+
+.site-footer__top {
+  padding-block: var(--space-7);
+}
+
+/* Mobile-first: default is a single stacked column; responsive.css
+   grows this to 2 columns at Tablet and the full 4-column layout at
+   Laptop/Desktop. */
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-7);
+}
+
+.site-footer__brand .site-logo__name,
+.site-footer__brand .site-logo__tagline {
+  color: var(--color-white);
+}
+
+.site-footer__about {
+  margin-top: var(--space-4);
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-on-dark-muted);
+}
+
+.site-footer__socials {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.site-footer__socials a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--overlay-white-08);
+  color: var(--color-white);
+  transition: background-color var(--transition-fast);
+}
+.site-footer__socials a:hover {
+  background-color: var(--color-teal-500);
+}
+
+.site-footer__heading {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+}
+
+.site-footer__links li + li {
+  margin-top: var(--space-3);
+}
+
+.site-footer__links a {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-on-dark-muted);
+  transition: color var(--transition-fast);
+}
+.site-footer__links a:hover {
+  color: var(--color-white);
+}
+
+.site-footer__contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+}
+.site-footer__contact li + li {
+  margin-top: var(--space-4);
+}
+.site-footer__contact svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--color-teal-500);
+  margin-top: 2px;
+}
+
+.site-footer__bottom {
+  border-top: 1px solid var(--overlay-white-12);
+  padding-block: var(--space-4);
+}
+
+/* Mobile-first: stacked and centered by default; responsive.css
+   switches to a row layout at Tablet+. */
+.site-footer__bottom-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  font-size: var(--fs-label);
+}
+
+.site-footer__bottom-links {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.site-footer__bottom-links a {
+  color: var(--color-text-on-dark-muted);
+  transition: color var(--transition-fast);
+}
+.site-footer__bottom-links a:hover {
+  color: var(--color-white);
+}

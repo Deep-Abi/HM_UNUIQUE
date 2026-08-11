@@ -1,0 +1,403 @@
+/* ==========================================================================
+   HEADER.CSS
+   Top utility bar, main header, primary navigation, Products dropdown,
+   and the mobile navigation drawer. This markup is identical on every
+   page (see documents/component-reference.md) — only the active-link
+   state changes per page.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. TOP UTILITY BAR
+   --------------------------------------------------------------------- */
+.utility-bar {
+  background-color: var(--color-navy-900);
+  color: var(--color-text-on-dark-muted);
+  font-size: var(--fs-body-sm);
+}
+
+.utility-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-2);
+}
+
+.utility-bar__contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+/* Mobile-first: only the first contact item (phone) shows by default
+   to avoid crowding a 320-375px header; responsive.css reveals the
+   rest from Large Mobile upward. */
+.utility-bar__contact > *:not(:first-child) {
+  display: none;
+}
+
+.utility-bar__contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-on-dark-muted);
+  transition: color var(--transition-fast);
+}
+.utility-bar__contact a:hover {
+  color: var(--color-white);
+}
+
+/* Mobile-first: hidden by default (Download Centre / social icons
+   icons need more width than a phone screen comfortably offers);
+   responsive.css reveals this from Tablet upward. */
+.utility-bar__links {
+  display: none;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.utility-bar__links a {
+  color: var(--color-text-on-dark-muted);
+  transition: color var(--transition-fast);
+}
+.utility-bar__links a:hover {
+  color: var(--color-white);
+}
+
+.utility-bar__socials {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.utility-bar__socials a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--overlay-white-08);
+  color: var(--color-white);
+  transition: background-color var(--transition-fast);
+}
+.utility-bar__socials a:hover {
+  background-color: var(--color-teal-500);
+}
+
+/* ---------------------------------------------------------------------
+   2. MAIN HEADER
+   --------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding-block: var(--space-3);
+}
+
+/* Logo */
+.site-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.site-logo__mark img {
+  height: 44px;
+  width: auto;
+}
+
+.site-logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.site-logo__name {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 1.25rem;
+  color: var(--color-navy-900);
+}
+
+.site-logo__tagline {
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------
+   3. PRIMARY NAVIGATION (mobile-first)
+   Hidden by default (mobile/large-mobile/tablet use the hamburger +
+   drawer instead); responsive.css reveals it at the Laptop breakpoint.
+   --------------------------------------------------------------------- */
+.primary-nav {
+  display: none;
+  align-items: center;
+}
+
+.primary-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.primary-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-heading);
+  padding-block: var(--space-2);
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.primary-nav__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background-color: var(--color-teal-500);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-fast);
+}
+
+.primary-nav__link:hover,
+.primary-nav__link[aria-current="page"] {
+  color: var(--color-teal-500);
+}
+.primary-nav__link:hover::after,
+.primary-nav__link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.primary-nav__chevron {
+  width: 10px;
+  height: 10px;
+  transition: transform var(--transition-fast);
+}
+
+.primary-nav__item--dropdown:hover .primary-nav__chevron,
+.primary-nav__item--dropdown.is-open .primary-nav__chevron {
+  transform: rotate(180deg);
+}
+
+/* ---------------------------------------------------------------------
+   4. PRODUCTS DROPDOWN
+   --------------------------------------------------------------------- */
+.primary-nav__item--dropdown {
+  position: relative;
+}
+
+.products-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 260px;
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--transition-base), transform var(--transition-base),
+    visibility var(--transition-base);
+  z-index: var(--z-dropdown);
+}
+
+.primary-nav__item--dropdown:hover .products-dropdown,
+.primary-nav__item--dropdown.is-open .products-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.products-dropdown__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-heading);
+  font-weight: var(--fw-medium);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.products-dropdown__link:hover,
+.products-dropdown__link[aria-current="page"] {
+  background-color: var(--color-teal-100);
+  color: var(--color-teal-600);
+}
+
+.products-dropdown__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-navy-900);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+.products-dropdown__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------------------------------------------------------------------
+   5. HEADER ACTIONS (Request a Quote button + hamburger)
+   --------------------------------------------------------------------- */
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Mobile-first: the hamburger is visible by default; responsive.css
+   hides it again once .primary-nav takes over at the Laptop tier. */
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+}
+
+.nav-toggle__bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--color-navy-900);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+.nav-toggle.is-active .nav-toggle__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-toggle.is-active .nav-toggle__bar:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.is-active .nav-toggle__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---------------------------------------------------------------------
+   6. MOBILE NAVIGATION DRAWER
+   --------------------------------------------------------------------- */
+.mobile-nav {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(340px, 86vw);
+  height: 100vh;
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-modal);
+  z-index: var(--z-mobile-nav);
+  transform: translateX(100%);
+  transition: transform var(--transition-base);
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+
+.mobile-nav.is-open {
+  transform: translateX(0);
+}
+
+.mobile-nav__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.mobile-nav__close {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-surface-light);
+}
+
+.mobile-nav__list > li {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-nav__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-4);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-heading);
+}
+
+.mobile-nav__link[aria-current="page"] {
+  color: var(--color-teal-500);
+}
+
+/* Accordion submenu for Products inside the mobile drawer */
+.mobile-nav__submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-base);
+}
+
+.mobile-nav__item--expanded .mobile-nav__submenu {
+  max-height: 320px;
+}
+
+.mobile-nav__submenu-link {
+  display: block;
+  padding-block: var(--space-3);
+  padding-left: var(--space-4);
+  color: var(--color-text-body);
+}
+.mobile-nav__submenu-link:hover,
+.mobile-nav__submenu-link[aria-current="page"] {
+  color: var(--color-teal-500);
+}
+
+.mobile-nav__cta {
+  margin-top: var(--space-5);
+}
+
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--overlay-navy-50);
+  z-index: calc(var(--z-mobile-nav) - 1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+.mobile-nav-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Products accordion toggle inside the mobile drawer — replaces what
+   was previously an inline style="width:100%; text-align:left;" on
+   the button in the generated HTML. */
+.mobile-nav__submenu-toggle {
+  width: 100%;
+  text-align: left;
+}

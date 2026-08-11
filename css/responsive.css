@@ -1,0 +1,244 @@
+/* ==========================================================================
+   RESPONSIVE.CSS
+   The ONLY file in the project that contains @media rules — every
+   other CSS file defines its MOBILE (base) state directly, with zero
+   media queries of its own, so there is exactly one place to look for
+   breakpoint logic and zero duplicated media queries anywhere.
+
+   Mobile-first: base styles across the whole project (loaded before
+   this file) already ARE the mobile layout. Every rule below is a
+   min-width query that progressively enhances the layout upward.
+   Standardized 5-tier list, matching variables.css's documented
+   breakpoint reference exactly:
+
+     Mobile       : 0px      (base — no query needed, defined elsewhere)
+     Large Mobile : >= 480px
+     Tablet       : >= 768px
+     Laptop       : >= 992px
+     Desktop      : >= 1200px
+
+   No layout shift, no horizontal scrolling, no overlapping elements
+   at any tier.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------
+   LARGE MOBILE — >= 480px
+   --------------------------------------------------------------------- */
+@media (min-width: 480px) {
+  .grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card__actions {
+    flex-direction: row;
+  }
+
+  .utility-bar__contact > *:not(:first-child) {
+    display: inline-flex;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   TABLET — >= 768px
+   Header CTA button reappears; grids grow to 2 columns; footer grows
+   to 2 columns; Quote modal and form rows regain their two-column
+   layout; sub-category tab strip (Phase 3) becomes a contained,
+   horizontally-scrollable row rather than wrapping the page.
+   --------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  :root {
+    --section-padding-y: var(--space-7);
+  }
+
+  .section {
+    padding-block: var(--space-7);
+  }
+
+  .hide-on-mobile {
+    display: inline-flex;
+  }
+  .show-on-mobile {
+    display: none;
+  }
+
+  .utility-bar__links {
+    display: flex;
+  }
+
+  .grid--3,
+  .grid--4,
+  .grid--5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid--6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .modal--quote {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .cta-band__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-8) var(--space-7);
+  }
+
+  .hero__inner {
+    grid-template-columns: 1.1fr 1fr;
+  }
+
+  .industries-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .category-hero__inner {
+    grid-template-columns: 1.15fr 1fr;
+  }
+
+  .catalogue-band__inner {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .inline-cta {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .stats-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .contact-grid {
+    grid-template-columns: 1.3fr 1fr;
+  }
+
+  .who-we-are {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .branch-card {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .site-footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .site-footer__bottom-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   LAPTOP — >= 992px
+   The primary nav takes over from the hamburger; grids approach their
+   nominal column counts; footer moves to its full 4-column layout.
+   --------------------------------------------------------------------- */
+@media (min-width: 992px) {
+  .primary-nav {
+    display: flex;
+  }
+
+  .nav-toggle {
+    display: none;
+  }
+
+  .grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .grid--5 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .grid--6 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .site-footer__grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   DESKTOP — >= 1200px
+   Full nominal column counts and full section spacing — this is the
+   concept PDF's native canvas width, rendering as designed.
+   --------------------------------------------------------------------- */
+@media (min-width: 1200px) {
+  :root {
+    --section-padding-y: var(--space-8);
+  }
+
+  .section {
+    padding-block: var(--space-8);
+  }
+
+  .grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .grid--5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .grid--6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .industries-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .stats-strip {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   REDUCED MOTION — consolidated in this single location (previously
+   duplicated across style.css and animations.css, which has been
+   fixed; this is now the only prefers-reduced-motion block in the
+   project).
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .success-check__mark {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

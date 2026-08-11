@@ -1,0 +1,1247 @@
+/* ==========================================================================
+   COMPONENTS.CSS
+   Every reusable UI component that isn't the header or footer:
+   buttons, cards, section headings, breadcrumb, modals, floating
+   action buttons, and the scroll-to-top button.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. BUTTONS
+   --------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-pill);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-body-sm);
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color var(--transition-base), color var(--transition-base),
+    border-color var(--transition-base), transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Primary — solid teal */
+.btn--primary {
+  background-color: var(--color-teal-500);
+  color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+.btn--primary:hover {
+  background-color: var(--color-teal-600);
+  box-shadow: var(--shadow-md);
+}
+
+/* Secondary — outline teal */
+.btn--outline {
+  background-color: transparent;
+  color: var(--color-teal-500);
+  border: 1.5px solid var(--color-teal-500);
+}
+.btn--outline:hover {
+  background-color: var(--color-teal-500);
+  color: var(--color-white);
+}
+
+/* Outline on dark background (hero / dark bands) */
+.btn--outline-light {
+  background-color: transparent;
+  color: var(--color-white);
+  border: 1.5px solid var(--overlay-white-50);
+}
+.btn--outline-light:hover {
+  background-color: var(--color-white);
+  color: var(--color-navy-900);
+  border-color: var(--color-white);
+}
+
+/* Dark solid — used on light backgrounds for secondary emphasis */
+.btn--dark {
+  background-color: var(--color-navy-900);
+  color: var(--color-white);
+}
+.btn--dark:hover {
+  background-color: var(--color-navy-700);
+}
+
+/* Gold — catalogue download CTA only, used sparingly per design system */
+.btn--gold {
+  background-color: var(--color-gold-500);
+  color: var(--color-navy-900);
+}
+.btn--gold:hover {
+  background-color: var(--color-gold-600);
+}
+
+/* White solid — used on dark CTA bands */
+.btn--white {
+  background-color: var(--color-white);
+  color: var(--color-navy-900);
+}
+.btn--white:hover {
+  background-color: var(--color-surface-light);
+}
+
+.btn--sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-label);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Loading state — toggled by forms.js while a submission is in
+   flight. Hides the button's own text/icon and shows a spinner
+   in their place via ::after, so no extra DOM element is needed
+   in the HTML for this to work. */
+.btn.is-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+.btn.is-loading svg {
+  visibility: hidden;
+}
+.btn.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid var(--overlay-white-40);
+  border-top-color: var(--color-white);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+.btn--outline.is-loading::after,
+.btn--outline-light.is-loading::after {
+  border-color: var(--overlay-navy-40);
+  border-top-color: var(--color-teal-500);
+}
+
+/* Text link with trailing arrow (e.g. "Explore Category", "View All Products") */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-body-sm);
+  color: var(--color-teal-500);
+}
+.link-arrow svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-fast);
+}
+.link-arrow:hover svg {
+  transform: translateX(3px);
+}
+
+/* Icon-only round button (used for carousel prev/next, close buttons) */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  color: var(--color-navy-900);
+  box-shadow: var(--shadow-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.btn-icon:hover {
+  background-color: var(--color-teal-500);
+  color: var(--color-white);
+}
+
+/* ---------------------------------------------------------------------
+   2. SECTION HEADING PATTERN
+   --------------------------------------------------------------------- */
+.section-heading {
+  max-width: 640px;
+  margin-bottom: var(--space-6);
+}
+
+.section-heading--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.section-heading__title {
+  margin-top: var(--space-1);
+}
+
+.section-heading__subtitle {
+  margin-top: var(--space-3);
+  color: var(--color-text-body);
+}
+
+/* ---------------------------------------------------------------------
+   3. BREADCRUMB
+   --------------------------------------------------------------------- */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-label);
+  color: var(--color-text-muted);
+  padding-block: var(--space-4);
+}
+
+.breadcrumb a {
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+.breadcrumb a:hover {
+  color: var(--color-teal-500);
+}
+
+.breadcrumb__current {
+  color: var(--color-text-heading);
+  font-weight: var(--fw-medium);
+}
+
+.breadcrumb__sep {
+  color: var(--color-border);
+}
+
+/* ---------------------------------------------------------------------
+   4. CARDS
+   --------------------------------------------------------------------- */
+.card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card--hover:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--color-navy-900);
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+}
+.card__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* .card__media, .card__title, .card__desc intentionally removed here
+   (Phase 6 dead-code cleanup) — every actual card on the site uses a
+   prefixed BEM variant instead (.category-card__title,
+   .product-card__title, .download-card__title, etc.), so these
+   generic unprefixed versions were never consumed by any page. */
+
+.card__specs {
+  margin-bottom: var(--space-4);
+}
+.card__specs li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+}
+.card__specs li + li {
+  margin-top: var(--space-2);
+}
+.card__specs svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  color: var(--color-teal-500);
+}
+
+.card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.card__actions .btn {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Icon-badge feature column (why-choose-us style repeated block) */
+.feature-item {
+  text-align: center;
+}
+.feature-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--color-teal-100);
+  color: var(--color-teal-600);
+  margin-bottom: var(--space-4);
+}
+.text-on-dark .feature-item__icon {
+  background-color: var(--overlay-white-10);
+  color: var(--color-white);
+}
+
+/* Compact variant — icon + label only, no description paragraph.
+   Used by the Industries We Serve grid. */
+.feature-item--compact .feature-item__icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-3);
+}
+.feature-item--compact .feature-item__title {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+}
+
+.feature-item__title {
+  margin-bottom: var(--space-2);
+}
+
+.feature-item__desc {
+  font-size: var(--fs-body-sm);
+}
+.text-on-dark .feature-item__desc {
+  color: var(--color-text-on-dark-muted);
+}
+
+/* Stat block (stats strip) */
+.stat-item {
+  text-align: center;
+}
+.stat-item__value {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h3);
+  color: var(--color-white);
+}
+.stat-item__label {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-on-dark-muted);
+}
+
+/* ---------------------------------------------------------------------
+   5. CTA BAND
+   --------------------------------------------------------------------- */
+.cta-band {
+  background-color: var(--color-navy-900);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.cta-band--catalogue {
+  background-color: var(--color-navy-800-solid);
+}
+
+/* Inner layout: text column + optional image column. Mobile-first —
+   stacks by default, becomes a row at Tablet+ (see responsive.css).
+   Reused on every page wherever a CTA band appears (Home, and every
+   category/About/Contact page from Phase 4 onward). */
+.cta-band__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+  padding: var(--space-7) var(--space-6);
+}
+
+.cta-band__text {
+  flex: 1;
+}
+
+.cta-band__title {
+  margin-bottom: var(--space-2);
+}
+
+.cta-band__media {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 220px;
+}
+
+/* ---------------------------------------------------------------------
+   6. TRUST BADGE ROW
+   Small icon + label item used in the Home hero and, from Phase 4
+   onward, at the top of every category page — one component, styled
+   once, per the Phase 1 architecture.
+   --------------------------------------------------------------------- */
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+}
+
+.trust-badge__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--color-teal-500);
+}
+.text-on-dark .trust-badge__icon {
+  color: var(--color-teal-500);
+}
+.trust-badge__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------------
+   7. PRODUCT CARD (featured-product variant)
+   Reused on Home (Featured Products) and, from Phase 4 onward, on
+   every category page's product grid — the spec-list variant with
+   Download PDF + Request Quote actions is layered on top of this same
+   base class when category pages are built, per Phase 1 §1.8.
+   --------------------------------------------------------------------- */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.product-card__media {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  background-color: var(--color-surface-light);
+}
+
+.product-card__title {
+  margin-bottom: var(--space-2);
+}
+
+.product-card__desc {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+  margin-bottom: var(--space-4);
+  flex-grow: 1;
+}
+
+/* ---------------------------------------------------------------------
+   8. IMAGE PLACEHOLDER
+   Used anywhere a real photo/illustration is not yet available. Keeps
+   the exact layout/aspect-ratio the concept PDF specifies so swapping
+   in the final asset later requires no layout change — see
+   documents/image-guidelines.md.
+   --------------------------------------------------------------------- */
+.img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-muted);
+}
+.img-placeholder svg {
+  width: 40%;
+  height: 40%;
+  max-width: 64px;
+  max-height: 64px;
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------
+   9. CATEGORY PAGE HERO
+   Reused identically across all 4 category pages (Electricals,
+   Electronics, Hardwares, Industrial & Commercial Equipment) — light
+   background, per the concept PDF (distinct from the Home page's dark
+   hero, which is Home-exclusive).
+   --------------------------------------------------------------------- */
+.category-hero {
+  background-color: var(--color-white);
+  padding-block: var(--space-6) var(--space-7);
+}
+
+.category-hero__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.category-hero__title {
+  margin-bottom: var(--space-3);
+}
+
+.category-hero__desc {
+  max-width: 56ch;
+  margin-bottom: var(--space-5);
+}
+
+.category-hero__badges {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3) var(--space-5);
+}
+
+.category-hero__media .aspect-box {
+  border-radius: var(--radius-lg);
+}
+
+/* ---------------------------------------------------------------------
+   10. SUB-CATEGORY TAB STRIP
+   Horizontally scrollable row of icon + label pills. Contained
+   scrolling only (see responsive.css) — never causes page-level
+   horizontal scroll. Currently a display/preview of the full taxonomy
+   with the first item marked active to match the concept; full
+   per-tab content filtering is a Phase 5+ item pending sub-category-
+   specific product data (see documents/PHASE-4-CATEGORY-PAGES-REPORT.md).
+   --------------------------------------------------------------------- */
+.category-tabs {
+  display: flex;
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+  /* Contained horizontal scroll from the smallest viewport up — this
+     is NOT a breakpoint-gated behavior (previously it only applied
+     from Tablet upward, which meant Mobile/Large Mobile had no
+     containment and could overflow the page horizontally with a
+     12-item taxonomy; fixed to be the mobile-first default here). */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.category-tabs__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  width: 96px;
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-body);
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.category-tabs__item svg {
+  width: 22px;
+  height: 22px;
+}
+
+.category-tabs__item span {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  line-height: 1.3;
+}
+
+.category-tabs__item:hover {
+  color: var(--color-teal-500);
+}
+
+.category-tabs__item.is-active {
+  color: var(--color-teal-600);
+  border-bottom-color: var(--color-teal-500);
+}
+
+/* ---------------------------------------------------------------------
+   11. INLINE CTA ROW
+   The compact "Looking for more X?" banner between the product grid
+   and the catalogue download band — lighter-weight than the full
+   .cta-band, reused on every category page.
+   --------------------------------------------------------------------- */
+.inline-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  background-color: var(--color-surface-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+}
+
+.inline-cta__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-teal-100);
+  color: var(--color-teal-600);
+  flex-shrink: 0;
+}
+
+.inline-cta__text {
+  flex: 1;
+}
+
+.inline-cta__title {
+  margin-bottom: var(--space-1);
+}
+
+/* ---------------------------------------------------------------------
+   12. CATALOGUE DOWNLOAD BAND
+   --------------------------------------------------------------------- */
+.catalogue-band__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+.catalogue-band__media {
+  width: 100%;
+  max-width: 200px;
+  flex-shrink: 0;
+}
+
+.catalogue-band__text {
+  flex: 1;
+}
+
+.catalogue-band__title {
+  margin-bottom: var(--space-2);
+}
+
+.catalogue-band__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-5);
+  margin-block: var(--space-4);
+}
+
+.catalogue-band__feature {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-label);
+}
+.catalogue-band__feature svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-teal-500);
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------
+   13. STATS STRIP
+   --------------------------------------------------------------------- */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------
+   6. FLOATING ACTION BUTTONS (WhatsApp / Call / Scroll to top)
+   --------------------------------------------------------------------- */
+.floating-actions {
+  position: fixed;
+  bottom: var(--space-5);
+  z-index: var(--z-floating-buttons);
+}
+
+.floating-actions--left {
+  left: var(--space-5);
+}
+.floating-actions--right {
+  right: var(--space-5);
+}
+
+.floating-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  color: var(--color-white);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast);
+}
+.floating-btn:hover {
+  transform: scale(1.06);
+}
+.floating-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.floating-btn--whatsapp {
+  background-color: var(--color-whatsapp-brand);
+}
+.floating-btn--call {
+  background-color: var(--color-teal-500);
+}
+
+.scroll-top-btn {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-navy-900);
+  color: var(--color-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-scroll-top);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--transition-base), transform var(--transition-base),
+    visibility var(--transition-base);
+}
+.scroll-top-btn.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* When the WhatsApp/Call floating buttons and scroll-to-top would
+   collide (bottom-right), scroll-to-top stacks above the call button;
+   handled by navigation.js toggling a `.has-scroll-top` class on
+   .floating-actions--right so spacing stays consistent site-wide. */
+.floating-actions--right.has-scroll-top .floating-btn--call {
+  margin-bottom: var(--space-7);
+}
+
+/* ---------------------------------------------------------------------
+   7. MODALS — Request a Quote + Thank You
+   --------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--overlay-navy-55);
+  z-index: var(--z-modal-overlay);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+.modal-overlay.is-open {
+  display: flex;
+}
+
+.modal {
+  position: relative;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Mobile-first: the Quote modal's two-column layout collapses to a
+   single column by default; responsive.css restores the two-column
+   grid at Tablet+. */
+.modal--quote {
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.modal--thank-you {
+  max-width: 460px;
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+}
+
+.modal__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-surface-light);
+  color: var(--color-text-heading);
+  z-index: 2;
+  transition: background-color var(--transition-fast);
+}
+.modal__close:hover {
+  background-color: var(--color-border);
+}
+
+.modal__form-col {
+  padding: var(--space-6);
+}
+
+.modal__aside-col {
+  background-color: var(--color-surface-light);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.modal__header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-teal-100);
+  color: var(--color-teal-600);
+  flex-shrink: 0;
+}
+
+.modal__title {
+  margin-bottom: var(--space-1);
+}
+
+.modal__subtitle {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+}
+
+.modal__why-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+}
+.modal__why-list li + li {
+  margin-top: var(--space-4);
+}
+
+.modal__help-box {
+  margin-top: auto;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.modal__note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-label);
+  color: var(--color-text-muted);
+  margin-top: var(--space-3);
+}
+
+/* Thank You modal specifics */
+.success-check {
+  margin-inline: auto;
+  margin-bottom: var(--space-5);
+  width: 84px;
+  height: 84px;
+}
+
+.modal--thank-you .modal__note-box {
+  background-color: var(--color-teal-100);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+  margin-block: var(--space-5);
+}
+
+/* ---------------------------------------------------------------------
+   8. FORM FIELDS (mobile-first)
+   --------------------------------------------------------------------- */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.form-field {
+  margin-bottom: var(--space-4);
+}
+
+.form-field__label {
+  display: block;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-heading);
+  margin-bottom: var(--space-2);
+}
+
+.form-field__label .required {
+  color: var(--color-error);
+}
+
+.form-field__control {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-white);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.form-field__control:focus {
+  outline: none;
+  border-color: var(--color-teal-500);
+  box-shadow: 0 0 0 3px var(--color-teal-100);
+}
+
+textarea.form-field__control {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.form-field--error .form-field__control {
+  border-color: var(--color-error);
+}
+.form-field__error-msg {
+  display: none;
+  font-size: var(--fs-label);
+  color: var(--color-error);
+  margin-top: var(--space-2);
+}
+.form-field--error .form-field__error-msg {
+  display: block;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--fs-label);
+  color: var(--color-text-muted);
+}
+.form-checkbox input {
+  margin-top: 3px;
+}
+.form-checkbox a {
+  color: var(--color-teal-500);
+}
+
+/* Form-level submission error message — shown instead of a
+   console.error() when the (future) submit endpoint fails, so the
+   person sees what went wrong rather than it being silently logged. */
+.form-submit-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  color: var(--color-error);
+  background-color: var(--color-error-tint);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-4);
+}
+.form-submit-error[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------
+   14. PAGE BANNER (dark inner hero)
+   Shared by About Us, Contact Us, and Download Centre — the "inner
+   banner hero" pattern from the Phase 1 architecture (distinct from
+   both the Home hero and the light-background category-hero). Mobile-
+   first: single column, centered; media/badge overlay is optional.
+   --------------------------------------------------------------------- */
+.page-banner {
+  position: relative;
+  background-color: var(--color-navy-900);
+  overflow: hidden;
+  padding-block: var(--space-7);
+}
+
+.page-banner__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.page-banner__eyebrow {
+  display: inline-block;
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-teal-500);
+  margin-bottom: var(--space-3);
+}
+
+.page-banner__title {
+  margin-bottom: var(--space-3);
+}
+
+.page-banner__desc {
+  max-width: 60ch;
+  margin-bottom: var(--space-5);
+}
+
+.page-banner__quicklinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+}
+
+.page-banner__quicklink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+}
+.page-banner__quicklink svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-teal-500);
+  flex-shrink: 0;
+}
+
+/* Floating stat badge that overlaps the bottom edge of the banner
+   media (About page's "7+ Years / Since 2017" badge) */
+.page-banner__badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-top: var(--space-6);
+}
+.page-banner__badge-item {
+  text-align: center;
+}
+.page-banner__badge-value {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h3);
+  color: var(--color-navy-900);
+}
+.page-banner__badge-label {
+  font-size: var(--fs-label);
+  color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   15. MILESTONE ITEM (About page journey/strengths grid)
+   --------------------------------------------------------------------- */
+.milestone {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+.milestone__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-teal-100);
+  color: var(--color-teal-600);
+}
+.milestone__year {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  color: var(--color-teal-600);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.milestone__title {
+  margin-bottom: var(--space-1);
+}
+.milestone__desc {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+}
+
+/* ---------------------------------------------------------------------
+   16. INFO CARD (Contact page — contact details / branch card)
+   --------------------------------------------------------------------- */
+.info-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+
+.info-card__title {
+  margin-bottom: var(--space-4);
+}
+
+.info-card__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+}
+.info-card__list li + li {
+  margin-top: var(--space-4);
+}
+.info-card__list svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--color-teal-500);
+  margin-top: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   20. INDUSTRIES SERVED GRID
+   Reused on Home and About (both render the same "Industries We
+   Serve" content) — moved here from pages/home.css during the
+   Pre-Deployment Audit after discovering About's copy of this grid
+   was rendering unstyled: each page only loads its OWN page-specific
+   CSS file, so a rule that's actually shared between two pages must
+   live in this shared file, not in one page's own stylesheet.
+   --------------------------------------------------------------------- */
+.industries-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+/* WhatsApp CTA row — a prominent, always-visible (non-floating) link
+   used inline on the Contact page, distinct from the fixed floating
+   WhatsApp button which stays global on every page. */
+.whatsapp-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background-color: var(--color-teal-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin-top: var(--space-5);
+}
+.whatsapp-cta__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-whatsapp-brand);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+.whatsapp-cta__icon svg {
+  width: 20px;
+  height: 20px;
+}
+.whatsapp-cta__text {
+  flex: 1;
+}
+
+/* ---------------------------------------------------------------------
+   17. DOWNLOAD CARD (Download Centre)
+   Composes from the base .card + a dedicated media/action layout.
+   --------------------------------------------------------------------- */
+.download-card__media {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  background-color: var(--color-surface-light);
+}
+.download-card__title {
+  margin-bottom: var(--space-2);
+}
+.download-card__desc {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-body);
+  margin-bottom: var(--space-4);
+  flex-grow: 1;
+}
+
+/* ---------------------------------------------------------------------
+   18. CONTACT PAGE LAYOUT
+   --------------------------------------------------------------------- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.branch-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.branch-card__media .aspect-box {
+  border-radius: 0;
+}
+.branch-card__body {
+  padding: var(--space-5);
+}
+.branch-card__title {
+  margin-bottom: var(--space-3);
+}
+
+/* ---------------------------------------------------------------------
+   19. ABOUT PAGE — WHO WE ARE
+   Mobile-first: text above media, single column; becomes a 2-column
+   row at Tablet+ (see responsive.css).
+   --------------------------------------------------------------------- */
+.who-we-are {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+.who-we-are__media {
+  gap: var(--space-3);
+}
