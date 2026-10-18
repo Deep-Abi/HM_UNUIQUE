@@ -130,17 +130,27 @@ h4,
 h5,
 h6 {
   margin: 0;
-  font-family: var(--font-heading);
+  font-family: var(--font-heading-primary);
   font-weight: var(--fw-bold);
   line-height: var(--lh-heading);
   color: var(--color-text-heading);
 }
 
+/* Primary headings (h1, h2) use Plus Jakarta Sans, extra-bold for h1
+   to give the hero/page-title level real visual weight. */
 h1 {
   font-size: var(--fs-h1);
+  font-weight: var(--fw-extrabold);
 }
 h2 {
   font-size: var(--fs-h2);
+}
+
+/* Secondary headings (h3, h4) switch to Manrope — a deliberate family
+   change (not just a smaller size) so the hierarchy reads clearly. */
+h3,
+h4 {
+  font-family: var(--font-heading-secondary);
 }
 h3 {
   font-size: var(--fs-h3);
@@ -152,6 +162,8 @@ h4 {
 p {
   margin: 0 0 var(--space-4);
   color: var(--color-text-body);
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
 }
 
 p:last-child {
@@ -174,9 +186,16 @@ p:last-child {
 }
 
 /* Keyword highlight span used inside hero/section headings
-   (e.g. "Electricals, Electronics, Hardwares & Industrial Tools") */
+   (e.g. "Electricals, Electronics, Hardwares & Industrial Tools").
+   Teal by default (safe on light backgrounds); dark-background
+   contexts (the Home hero) switch to the brighter Accent Cyan, which
+   would fail contrast on a light background but reads beautifully
+   against navy — matching the concept PDF's actual hero treatment. */
 .text-accent {
   color: var(--color-teal-500);
+}
+.text-on-dark .text-accent {
+  color: var(--color-cyan-500);
 }
 
 /* ---------------------------------------------------------------------

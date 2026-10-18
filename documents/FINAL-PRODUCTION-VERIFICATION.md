@@ -69,7 +69,7 @@ confirmed by a full-project grep after every fix.
 ### Every HTML page
 All 8 pages (`index.html`, `electricals.html`, `electronics.html`,
 `hardwares.html`, `industrial-equipment.html`, `about.html`,
-`contact.html`, `download-centre.html`) re-parsed cleanly with zero
+`contact.html`) re-parsed cleanly with zero
 markup errors, and every tag type re-counted for balance (`<div>`,
 `<a>`, `<button>`, `<form>`) after the `href="#"` fixes — all balanced.
 

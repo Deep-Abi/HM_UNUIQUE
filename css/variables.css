@@ -15,16 +15,32 @@
 :root {
   /* ---------------------------------------------------------------------
      COLOR — PRIMARY
+     Refined during the UI Refinement phase — navy and teal moved
+     slightly closer to the concept PDF's actual rendered colors
+     (pixel-sampled from the reference screenshots), not a redesign.
      --------------------------------------------------------------------- */
-  --color-navy-900: #0e2b3b;   /* deepest navy — header, hero, dark bands */
+  --color-navy-900: #0c2836;   /* deepest navy — header, hero, dark bands */
   --color-navy-800: #10334533; /* not used directly, kept for reference   */
-  --color-navy-800-solid: #123244; /* footer background                  */
-  --color-navy-700: #163a4d;   /* hover state on navy surfaces           */
+  --color-navy-800-solid: #102f3f; /* footer background                  */
+  --color-navy-700: #14374c;   /* hover state on navy surfaces           */
+  --color-cta-band-bg: #033139; /* global "Looking for the Right Products"
+                                    CTA band background — pixel-sampled
+                                    from the reference, a richer teal-navy
+                                    distinct from the darker footer tone */
 
-  /* COLOR — ACCENT */
-  --color-teal-500: #1aa6a0;   /* primary accent — links, eyebrows, active states */
-  --color-teal-600: #158f8a;   /* hover/active state of teal accent      */
-  --color-teal-100: #e6f6f5;   /* tinted teal background (success box)   */
+  /* COLOR — ACCENT (Teal + Accent Cyan)
+     Two distinct accent shades, matching the concept PDF, which uses a
+     mid-teal for buttons/icons/interactive elements and a brighter,
+     more saturated cyan specifically for keyword highlights inside
+     dark-background headings (the hero's "Electricals, Electronics,
+     Hardwares & Industrial Tools" phrase). Using cyan on a LIGHT
+     background instead would fail contrast (verified: 2.43:1, well
+     under the 3:1 large-text minimum), so cyan is reserved for
+     dark-background contexts only — see .text-accent in style.css. */
+  --color-teal-500: #0f96a0;   /* primary accent — buttons, icons, links */
+  --color-teal-600: #0c7d87;   /* hover/active state of teal accent      */
+  --color-teal-100: #e3f5f6;   /* tinted teal background (success box)   */
+  --color-cyan-500: #06b6d4;   /* accent cyan — dark-background heading keyword highlights only */
 
   /* COLOR — CTA GOLD (secondary accent, used sparingly) */
   --color-gold-500: #f2a83c;
@@ -65,9 +81,24 @@
 
   /* ---------------------------------------------------------------------
      TYPOGRAPHY
+     Three-family hierarchy (Phase: UI Refinement) — replaces the
+     earlier single-family (Poppins/Inter) system with a deliberate
+     hierarchy matching content role, loaded via Google Fonts:
+       Primary heading (h1, h2)   -> Plus Jakarta Sans, bold/extrabold
+       Secondary heading (h3, h4) -> Manrope, bold
+       Body / specs               -> Inter, regular
+       Buttons                    -> Inter, medium
+       Navigation                 -> Inter, semibold
+       Small labels / eyebrows    -> Inter, medium
      --------------------------------------------------------------------- */
-  --font-heading: "Poppins", "Segoe UI", Arial, sans-serif;
+  --font-heading-primary: "Plus Jakarta Sans", "Segoe UI", Arial, sans-serif;
+  --font-heading-secondary: "Manrope", "Segoe UI", Arial, sans-serif;
   --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+
+  /* Kept as an alias so any rule still referencing --font-heading
+     directly (rather than the new primary/secondary split) resolves
+     to the correct primary-heading family, not a stale one. */
+  --font-heading: var(--font-heading-primary);
 
   --fs-h1: clamp(1.9rem, 1.4rem + 2.2vw, 3rem);
   --fs-h2: clamp(1.5rem, 1.2rem + 1.4vw, 2.125rem);
@@ -86,6 +117,7 @@
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-bold: 700;
+  --fw-extrabold: 800;
 
   --ls-eyebrow: 0.08em;
 

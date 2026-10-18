@@ -9,31 +9,97 @@
    ========================================================================== */
 
 /* ---------------------------------------------------------------------
-   HERO — mobile-first: single column by default (content stacks above
-   the media). responsive.css switches this to the two-column layout
-   from the concept at Tablet+.
+   HERO -- the ENTIRE slide (background photo + overlay + text) moves
+   together as one unit per category; each [data-slider-slide] is a
+   self-contained mini-hero with its own image layer and its own text
+   block, and the whole 4-slide track slides horizontally. All four
+   slides currently use the same photo (only one real product image
+   exists yet) -- swapping in distinct photography per category later
+   only means changing each slide's <picture> source, no structural
+   change needed.
    --------------------------------------------------------------------- */
 .hero {
   position: relative;
   background-color: var(--color-navy-900);
   overflow: hidden;
-  padding-block: var(--space-7);
+  min-height: 560px;
+}
+
+.hero__slider-track {
+  display: flex;
+  min-height: 560px;
+  /* A slightly longer duration and a deliberate ease-in-out curve
+     (rather than the sitewide default "ease") make the slide read as
+     smoother and more premium for a hero-level transition. */
+  transition: transform 650ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.hero__slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.hero__slide-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__slide-media picture,
+.hero__slide-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Horizontal bias only matters at narrower viewports, where the
+     hero is taller (relative to width) than the source photo and the
+     browser must crop left/right to fill it -- a plain center crop
+     there cuts off the most visually distinctive products (the
+     coloured cable coils, the LED flood light). 68% keeps the full
+     panel and the coloured cables in frame. At wide desktop widths
+     the full image width already shows (only top/bottom crop there),
+     so this has no effect there -- safe as a single global value. */
+  object-position: 68% center;
+}
+
+/* Left-to-right dark gradient so text stays readable over any part of
+   the photo, regardless of viewport width. */
+.hero__slide-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    var(--color-navy-900) 0%,
+    var(--overlay-navy-40) 55%,
+    transparent 85%
+  );
+  pointer-events: none;
 }
 
 .hero__inner {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: var(--space-7);
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-block: var(--space-8);
 }
 
+.hero__content {
+  max-width: 520px;
+  /* Nudges the text left of the standard container gutter, giving it
+     more room before the product photography. */
+  margin-left: calc(var(--space-4) * -1);
+}
+
+/* Modifier only -- base label styling comes from the shared .eyebrow
+   utility (composed together in the HTML: class="eyebrow hero__eyebrow"),
+   this class exists purely to widen the bottom margin for this context. */
 .hero__eyebrow {
-  display: inline-block;
-  font-size: var(--fs-eyebrow);
-  font-weight: var(--fw-semibold);
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-teal-500);
   margin-bottom: var(--space-3);
 }
 
@@ -50,57 +116,75 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-3) var(--space-5);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-7);
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  align-items: center;
+  gap: var(--space-5);
 }
 
-.hero__media {
-  position: relative;
+/* "About HM Unique" -- a plain icon+text link (not a bordered button),
+   matching the concept reference exactly: a small teal-outlined circle
+   containing a play icon, plain uppercase text beside it, no button
+   background/border around the whole thing. Home-exclusive, so it
+   lives here rather than in the shared components.css. */
+.hero__watch-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-white);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-body-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: opacity var(--transition-fast);
+}
+.hero__watch-link:hover {
+  opacity: 0.8;
+}
+.hero__watch-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-teal-500);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+.hero__watch-link__icon i {
+  font-size: 12px;
+  margin-left: 2px;
 }
 
-.hero__slider {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.hero__slider-track {
-  display: flex;
-  transition: transform var(--transition-slow);
-}
-
-.hero__slide {
-  flex: 0 0 100%;
-  width: 100%;
-}
-
-.hero__slide .aspect-box {
-  border-radius: var(--radius-lg);
-}
-
+/* Prev/next moved to the outer top corners of the hero, off the
+   vertical center where they'd otherwise sit over the text/image. */
 .hero__nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 4;
 }
 .hero__nav--prev {
-  left: var(--space-3);
+  left: var(--space-4);
 }
 .hero__nav--next {
-  right: var(--space-3);
+  right: var(--space-4);
 }
 
 .hero__dots {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-5);
+  transform: translateX(-50%);
+  z-index: 4;
   display: flex;
   justify-content: center;
   gap: var(--space-2);
-  margin-top: var(--space-4);
 }
 
 .hero__dots button {
@@ -115,12 +199,26 @@
   width: 22px;
   border-radius: var(--radius-pill);
 }
-
-/* ---------------------------------------------------------------------
    CATEGORY CARD (Home-only — see Phase 1 §1.8 reusable-component table)
    --------------------------------------------------------------------- */
 .category-card {
+  position: relative;
   text-align: left;
+}
+
+/* Overlapping icon badge — matches the concept reference exactly,
+   where the category icon floats over the top-left corner of the
+   product image rather than sitting in normal flow above it. Scoped
+   to .category-card specifically so the shared .card__icon base
+   style (used elsewhere, e.g. About page's Vision/Mission cards)
+   stays untouched. */
+.category-card .card__icon {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 2;
+  margin-bottom: 0;
+  box-shadow: var(--shadow-md);
 }
 
 .category-card__media {

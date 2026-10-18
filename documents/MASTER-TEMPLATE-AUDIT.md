@@ -83,7 +83,7 @@ consume the identical definition.
 
 ## 8. Ready for next phases
 
-The Home page is now the master template. What every future page (Electricals, Electronics, Hardwares, Industrial Equipment, About, Contact, Download Centre) will inherit unchanged:
+The Home page is now the master template. What every future page (Electricals, Electronics, Hardwares, Industrial Equipment, About, Contact) will inherit unchanged:
 - Header, Top Utility Bar, Navigation, Products Dropdown, Mobile Drawer
 - Footer, Floating WhatsApp/Call, Scroll-to-Top
 - Quote Modal + Thank You Modal (shared engine, delegated triggers)

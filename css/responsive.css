@@ -32,10 +32,6 @@
   .card__actions {
     flex-direction: row;
   }
-
-  .utility-bar__contact > *:not(:first-child) {
-    display: inline-flex;
-  }
 }
 
 /* ---------------------------------------------------------------------
@@ -61,8 +57,14 @@
     display: none;
   }
 
-  .utility-bar__links {
+  /* Primary email appears from Tablet; the secondary email stays
+     hidden until Desktop, where there's enough width for both without
+     crowding the phone number. */
+  .utility-bar__emails {
     display: flex;
+  }
+  .utility-bar__emails .utility-bar__email:last-child {
+    display: none;
   }
 
   .grid--3,
@@ -86,11 +88,12 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-8) var(--space-7);
+    padding-block: var(--space-8);
   }
 
-  .hero__inner {
-    grid-template-columns: 1.1fr 1fr;
+  .hero,
+  .hero__slider-track {
+    min-height: 620px;
   }
 
   .industries-grid {
@@ -184,6 +187,15 @@
     padding-block: var(--space-8);
   }
 
+  .hero,
+  .hero__slider-track {
+    min-height: 680px;
+  }
+
+  .utility-bar__emails .utility-bar__email:last-child {
+    display: inline-flex;
+  }
+
   .grid--2 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -206,6 +218,16 @@
 
   .stats-strip {
     grid-template-columns: repeat(5, 1fr);
+  }
+
+  /* Column divider lines between Why Choose Us items — only added
+     here (Desktop) since .grid--5 is only guaranteed to render as a
+     true single-row 5-column grid at this tier; at every narrower
+     tier the grid wraps to multiple rows, where a "divider between
+     columns" would visually misplace itself between wrapped rows. */
+  .why-choose-grid > *:not(:last-child) {
+    border-right: 1px solid var(--overlay-white-12);
+    padding-right: var(--space-5);
   }
 
   .hide-on-desktop {

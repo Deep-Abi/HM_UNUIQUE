@@ -54,7 +54,7 @@ Thank You modal ever need to change:
 ## Nav keys
 
 `home`, `electricals`, `electronics`, `hardwares`, `industrial`, `about`,
-`contact`, `download-centre`
+`contact`
 
 Each page's `<body>` carries `data-nav-key="<key>"`. The Products dropdown
 trigger and the desktop/mobile Electricals/Electronics/Hardwares/Industrial

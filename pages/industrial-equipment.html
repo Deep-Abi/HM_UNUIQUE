@@ -31,6 +31,17 @@
   <meta name="twitter:description" content="Discover HM UNIQUE&rsquo;s Industrial &amp; Commercial Equipment &mdash; material handling, pumps &amp; motors, ventilation and power backup solutions." />
   <meta name="twitter:image" content="https://www.hmunique.com/assets/common/og-default.jpg" />
 
+  <!-- Google Fonts: Plus Jakarta Sans (primary headings), Manrope
+       (secondary headings), Inter (body/buttons/nav/labels/specs) —
+       see css/variables.css for the full typography hierarchy this
+       feeds into. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Manrope:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome (icon system) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="../css/utilities.css" />
   <link rel="stylesheet" href="../css/animations.css" />
@@ -50,14 +61,14 @@
   "url": "https://www.hmunique.com",
   "logo": "https://www.hmunique.com/assets/logo/hm-unique-logo.svg",
   "description": "Supplier of Electricals, Electronics Components, Hardwares and Industrial & Commercial Equipment.",
-  "telephone": "+91-98765-43210",
-  "email": "info@hmunique.com",
+  "telephone": "+91-78100-01288",
+  "email": "hmunitecenterprises02@gmail.com",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "123, Industrial Estate, Phase 1",
-    "addressLocality": "Coimbatore",
+    "streetAddress": "No.271, Linghi Chetty Street, George Town",
+    "addressLocality": "Chennai",
     "addressRegion": "Tamil Nadu",
-    "postalCode": "641021",
+    "postalCode": "600001",
     "addressCountry": "IN"
   },
   "openingHoursSpecification": {
@@ -75,9 +86,9 @@
   },
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+91-98765-43210",
+    "telephone": "+91-78100-01288",
     "contactType": "customer service",
-    "email": "info@hmunique.com",
+    "email": "hmunitecenterprises02@gmail.com",
     "areaServed": "IN",
     "availableLanguage": [
       "en"
@@ -174,17 +185,19 @@
 <header class="site-header" data-site-header>
   <div class="utility-bar">
     <div class="container utility-bar__inner">
-      <div class="utility-bar__contact">
-        <a href="tel:+919876543210"><span>+91 98765 43210</span></a>
-        <a href="mailto:info@hmunique.com"><span>info@hmunique.com</span></a>
-      </div>
-      <div class="utility-bar__links">
-        <a href="download-centre.html">Download Centre</a>
-        <div class="utility-bar__socials">
-          <a aria-label="Facebook" aria-disabled="true">FB</a>
-          <a aria-label="LinkedIn" aria-disabled="true">IN</a>
-          <a aria-label="Instagram" aria-disabled="true">IG</a>
-        </div>
+      <a class="utility-bar__phone" href="tel:+917810001288">
+        <i class="fa-solid fa-phone" aria-hidden="true"></i>
+        <span>+91 78100 01288</span>
+      </a>
+      <div class="utility-bar__emails">
+        <a class="utility-bar__email" href="mailto:hmunitecenterprises02@gmail.com">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>hmunitecenterprises02@gmail.com</span>
+        </a>
+        <a class="utility-bar__email" href="mailto:haribabu2004@gmail.com">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>haribabu2004@gmail.com</span>
+        </a>
       </div>
     </div>
   </div>
@@ -207,31 +220,31 @@
         <li class="primary-nav__item primary-nav__item--dropdown" data-nav-dropdown>
           <button type="button" class="primary-nav__link" data-nav-dropdown-trigger aria-haspopup="true" aria-expanded="false" aria-controls="products-dropdown-menu" aria-current="page">
             Products
-            <svg class="primary-nav__chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            <i class="fa-solid fa-chevron-down primary-nav__chevron" aria-hidden="true"></i>
           </button>
           <ul class="products-dropdown" id="products-dropdown-menu">
           <li>
             <a class="products-dropdown__link" href="electricals.html" data-nav-key-link="electricals">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Electricals
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Electricals</span>
             </a>
           </li>
           <li>
             <a class="products-dropdown__link" href="electronics.html" data-nav-key-link="electronics">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Electronics Components
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Electronics Components</span>
             </a>
           </li>
           <li>
             <a class="products-dropdown__link" href="hardwares.html" data-nav-key-link="hardwares">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Hardwares
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Hardwares</span>
             </a>
           </li>
           <li>
             <a class="products-dropdown__link" href="industrial-equipment.html" data-nav-key-link="industrial" aria-current="page">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Industrial &amp; Commercial Equipment
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Industrial &amp; Commercial Equipment</span>
             </a>
           </li>
           </ul>
@@ -246,9 +259,9 @@
     </nav>
 
     <div class="site-header__actions">
-      <button type="button" class="btn btn--primary hide-on-mobile" data-modal-open="quote">
+      <button type="button" class="btn btn--dark hide-on-mobile" data-modal-open="quote">
         Request a Quote
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
       </button>
       <button type="button" class="nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation">
         <span class="nav-toggle__bar"></span>
@@ -263,28 +276,50 @@
   <nav class="mobile-nav" id="mobile-navigation" data-mobile-nav aria-label="Mobile navigation">
     <div class="mobile-nav__header">
       <span class="site-logo__name">HM UNIQUE</span>
-      <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu">&times;</button>
+      <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <ul class="mobile-nav__list">
       <li><a class="mobile-nav__link" href="../index.html" data-nav-key-link="home">Home</a></li>
       <li class="mobile-nav__item" data-mobile-nav-item>
         <button type="button" class="mobile-nav__link mobile-nav__submenu-toggle" data-mobile-submenu-toggle aria-expanded="false" aria-controls="mobile-products-submenu">
           Products
-          <svg class="primary-nav__chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <i class="fa-solid fa-chevron-down primary-nav__chevron" aria-hidden="true"></i>
         </button>
         <ul class="mobile-nav__submenu" id="mobile-products-submenu">
-            <li><a class="mobile-nav__submenu-link" href="electricals.html" data-nav-key-link="electricals">Electricals</a></li>
-            <li><a class="mobile-nav__submenu-link" href="electronics.html" data-nav-key-link="electronics">Electronics Components</a></li>
-            <li><a class="mobile-nav__submenu-link" href="hardwares.html" data-nav-key-link="hardwares">Hardwares</a></li>
-            <li><a class="mobile-nav__submenu-link" href="industrial-equipment.html" data-nav-key-link="industrial" aria-current="page">Industrial &amp; Commercial Equipment</a></li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="electricals.html" data-nav-key-link="electricals">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+                <span>Electricals</span>
+              </a>
+            </li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="electronics.html" data-nav-key-link="electronics">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
+                <span>Electronics Components</span>
+              </a>
+            </li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="hardwares.html" data-nav-key-link="hardwares">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span>
+                <span>Hardwares</span>
+              </a>
+            </li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="industrial-equipment.html" data-nav-key-link="industrial" aria-current="page">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
+                <span>Industrial &amp; Commercial Equipment</span>
+              </a>
+            </li>
         </ul>
       </li>
       <li><a class="mobile-nav__link" href="about.html" data-nav-key-link="about">About Us</a></li>
       <li><a class="mobile-nav__link" href="contact.html" data-nav-key-link="contact">Contact Us</a></li>
-      <li><a class="mobile-nav__link" href="download-centre.html" data-nav-key-link="download-centre">Download Centre</a></li>
     </ul>
     <div class="mobile-nav__cta">
-      <button type="button" class="btn btn--primary btn--block" data-modal-open="quote">Request a Quote</button>
+      <button type="button" class="btn btn--dark btn--block" data-modal-open="quote">
+        Request a Quote
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
+      </button>
     </div>
   </nav>
 
@@ -292,7 +327,7 @@
   <div class="container">
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="../index.html">Home</a>
-      <span class="breadcrumb__sep">/</span>
+      <i class="fa-solid fa-chevron-right breadcrumb__sep" aria-hidden="true"></i>
       <span class="breadcrumb__current" aria-current="page">Industrial &amp; Commercial Equipment</span>
     </nav>
   </div>
@@ -303,26 +338,26 @@
           <p class="category-hero__desc">Reliable and efficient equipment for industrial, commercial and facility management applications.</p>
           <div class="category-hero__badges">
             <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+              <span class="trust-badge__icon"><i class="fa-solid fa-award" aria-hidden="true"></i></span>
               <span>High Performance</span>
             </div>
             <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="trust-badge__icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
               <span>Reliable &amp; Durable</span>
             </div>
             <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
+              <span class="trust-badge__icon"><i class="fa-solid fa-table-cells" aria-hidden="true"></i></span>
               <span>Wide Range</span>
             </div>
             <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="2.5" y="13" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="17.5" y="13" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M20 19v1a3 3 0 0 1-3 3h-3" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
+              <span class="trust-badge__icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
               <span>After Sales Support</span>
             </div>
           </div>
         </div>
         <div class="category-hero__media">
           <div class="aspect-box aspect-box--tall" role="img" aria-label="Industrial &amp; Commercial Equipment hero image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
         </div>
       </div>
@@ -330,46 +365,34 @@
 
     <section class="section--sm section--light" aria-label="Sub-categories">
       <div class="container">
-        <div class="category-tabs" data-tabs aria-label="Industrial &amp; Commercial Equipment sub-categories">
-          <button type="button" class="category-tabs__item is-active" aria-current="true">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8M12 13v9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>
+        <div class="category-tabs" data-catalog-tabs aria-label="Industrial &amp; Commercial Equipment sub-categories">
+          <button type="button" class="category-tabs__item is-active" data-category="material-handling-equipment" aria-current="true">
+            <i class="fa-solid fa-box" aria-hidden="true"></i>
             <span>Material Handling Equipment</span>
           </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <button type="button" class="category-tabs__item" data-category="pumps-motors">
+            <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
             <span>Pumps &amp; Motors</span>
           </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1M18.4 18.4l-2.1-2.1M7.7 7.7 5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            <span>Ventilation &amp; Air Equipment</span>
-          </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+          <button type="button" class="category-tabs__item" data-category="electrical-enclosures">
+            <i class="fa-solid fa-table-cells" aria-hidden="true"></i>
             <span>Electrical Enclosures</span>
           </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            <span>Control &amp; Instrumentation</span>
-          </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <button type="button" class="category-tabs__item" data-category="safety-security-equipment">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
             <span>Safety &amp; Security Equipment</span>
           </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>
+          <button type="button" class="category-tabs__item" data-category="lighting-solutions">
+            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
             <span>Lighting Solutions</span>
           </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>
+          <button type="button" class="category-tabs__item" data-category="power-backup-stabilizers">
+            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
             <span>Power Backup &amp; Stabilizers</span>
           </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>
+          <button type="button" class="category-tabs__item" data-category="cleaning-equipment">
+            <i class="fa-solid fa-droplet" aria-hidden="true"></i>
             <span>Cleaning Equipment</span>
-          </button>
-          <button type="button" class="category-tabs__item">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8M12 13v9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>
-            <span>Other Industrial Supplies</span>
           </button>
         </div>
       </div>
@@ -378,156 +401,24 @@
     <section class="section section--surface" aria-labelledby="popular-heading">
       <div class="container">
         <div class="section-heading section-heading--center">
-          <h2 class="section-heading__title" id="popular-heading">Popular Industrial &amp; Commercial Equipment</h2>
-          <p class="section-heading__subtitle">Explore our most in-demand equipment for industrial and commercial use.</p>
+          <h2 class="section-heading__title" id="popular-heading" data-catalog-heading>Popular Material Handling Equipment</h2>
+          <p class="section-heading__subtitle" data-catalog-description>Pallet trucks, trolleys and lifting equipment for safe, efficient material movement.</p>
         </div>
-        <div class="grid grid--3">
-          <article class="card card--hover product-card" data-animate="fade-up">
-            <div class="product-card__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="Hand Pallet Truck product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-            <h3 class="product-card__title">Hand Pallet Truck</h3>
-            <ul class="card__specs">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Load Capacity:</strong> 2.5 Ton</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Min. Fork Height:</strong> 85mm</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Max Fork Height:</strong> 200mm</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Steering Type:</strong> Manual</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Application:</strong> Material Handling</span></li>
-            </ul>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/industrial-catalogue.pdf" download>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
-          </article>
-          <article class="card card--hover product-card" data-animate="fade-up">
-            <div class="product-card__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="Centrifugal Water Pump product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-            <h3 class="product-card__title">Centrifugal Water Pump</h3>
-            <ul class="card__specs">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Power:</strong> 0.5 HP &ndash; 5 HP</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Flow Rate:</strong> Up to 1000 LPM</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Head Range:</strong> Up to 50 Meter</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Material:</strong> CI / SS</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Application:</strong> Water Transfer</span></li>
-            </ul>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/industrial-catalogue.pdf" download>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
-          </article>
-          <article class="card card--hover product-card" data-animate="fade-up">
-            <div class="product-card__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="Exhaust Fan product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-            <h3 class="product-card__title">Exhaust Fan</h3>
-            <ul class="card__specs">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Size:</strong> 300mm to 600mm</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Air Delivery:</strong> High Flow</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Blade Material:</strong> Aluminium / MS / PP</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Application:</strong> Ventilation</span></li>
-            </ul>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/industrial-catalogue.pdf" download>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
-          </article>
-          <article class="card card--hover product-card" data-animate="fade-up">
-            <div class="product-card__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="LED High Bay Light product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-            <h3 class="product-card__title">LED High Bay Light</h3>
-            <ul class="card__specs">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Power:</strong> 100W / 150W / 200W</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Lumen Output:</strong> High Efficiency</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Voltage:</strong> 100&ndash;277V</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>IP Rating:</strong> IP65</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Application:</strong> Industrial Lighting</span></li>
-            </ul>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/industrial-catalogue.pdf" download>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
-          </article>
-          <article class="card card--hover product-card" data-animate="fade-up">
-            <div class="product-card__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="Control Panel product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-            <h3 class="product-card__title">Control Panel</h3>
-            <ul class="card__specs">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Type:</strong> Power / MCC / PCC</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Voltage:</strong> 415V / 440V</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Phase:</strong> 3 Phase / 4 Wire</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Protection:</strong> Short Circuit, Overload</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Application:</strong> Power Distribution</span></li>
-            </ul>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/industrial-catalogue.pdf" download>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
-          </article>
-          <article class="card card--hover product-card" data-animate="fade-up">
-            <div class="product-card__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="Servo Voltage Stabilizer product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-            <h3 class="product-card__title">Servo Voltage Stabilizer</h3>
-            <ul class="card__specs">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Capacity:</strong> 5 KVA &ndash; 100 KVA</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Input Voltage:</strong> 140V &ndash; 280V</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Output Voltage:</strong> 230V &plusmn;1%</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Display:</strong> Digital</span></li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Application:</strong> Voltage Regulation</span></li>
-            </ul>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/industrial-catalogue.pdf" download>
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
-          </article>
-        </div>
+        <div class="grid grid--3" data-catalog-grid></div>
       </div>
     </section>
 
     <section class="section--sm section--light" aria-label="Request more products">
       <div class="container">
         <div class="inline-cta">
-          <span class="inline-cta__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+          <span class="inline-cta__icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
           <div class="inline-cta__text">
-            <h3 class="inline-cta__title">Looking for more Industrial &amp; Commercial Equipment products?</h3>
+            <h3 class="inline-cta__title" data-catalog-inline-title>Looking for more Industrial &amp; Commercial Equipment products?</h3>
             <p>We supply hundreds of additional variants from leading brands to match your exact requirements.</p>
           </div>
-          <button type="button" class="btn btn--primary" data-modal-open="quote">
+          <button type="button" class="btn btn--primary" data-modal-open="quote" data-catalog-quote-trigger>
             Request a Quote
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -539,22 +430,22 @@
           <div class="catalogue-band__inner">
             <div class="catalogue-band__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Industrial &amp; Commercial Equipment Catalogue cover — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <div class="catalogue-band__text">
-              <h2 class="catalogue-band__title" id="catalogue-heading">Download Complete<br />Industrial &amp; Commercial Equipment Catalogue</h2>
+              <h2 class="catalogue-band__title" id="catalogue-heading" data-catalog-catalogue-heading>Download Complete<br />Industrial &amp; Commercial Equipment Catalogue</h2>
               <p>Browse detailed specifications, technical drawings, certifications and complete product information.</p>
               <div class="catalogue-band__features">
-              <span class="catalogue-band__feature"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>Technical Specifications</span>
-              <span class="catalogue-band__feature"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8M12 13v9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>Product Datasheets</span>
-              <span class="catalogue-band__feature"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Certifications</span>
-              <span class="catalogue-band__feature"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>Complete Product Range</span>
+              <span class="catalogue-band__feature"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Technical Specifications</span>
+              <span class="catalogue-band__feature"><i class="fa-solid fa-box" aria-hidden="true"></i>Product Datasheets</span>
+              <span class="catalogue-band__feature"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i>Certifications</span>
+              <span class="catalogue-band__feature"><i class="fa-solid fa-table-cells" aria-hidden="true"></i>Complete Product Range</span>
               </div>
-              <button type="button" class="btn btn--gold">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <a class="btn btn--gold" href="../assets/catalogue/industrial-catalogue.pdf#material-handling-equipment" download data-catalog-catalogue-pdf>
+                <i class="fa-solid fa-download" aria-hidden="true"></i>
                 Download Catalogue PDF
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -604,10 +495,10 @@
         </a>
         <p class="site-footer__about">HM UNIQUE is a trusted supplier of Electricals, Electronics, Hardwares and Industrial Tools committed to quality, reliability and customer satisfaction.</p>
         <div class="site-footer__socials">
-          <a aria-label="Facebook" aria-disabled="true">FB</a>
-          <a aria-label="LinkedIn" aria-disabled="true">IN</a>
-          <a aria-label="Instagram" aria-disabled="true">IG</a>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noopener" aria-label="WhatsApp">WA</a>
+          <a aria-label="Facebook" aria-disabled="true"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+          <a aria-label="LinkedIn" aria-disabled="true"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
+          <a aria-label="Instagram" aria-disabled="true"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
 
@@ -617,7 +508,6 @@
           <li><a href="../index.html">Home</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="download-centre.html">Download Centre</a></li>
         </ul>
       </div>
 
@@ -634,9 +524,9 @@
       <div class="site-footer__col">
         <h3 class="site-footer__heading">Contact Us</h3>
         <ul class="site-footer__contact">
-          <li><span>123, Industrial Estate, Phase 1, Coimbatore &ndash; 641 021, Tamil Nadu, India</span></li>
-          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
-          <li><a href="mailto:info@hmunique.com">info@hmunique.com</a></li>
+          <li><span>No.271, Linghi Chetty Street, George Town, Chennai &ndash; 600001, Tamil Nadu, India</span></li>
+          <li><a href="tel:+917810001288">+91 78100 01288</a></li>
+          <li><a href="mailto:hmunitecenterprises02@gmail.com">hmunitecenterprises02@gmail.com</a></li>
           <li><span>Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span></li>
         </ul>
       </div>
@@ -656,7 +546,7 @@
 
 <div class="modal-overlay" data-modal="quote" aria-hidden="true">
   <div class="modal modal--quote" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <div class="modal__form-col">
       <div class="modal__header">
@@ -742,16 +632,16 @@
         </label>
 
         <p class="form-submit-error" data-form-error hidden role="alert">
-          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+919876543210">+91 98765 43210</a>.
+          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+917810001288">+91 78100 01288</a>.
         </p>
 
         <button type="submit" class="btn btn--primary btn--block mt-4">
           Submit Request
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </button>
 
         <p class="modal__note">
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14"><path d="M8 1l6 2.5v4c0 4-2.6 6.7-6 7.5-3.4-.8-6-3.5-6-7.5v-4L8 1z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
           Your information is safe with us. We never share your data.
         </p>
       </form>
@@ -766,7 +656,7 @@
         <li><span aria-hidden="true">&#10003;</span><span><strong>Customer Satisfaction</strong><br />Your satisfaction is our top priority in every collaboration.</span></li>
       </ul>
       <div class="modal__help-box">
-        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+919876543210">+91 98765 43210</a></p>
+        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+917810001288">+91 78100 01288</a></p>
       </div>
     </aside>
   </div>
@@ -774,7 +664,7 @@
 
 <div class="modal-overlay" data-modal="thank-you" aria-hidden="true">
   <div class="modal modal--thank-you" role="dialog" aria-modal="true" aria-labelledby="thank-you-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <svg class="success-check" viewBox="0 0 84 84" aria-hidden="true">
       <circle class="success-check__circle" cx="42" cy="42" r="40" fill="none" stroke="currentColor" stroke-width="3" />
@@ -797,19 +687,20 @@
 </div>
 
 <div class="floating-actions floating-actions--left">
-  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/919876543210" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z" fill="currentColor"/></svg>
+  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
   </a>
 </div>
 <div class="floating-actions floating-actions--right">
-  <a class="floating-btn floating-btn--call" href="tel:+919876543210" aria-label="Call HM UNIQUE">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1z" fill="currentColor"/></svg>
+  <a class="floating-btn floating-btn--call" href="tel:+917810001288" aria-label="Call HM UNIQUE">
+    <i class="fa-solid fa-phone" aria-hidden="true"></i>
   </a>
 </div>
 <button type="button" class="scroll-top-btn" data-scroll-top aria-label="Scroll to top">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5l7 7M12 5l-7 7M12 5v14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
 </button>
 
   <script type="module" src="../js/main.js" defer></script>
+  <script src="../js/pages/industrial-catalog.js" defer></script>
 </body>
 </html>

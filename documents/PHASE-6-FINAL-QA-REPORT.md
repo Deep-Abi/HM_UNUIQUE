@@ -11,7 +11,7 @@ altered.
 
 ## 1. Full project review
 
-All 8 pages (Home, 4 category pages, About, Contact, Download Centre),
+All 7 pages (Home, 4 category pages, About, Contact),
 the Quote and Thank You modals, header, footer, floating buttons, and
 every shared CSS/JS file were reviewed against the concept PDF and the
 approved Phase 1–5 architecture. Two genuine, previously-undetected

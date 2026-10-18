@@ -38,7 +38,6 @@ are catalogued across the site, all using the documented
 | Electricals / Electronics / Hardwares / Industrial | 8 each (hero image + 6 product images + 1 catalogue cover) |
 | About | 5 (4 "Who We Are" facility photos + 1 CTA illustration) |
 | Contact | 3 (map, branch photo, CTA illustration) |
-| Download Centre | 7 (6 catalogue thumbnails + 1 CTA illustration) |
 
 **These are the images that should be replaced with real client product
 photography before or shortly after launch.** Swapping them requires
@@ -56,7 +55,8 @@ against the filesystem.
 - **6 real catalogue PDFs exist** in `assets/catalogue/` (Electrical,
   Electronics, Hardware, Industrial catalogues, Company Profile,
   Product Datasheets) — all valid, readable PDF files (verified via
-  `pypdf`), all correctly linked from the Download Centre page.
+  `pypdf`), all correctly linked from the category pages' catalogue
+  download bands.
 - **Issue found and fixed**: the 24 "Download PDF" buttons on the 4
   category pages' product cards (6 products × 4 categories) had **no
   `href` at all** — they were inert `<button>` elements that did
@@ -122,8 +122,8 @@ semantically correct destinations (not just "a file exists," but "the
   page-specific CSS file — confirmed this was the only instance.
 - **Page-specific CSS scope verified**: `home.css` contains 145 lines
   of genuinely Home-only rules (hero, category cards, section-header
-  row); the other 7 page-specific files (`about.css`, `contact.css`,
-  `download-centre.css`, and all 4 category page files) are correctly
+  row); the other page-specific files (`about.css`, `contact.css`,
+  and all 4 category page files) are correctly
   empty stubs (~6 lines, boilerplate comment only) — everything they
   needed was legitimately shared and lives in `components.css`.
 

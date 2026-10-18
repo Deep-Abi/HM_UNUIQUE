@@ -18,7 +18,7 @@
  * </div>
  */
 
-const AUTOPLAY_INTERVAL_MS = 6000;
+const AUTOPLAY_INTERVAL_MS = 5000;
 const SWIPE_THRESHOLD_PX = 40;
 
 class Slider {
@@ -29,10 +29,36 @@ class Slider {
     this.prevBtn = rootEl.querySelector("[data-slider-prev]");
     this.nextBtn = rootEl.querySelector("[data-slider-next]");
     this.dotsContainer = rootEl.querySelector("[data-slider-dots]");
+    this.realCount = this.slides.length;
     this.currentIndex = 0;
     this.autoplayTimer = null;
 
     if (this.slides.length === 0) return;
+
+    // Clone the first slide and append it after the last one so the
+    // "last -> first" wrap can animate forward continuously instead of
+    // snapping backwards. Once that clone finishes sliding into view we
+    // jump (no transition) to the real first slide at index 0.
+    if (this.realCount > 1 && this.track) {
+      const clone = this.slides[0].cloneNode(true);
+      clone.setAttribute("aria-hidden", "true");
+      clone.setAttribute("inert", "");
+      this.track.appendChild(clone);
+      this.slides.push(clone);
+
+      this.track.addEventListener("transitionend", (event) => {
+        if (event.target !== this.track) return;
+        if (this.currentIndex === this.realCount) {
+          this.track.style.transition = "none";
+          this.currentIndex = 0;
+          this.track.style.transform = "translateX(0%)";
+          // Force reflow so the transition-less jump applies before
+          // transitions are re-enabled for the next slide change.
+          void this.track.offsetHeight;
+          this.track.style.transition = "";
+        }
+      });
+    }
 
     this.buildDots();
     this.bindEvents();
@@ -42,19 +68,28 @@ class Slider {
 
   buildDots() {
     if (!this.dotsContainer) return;
-    this.dots = this.slides.map((_, index) => {
+    this.dots = Array.from({ length: this.realCount }, (_, index) => {
       const dot = document.createElement("button");
       dot.type = "button";
       dot.setAttribute("aria-label", `Go to slide ${index + 1}`);
-      dot.addEventListener("click", () => this.goTo(index));
+      dot.addEventListener("click", () => {
+        this.goTo(index);
+        this.startAutoplay();
+      });
       this.dotsContainer.appendChild(dot);
       return dot;
     });
   }
 
   bindEvents() {
-    this.prevBtn?.addEventListener("click", () => this.prev());
-    this.nextBtn?.addEventListener("click", () => this.next());
+    this.prevBtn?.addEventListener("click", () => {
+      this.prev();
+      this.startAutoplay();
+    });
+    this.nextBtn?.addEventListener("click", () => {
+      this.next();
+      this.startAutoplay();
+    });
 
     this.root.addEventListener("mouseenter", () => this.stopAutoplay());
     this.root.addEventListener("mouseleave", () => this.startAutoplay());
@@ -79,7 +114,7 @@ class Slider {
   }
 
   goTo(index) {
-    this.currentIndex = (index + this.slides.length) % this.slides.length;
+    this.currentIndex = (index + this.realCount) % this.realCount;
     if (this.track) {
       this.track.style.transform = `translateX(-${this.currentIndex * 100}%)`;
     }
@@ -89,6 +124,16 @@ class Slider {
   }
 
   next() {
+    if (this.currentIndex === this.realCount - 1 && this.slides.length > this.realCount) {
+      // Slide forward into the cloned first slide; transitionend snaps
+      // back to the real index 0 without an animation.
+      this.currentIndex = this.realCount;
+      if (this.track) {
+        this.track.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+      }
+      this.dots?.forEach((dot, i) => dot.classList.toggle("is-active", i === 0));
+      return;
+    }
     this.goTo(this.currentIndex + 1);
   }
 

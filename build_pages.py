@@ -12,6 +12,23 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE_URL = "https://www.hmunique.com"
 
 # ---------------------------------------------------------------------
+# Global contact details — the single source of truth for every phone/
+# email/address usage across the site. Update here only; every page
+# regenerates from these constants.
+# ---------------------------------------------------------------------
+PHONE_DISPLAY = "+91 78100 01288"
+PHONE_TEL = "+917810001288"
+PHONE_WA = "917810001288"
+EMAIL_PRIMARY = "hmunitecenterprises02@gmail.com"
+EMAIL_SECONDARY = "haribabu2004@gmail.com"
+ADDRESS_LINE1 = "No.271, Linghi Chetty Street"
+ADDRESS_LINE2 = "George Town, Chennai &ndash; 600001"
+ADDRESS_LINE3 = "Tamil Nadu, India"
+ADDRESS_FULL_PLAIN = "No.271, Linghi Chetty Street, George Town, Chennai - 600001, Tamil Nadu, India"
+MAPS_QUERY = "No.271, Linghi Chetty Street, George Town, Chennai, Tamil Nadu 600001"
+MAPS_QUERY_ENCODED = "No.271%2C%20Linghi%20Chetty%20Street%2C%20George%20Town%2C%20Chennai%2C%20Tamil%20Nadu%20600001"
+
+# ---------------------------------------------------------------------
 # Page registry: nav key, title, output path, relative depth, breadcrumb,
 # meta description, canonical URL (site-relative, from SITE_URL)
 # ---------------------------------------------------------------------
@@ -76,17 +93,8 @@ PAGES = [
         "path": "pages/contact.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("Contact Us", None)],
-        "description": "Get in touch with HM UNIQUE. Call, email or WhatsApp our team, or visit our Coimbatore head office and Chennai branch.",
+        "description": "Get in touch with HM UNIQUE. Call, email or WhatsApp our team, or visit our Chennai office.",
         "canonical": "/pages/contact.html",
-    },
-    {
-        "key": "download-centre",
-        "title": "Download Centre | HM UNIQUE",
-        "path": "pages/download-centre.html",
-        "depth": 1,
-        "breadcrumb": [("Home", "../index.html"), ("Download Centre", None)],
-        "description": "Download HM UNIQUE&rsquo;s product catalogues, company profile and datasheets for Electricals, Electronics, Hardwares and Industrial Equipment.",
-        "canonical": "/pages/download-centre.html",
     },
 ]
 
@@ -98,10 +106,10 @@ NAV_ITEMS = [
 ]
 
 PRODUCT_ITEMS = [
-    ("electricals", "Electricals", "pages/electricals.html"),
-    ("electronics", "Electronics Components", "pages/electronics.html"),
-    ("hardwares", "Hardwares", "pages/hardwares.html"),
-    ("industrial", "Industrial &amp; Commercial Equipment", "pages/industrial-equipment.html"),
+    ("electricals", "Electricals", "pages/electricals.html", "bolt"),
+    ("electronics", "Electronics Components", "pages/electronics.html", "chip"),
+    ("hardwares", "Hardwares", "pages/hardwares.html", "wrench"),
+    ("industrial", "Industrial &amp; Commercial Equipment", "pages/industrial-equipment.html", "factory"),
 ]
 
 
@@ -129,20 +137,21 @@ def nav_current(key, current_key):
 
 
 def build_utility_bar(current_key, depth):
-    dl_active = nav_current("download-centre", current_key)
     return f"""  <div class="utility-bar">
     <div class="container utility-bar__inner">
-      <div class="utility-bar__contact">
-        <a href="tel:+919876543210"><span>+91 98765 43210</span></a>
-        <a href="mailto:info@hmunique.com"><span>info@hmunique.com</span></a>
-      </div>
-      <div class="utility-bar__links">
-        <a href="{rel('pages/download-centre.html', depth)}"{dl_active}>Download Centre</a>
-        <div class="utility-bar__socials">
-          <a aria-label="Facebook" aria-disabled="true">FB</a>
-          <a aria-label="LinkedIn" aria-disabled="true">IN</a>
-          <a aria-label="Instagram" aria-disabled="true">IG</a>
-        </div>
+      <a class="utility-bar__phone" href="tel:{PHONE_TEL}">
+        <i class="fa-solid fa-phone" aria-hidden="true"></i>
+        <span>{PHONE_DISPLAY}</span>
+      </a>
+      <div class="utility-bar__emails">
+        <a class="utility-bar__email" href="mailto:{EMAIL_PRIMARY}">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>{EMAIL_PRIMARY}</span>
+        </a>
+        <a class="utility-bar__email" href="mailto:{EMAIL_SECONDARY}">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>{EMAIL_SECONDARY}</span>
+        </a>
       </div>
     </div>
   </div>"""
@@ -150,13 +159,13 @@ def build_utility_bar(current_key, depth):
 
 def build_products_dropdown(current_key, depth):
     links = []
-    for key, label, path in PRODUCT_ITEMS:
+    for key, label, path, icon in PRODUCT_ITEMS:
         active = nav_current(key, current_key)
         links.append(
             f"""          <li>
             <a class="products-dropdown__link" href="{rel(path, depth)}" data-nav-key-link="{key}"{active}>
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              {label}
+              <span class="products-dropdown__icon" aria-hidden="true">{ICONS[icon]}</span>
+              <span class="products-dropdown__text">{label}</span>
             </a>
           </li>"""
         )
@@ -177,7 +186,7 @@ def build_primary_nav(current_key, depth):
         <li class="primary-nav__item primary-nav__item--dropdown" data-nav-dropdown>
           <button type="button" class="primary-nav__link" data-nav-dropdown-trigger aria-haspopup="true" aria-expanded="false" aria-controls="products-dropdown-menu"{products_current}>
             Products
-            <svg class="primary-nav__chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            <i class="fa-solid fa-chevron-down primary-nav__chevron" aria-hidden="true"></i>
           </button>
           <ul class="products-dropdown" id="products-dropdown-menu">
 {build_products_dropdown(current_key, depth)}
@@ -196,13 +205,17 @@ def build_mobile_nav(current_key, depth):
     home_active = nav_current("home", current_key)
     about_active = nav_current("about", current_key)
     contact_active = nav_current("contact", current_key)
-    dl_active = nav_current("download-centre", current_key)
 
     product_links = []
-    for key, label, path in PRODUCT_ITEMS:
+    for key, label, path, icon in PRODUCT_ITEMS:
         active = nav_current(key, current_key)
         product_links.append(
-            f'            <li><a class="mobile-nav__submenu-link" href="{rel(path, depth)}" data-nav-key-link="{key}"{active}>{label}</a></li>'
+            f'''            <li>
+              <a class="mobile-nav__submenu-link" href="{rel(path, depth)}" data-nav-key-link="{key}"{active}>
+                <span class="mobile-nav__submenu-icon" aria-hidden="true">{ICONS[icon]}</span>
+                <span>{label}</span>
+              </a>
+            </li>'''
         )
     product_links_html = "\n".join(product_links)
 
@@ -210,14 +223,14 @@ def build_mobile_nav(current_key, depth):
   <nav class="mobile-nav" id="mobile-navigation" data-mobile-nav aria-label="Mobile navigation">
     <div class="mobile-nav__header">
       <span class="site-logo__name">HM UNIQUE</span>
-      <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu">&times;</button>
+      <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <ul class="mobile-nav__list">
       <li><a class="mobile-nav__link" href="{rel('index.html', depth)}" data-nav-key-link="home"{home_active}>Home</a></li>
       <li class="mobile-nav__item" data-mobile-nav-item>
         <button type="button" class="mobile-nav__link mobile-nav__submenu-toggle" data-mobile-submenu-toggle aria-expanded="false" aria-controls="mobile-products-submenu">
           Products
-          <svg class="primary-nav__chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <i class="fa-solid fa-chevron-down primary-nav__chevron" aria-hidden="true"></i>
         </button>
         <ul class="mobile-nav__submenu" id="mobile-products-submenu">
 {product_links_html}
@@ -225,10 +238,12 @@ def build_mobile_nav(current_key, depth):
       </li>
       <li><a class="mobile-nav__link" href="{rel('pages/about.html', depth)}" data-nav-key-link="about"{about_active}>About Us</a></li>
       <li><a class="mobile-nav__link" href="{rel('pages/contact.html', depth)}" data-nav-key-link="contact"{contact_active}>Contact Us</a></li>
-      <li><a class="mobile-nav__link" href="{rel('pages/download-centre.html', depth)}" data-nav-key-link="download-centre"{dl_active}>Download Centre</a></li>
     </ul>
     <div class="mobile-nav__cta">
-      <button type="button" class="btn btn--primary btn--block" data-modal-open="quote">Request a Quote</button>
+      <button type="button" class="btn btn--dark btn--block" data-modal-open="quote">
+        Request a Quote
+        {ICONS["circle-plus"]}
+      </button>
     </div>
   </nav>"""
 
@@ -252,9 +267,9 @@ def build_header(current_key, depth):
     </nav>
 
     <div class="site-header__actions">
-      <button type="button" class="btn btn--primary hide-on-mobile" data-modal-open="quote">
+      <button type="button" class="btn btn--dark hide-on-mobile" data-modal-open="quote">
         Request a Quote
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        {ICONS["circle-plus"]}
       </button>
       <button type="button" class="nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation">
         <span class="nav-toggle__bar"></span>
@@ -278,7 +293,7 @@ def build_breadcrumb(breadcrumb, depth):
         else:
             parts.append(f'<span class="breadcrumb__current" aria-current="page">{label}</span>')
         if i < len(breadcrumb) - 1:
-            parts.append('<span class="breadcrumb__sep">/</span>')
+            parts.append('<i class="fa-solid fa-chevron-right breadcrumb__sep" aria-hidden="true"></i>')
     inner = "\n      ".join(parts)
     return f"""  <div class="container">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -304,10 +319,10 @@ def build_footer(depth):
         </a>
         <p class="site-footer__about">HM UNIQUE is a trusted supplier of Electricals, Electronics, Hardwares and Industrial Tools committed to quality, reliability and customer satisfaction.</p>
         <div class="site-footer__socials">
-          <a aria-label="Facebook" aria-disabled="true">FB</a>
-          <a aria-label="LinkedIn" aria-disabled="true">IN</a>
-          <a aria-label="Instagram" aria-disabled="true">IG</a>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noopener" aria-label="WhatsApp">WA</a>
+          <a aria-label="Facebook" aria-disabled="true"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+          <a aria-label="LinkedIn" aria-disabled="true"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
+          <a aria-label="Instagram" aria-disabled="true"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
 
@@ -317,7 +332,6 @@ def build_footer(depth):
           <li><a href="{rel('index.html', depth)}">Home</a></li>
           <li><a href="{rel('pages/about.html', depth)}">About Us</a></li>
           <li><a href="{rel('pages/contact.html', depth)}">Contact Us</a></li>
-          <li><a href="{rel('pages/download-centre.html', depth)}">Download Centre</a></li>
         </ul>
       </div>
 
@@ -334,9 +348,9 @@ def build_footer(depth):
       <div class="site-footer__col">
         <h3 class="site-footer__heading">Contact Us</h3>
         <ul class="site-footer__contact">
-          <li><span>123, Industrial Estate, Phase 1, Coimbatore &ndash; 641 021, Tamil Nadu, India</span></li>
-          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
-          <li><a href="mailto:info@hmunique.com">info@hmunique.com</a></li>
+          <li><span>{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}</span></li>
+          <li><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></li>
+          <li><a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a></li>
           <li><span>Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span></li>
         </ul>
       </div>
@@ -357,24 +371,24 @@ def build_footer(depth):
 
 def build_floating_actions():
     return """<div class="floating-actions floating-actions--left">
-  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/919876543210" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z" fill="currentColor"/></svg>
+  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
   </a>
 </div>
 <div class="floating-actions floating-actions--right">
-  <a class="floating-btn floating-btn--call" href="tel:+919876543210" aria-label="Call HM UNIQUE">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1z" fill="currentColor"/></svg>
+  <a class="floating-btn floating-btn--call" href="tel:+917810001288" aria-label="Call HM UNIQUE">
+    <i class="fa-solid fa-phone" aria-hidden="true"></i>
   </a>
 </div>
 <button type="button" class="scroll-top-btn" data-scroll-top aria-label="Scroll to top">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5l7 7M12 5l-7 7M12 5v14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
 </button>"""
 
 
 def build_quote_modal():
     return """<div class="modal-overlay" data-modal="quote" aria-hidden="true">
   <div class="modal modal--quote" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <div class="modal__form-col">
       <div class="modal__header">
@@ -460,16 +474,16 @@ def build_quote_modal():
         </label>
 
         <p class="form-submit-error" data-form-error hidden role="alert">
-          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+919876543210">+91 98765 43210</a>.
+          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+917810001288">+91 78100 01288</a>.
         </p>
 
         <button type="submit" class="btn btn--primary btn--block mt-4">
           Submit Request
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </button>
 
         <p class="modal__note">
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14"><path d="M8 1l6 2.5v4c0 4-2.6 6.7-6 7.5-3.4-.8-6-3.5-6-7.5v-4L8 1z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
           Your information is safe with us. We never share your data.
         </p>
       </form>
@@ -484,7 +498,7 @@ def build_quote_modal():
         <li><span aria-hidden="true">&#10003;</span><span><strong>Customer Satisfaction</strong><br />Your satisfaction is our top priority in every collaboration.</span></li>
       </ul>
       <div class="modal__help-box">
-        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+919876543210">+91 98765 43210</a></p>
+        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+917810001288">+91 78100 01288</a></p>
       </div>
     </aside>
   </div>
@@ -494,7 +508,7 @@ def build_quote_modal():
 def build_thank_you_modal():
     return """<div class="modal-overlay" data-modal="thank-you" aria-hidden="true">
   <div class="modal modal--thank-you" role="dialog" aria-modal="true" aria-labelledby="thank-you-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <svg class="success-check" viewBox="0 0 84 84" aria-hidden="true">
       <circle class="success-check__circle" cx="42" cy="42" r="40" fill="none" stroke="currentColor" stroke-width="3" />
@@ -531,41 +545,50 @@ PAGE_MAIN_COMMENTS = {
 # need them (category cards, trust badges, why-choose-us, industries).
 # ---------------------------------------------------------------------
 ICONS = {
-    "bolt": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "chip": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    "wrench": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 18l3 3 6.6-6.3a4 4 0 0 0 5.1-5.4l-2.8 2.8-2-2 2.8-2.8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "factory": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V11l5 3v-3l5 3V8l6 4v9H3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M7 21v-4M12 21v-4M17 21v-4" stroke="currentColor" stroke-width="1.4"/></svg>',
-    "grid": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "shield-check": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "award": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "truck": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M13 10h4l4 3v3h-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="17" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "tag": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3h6a3 3 0 0 1 3 3v6l-9 9-9-9 9-9z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="15" cy="9" r="1.4" fill="currentColor"/></svg>',
-    "headset": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="2.5" y="13" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="17.5" y="13" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M20 19v1a3 3 0 0 1-3 3h-3" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "hard-hat": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0 1 16 0z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M2 17h20M11 5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    "droplet": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "building": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M8 8h2M14 8h2M8 12h2M14 12h2M8 16h2M14 16h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    "gear": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1M18.4 18.4l-2.1-2.1M7.7 7.7 5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    "box": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8M12 13v9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "arrow-right": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>',
-    "play": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5V3z" fill="currentColor"/></svg>',
-    "chevron-left": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 2 4 8l6 6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "chevron-right": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "placeholder-image": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg>',
-    "check": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "download": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "file": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "cable": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8a4 4 0 0 1 8 0v8a4 4 0 0 0 8 0" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="4" cy="8" r="1.6" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="20" cy="16" r="1.6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "screw": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 3-9 9-3 3v-3l9-9z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M13 4l2 2M9 8l2 2M6 11l2 2M4 21l3-1-2-2z" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg>',
-    "pump": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "map-pin": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>',
-    "clock": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "phone": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "mail": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M4 6.5l8 6 8-6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "target": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',
-    "compass": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M15.5 8.5l-2 5-5 2 2-5z" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg>',
-    "handshake": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12l4-4 4 2 3-3 4 4-3 3-3-2-3 3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M14 11l4 4-2 2M6 13l-2 2 3 3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    "milestone": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2v20M5 4h13l-3 4 3 4H5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg>',
-    "whatsapp": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z" fill="currentColor"/></svg>',
+    "bolt": '<i class="fa-solid fa-bolt" aria-hidden="true"></i>',
+    "chip": '<i class="fa-solid fa-microchip" aria-hidden="true"></i>',
+    "wrench": '<i class="fa-solid fa-wrench" aria-hidden="true"></i>',
+    "factory": '<i class="fa-solid fa-industry" aria-hidden="true"></i>',
+    "grid": '<i class="fa-solid fa-table-cells" aria-hidden="true"></i>',
+    "shield-check": '<i class="fa-solid fa-shield-halved" aria-hidden="true"></i>',
+    "award": '<i class="fa-solid fa-award" aria-hidden="true"></i>',
+    "truck": '<i class="fa-solid fa-truck" aria-hidden="true"></i>',
+    "tag": '<i class="fa-solid fa-tag" aria-hidden="true"></i>',
+    "headset": '<i class="fa-solid fa-headset" aria-hidden="true"></i>',
+    "hard-hat": '<i class="fa-solid fa-hard-hat" aria-hidden="true"></i>',
+    "droplet": '<i class="fa-solid fa-droplet" aria-hidden="true"></i>',
+    "building": '<i class="fa-solid fa-building" aria-hidden="true"></i>',
+    "gear": '<i class="fa-solid fa-gear" aria-hidden="true"></i>',
+    "box": '<i class="fa-solid fa-box" aria-hidden="true"></i>',
+    "users": '<i class="fa-solid fa-users" aria-hidden="true"></i>',
+    "circle-check": '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>',
+    "landmark": '<i class="fa-solid fa-building-columns" aria-hidden="true"></i>',
+    "lightbulb": '<i class="fa-solid fa-lightbulb" aria-hidden="true"></i>',
+    "city": '<i class="fa-solid fa-city" aria-hidden="true"></i>',
+    "gears": '<i class="fa-solid fa-gears" aria-hidden="true"></i>',
+    "diagram-project": '<i class="fa-solid fa-diagram-project" aria-hidden="true"></i>',
+    "arrow-right": '<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>',
+    "circle-plus": '<i class="fa-solid fa-circle-plus" aria-hidden="true"></i>',
+    "circle-right": '<i class="fa-solid fa-circle-right" aria-hidden="true"></i>',
+    "play": '<i class="fa-solid fa-play" aria-hidden="true"></i>',
+    "chevron-left": '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>',
+    "chevron-right": '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>',
+    "placeholder-image": '<i class="fa-regular fa-image" aria-hidden="true"></i>',
+    "check": '<i class="fa-solid fa-check" aria-hidden="true"></i>',
+    "download": '<i class="fa-solid fa-download" aria-hidden="true"></i>',
+    "file": '<i class="fa-solid fa-file-lines" aria-hidden="true"></i>',
+    "cable": '<i class="fa-solid fa-plug" aria-hidden="true"></i>',
+    "screw": '<i class="fa-solid fa-screwdriver" aria-hidden="true"></i>',
+    "pump": '<i class="fa-solid fa-gauge-high" aria-hidden="true"></i>',
+    "map-pin": '<i class="fa-solid fa-location-dot" aria-hidden="true"></i>',
+    "clock": '<i class="fa-solid fa-clock" aria-hidden="true"></i>',
+    "phone": '<i class="fa-solid fa-phone" aria-hidden="true"></i>',
+    "mail": '<i class="fa-solid fa-envelope" aria-hidden="true"></i>',
+    "target": '<i class="fa-solid fa-bullseye" aria-hidden="true"></i>',
+    "compass": '<i class="fa-solid fa-compass" aria-hidden="true"></i>',
+    "handshake": '<i class="fa-solid fa-handshake" aria-hidden="true"></i>',
+    "milestone": '<i class="fa-solid fa-timeline" aria-hidden="true"></i>',
+    "whatsapp": '<i class="fa-brands fa-whatsapp" aria-hidden="true"></i>',
 }
 
 
@@ -587,10 +610,10 @@ def build_home_main():
     # 3. HERO BANNER
     # -------------------------------------------------------------
     hero_badges = [
-        ("grid", "Wide Product Range"),
-        ("shield-check", "Quality Assured"),
-        ("award", "Trusted Brands"),
-        ("truck", "Timely Delivery"),
+        ("users", "Wide Product Range"),
+        ("circle-check", "Quality Assured"),
+        ("landmark", "Trusted Brands"),
+        ("box", "Timely Delivery"),
     ]
     hero_badges_html = "\n".join(
         f'''            <div class="trust-badge">
@@ -613,38 +636,40 @@ def build_home_main():
     hero_slides_html = "\n".join([hero_slide] * 5)
 
     hero_html = f"""    <section class="hero text-on-dark" aria-label="Hero">
-      <div class="container hero__inner">
-        <div class="hero__content">
-          <span class="hero__eyebrow">One Source. Complete Solution.</span>
-          <h1 class="hero__title">Your Trusted Partner in <span class="text-accent">Electricals, Electronics, Hardwares &amp; Industrial Tools</span></h1>
-          <p class="hero__desc">Supplying quality products that power industries, build infrastructure and drive innovation.</p>
+      <div class="container">
+        <div class="hero__inner">
+          <div class="hero__content">
+            <span class="eyebrow hero__eyebrow">One Source. Complete Solution.</span>
+            <h1 class="hero__title">Your Trusted Partner in <span class="text-accent">Electricals, Electronics, Hardwares &amp; Industrial Tools</span></h1>
+            <p class="hero__desc">Supplying quality products that power industries, build infrastructure and drive innovation.</p>
 
-          <div class="hero__badges">
+            <div class="hero__badges">
 {hero_badges_html}
-          </div>
-
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="pages/electricals.html">
-              Explore Products
-              {ICONS['arrow-right']}
-            </a>
-            <a class="btn btn--outline-light" href="pages/about.html">
-              {ICONS['play']}
-              About HM Unique
-            </a>
-          </div>
-        </div>
-
-        <div class="hero__media">
-          <div class="hero__slider" data-slider>
-            <div class="hero__slider-track" data-slider-track>
-{hero_slides_html}
             </div>
-            <button type="button" class="btn-icon hero__nav hero__nav--prev" data-slider-prev aria-label="Previous slide">{ICONS['chevron-left']}</button>
-            <button type="button" class="btn-icon hero__nav hero__nav--next" data-slider-next aria-label="Next slide">{ICONS['chevron-right']}</button>
+
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="pages/electricals.html">
+                Explore Products
+                {ICONS['circle-right']}
+              </a>
+              <a class="hero__watch-link" href="pages/about.html">
+                <span class="hero__watch-link__icon">{ICONS['play']}</span>
+                About HM Unique
+              </a>
+            </div>
           </div>
-          <div class="hero__dots" data-slider-dots aria-label="Slide navigation"></div>
+
+          <div class="hero__media">
+            <div class="hero__slider" data-slider>
+              <div class="hero__slider-track" data-slider-track>
+{hero_slides_html}
+              </div>
+              <button type="button" class="btn-icon hero__nav hero__nav--prev" data-slider-prev aria-label="Previous slide">{ICONS['chevron-left']}</button>
+              <button type="button" class="btn-icon hero__nav hero__nav--next" data-slider-next aria-label="Next slide">{ICONS['chevron-right']}</button>
+            </div>
+          </div>
         </div>
+        <div class="hero__dots" data-slider-dots aria-label="Slide navigation"></div>
       </div>
     </section>"""
 
@@ -665,7 +690,7 @@ def build_home_main():
             </div>
             <h3 class="category-card__title">{name}</h3>
             <p class="category-card__desc">{desc}</p>
-            <a class="link-arrow" href="{href}">
+            <a class="btn btn--outline btn--sm" href="{href}">
               Explore Category
               {ICONS['arrow-right']}
             </a>
@@ -730,17 +755,19 @@ def build_home_main():
     # 6. WHY CHOOSE US
     # -------------------------------------------------------------
     why_choose = [
-        ("shield-check", "Quality Products", "We supply only high quality products from trusted manufacturers."),
-        ("grid", "Wide Range", "One-stop solution for Electricals, Electronics, Hardwares &amp; Industrial tools."),
+        ("box", "Quality Products", "We supply only high quality products from trusted manufacturers."),
+        ("diagram-project", "Wide Range", "One-stop solution for Electricals, Electronics, Hardwares &amp; Industrial tools."),
         ("tag", "Competitive Pricing", "Best value for your money across all products."),
         ("truck", "Timely Delivery", "Prompt delivery ensuring minimal downtime for your projects."),
         ("headset", "Expert Support", "Our team is always ready to help you find the right products."),
     ]
     why_choose_html = "\n".join(
-        f"""          <div class="feature-item" data-animate="fade-up">
+        f"""          <div class="feature-item feature-item--row" data-animate="fade-up">
             <span class="feature-item__icon">{ICONS[icon]}</span>
-            <h3 class="feature-item__title">{title}</h3>
-            <p class="feature-item__desc">{desc}</p>
+            <div>
+              <h3 class="feature-item__title">{title}</h3>
+              <p class="feature-item__desc">{desc}</p>
+            </div>
           </div>"""
         for icon, title, desc in why_choose
     )
@@ -751,7 +778,7 @@ def build_home_main():
           <span class="eyebrow">Why Choose Us</span>
           <h2 class="section-heading__title" id="why-choose-heading">Commitment to Quality &amp; Service</h2>
         </div>
-        <div class="grid grid--5">
+        <div class="grid grid--5 why-choose-grid">
 {why_choose_html}
         </div>
       </div>
@@ -763,12 +790,12 @@ def build_home_main():
     industries = [
         ("factory", "Manufacturing"),
         ("hard-hat", "Construction"),
-        ("bolt", "Power &amp; Energy"),
+        ("lightbulb", "Power &amp; Energy"),
         ("droplet", "Oil &amp; Gas"),
         ("truck", "Transportation"),
-        ("building", "Infrastructure"),
-        ("gear", "Automation"),
-        ("box", "OEMs"),
+        ("city", "Infrastructure"),
+        ("gears", "Automation"),
+        ("diagram-project", "OEMs"),
     ]
     industries_html = "\n".join(
         f"""          <div class="feature-item feature-item--compact" data-animate="fade-up">
@@ -793,22 +820,18 @@ def build_home_main():
     # -------------------------------------------------------------
     # 8. BOTTOM CTA BANNER
     # -------------------------------------------------------------
-    cta_section = f"""    <section class="section section--sm" aria-labelledby="cta-heading">
-      <div class="container">
-        <div class="cta-band text-on-dark">
-          <div class="cta-band__inner">
-            <div class="cta-band__text">
-              <h2 class="cta-band__title" id="cta-heading">Looking for the Right Products for Your Project?</h2>
-              <p>Send us your requirement and our experts will get back to you with the best solution.</p>
-              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
-                Request a Quote Now
-                {ICONS['arrow-right']}
-              </button>
-            </div>
-            <div class="cta-band__media">
-              {img_placeholder('Request a quote illustration', 'aspect-box--square')}
-            </div>
-          </div>
+    cta_section = f"""    <section class="cta-band cta-band--full text-on-dark" aria-labelledby="cta-heading">
+      <div class="container cta-band__inner">
+        <div class="cta-band__text">
+          <h2 class="cta-band__title" id="cta-heading">Looking for the Right Products for Your Project?</h2>
+          <p>Send us your requirement and our experts will get back to you with the best solution.</p>
+        </div>
+        <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
+          Request a Quote
+          {ICONS['circle-right']}
+        </button>
+        <div class="cta-band__media">
+          {img_placeholder('Request a quote illustration', 'aspect-box--wide')}
         </div>
       </div>
     </section>"""
@@ -1272,7 +1295,7 @@ def build_about_main():
     # Banner
     banner = f"""    <section class="page-banner text-on-dark" aria-label="About HM UNIQUE">
       <div class="container page-banner__inner">
-        <span class="page-banner__eyebrow">About HM UNIQUE</span>
+        <span class="eyebrow page-banner__eyebrow">About HM UNIQUE</span>
         <h1 class="page-banner__title">Building Connections. Powering Industries.</h1>
         <p class="page-banner__desc">With 7+ years of experience, HM UNIQUE has emerged as a trusted supplier of Electricals, Electronics, Hardwares and Industrial Tools. Our commitment to quality, reliability and customer satisfaction drives everything we do.</p>
         <div class="page-banner__badge">
@@ -1387,7 +1410,7 @@ def build_about_main():
         ("target", "Today", "Moving Forward", "Continuing to grow with innovation, trust and a customer-first approach."),
     ]
     milestones_html = "\n".join(
-        f"""          <article class="milestone" data-animate="fade-up">
+        f"""          <article class="card milestone" data-animate="fade-up">
             <span class="milestone__icon">{ICONS[icon]}</span>
             <span class="milestone__year">{year}</span>
             <h3 class="milestone__title">{title}</h3>
@@ -1440,12 +1463,12 @@ def build_about_main():
     industries = [
         ("factory", "Manufacturing"),
         ("hard-hat", "Construction"),
-        ("bolt", "Power &amp; Energy"),
+        ("lightbulb", "Power &amp; Energy"),
         ("droplet", "Oil &amp; Gas"),
         ("truck", "Transportation"),
-        ("building", "Infrastructure"),
-        ("gear", "Automation"),
-        ("box", "OEMs"),
+        ("city", "Infrastructure"),
+        ("gears", "Automation"),
+        ("diagram-project", "OEMs"),
     ]
     industries_html = "\n".join(
         f"""          <div class="feature-item feature-item--compact" data-animate="fade-up">
@@ -1467,22 +1490,18 @@ def build_about_main():
     </section>"""
 
     # CTA (real PDF data)
-    cta_section = f"""    <section class="section--sm" aria-labelledby="about-cta-heading">
-      <div class="container">
-        <div class="cta-band text-on-dark">
-          <div class="cta-band__inner">
-            <div class="cta-band__text">
-              <h2 class="cta-band__title" id="about-cta-heading">Let&rsquo;s Build Something Great Together</h2>
-              <p>Partner with HM UNIQUE for reliable, exceptional service and lasting business relationships.</p>
-              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
-                Request a Quote
-                {ICONS['arrow-right']}
-              </button>
-            </div>
-            <div class="cta-band__media">
-              {img_placeholder('HM UNIQUE team illustration', 'aspect-box--square')}
-            </div>
-          </div>
+    cta_section = f"""    <section class="cta-band cta-band--full text-on-dark" aria-labelledby="about-cta-heading">
+      <div class="container cta-band__inner">
+        <div class="cta-band__text">
+          <h2 class="cta-band__title" id="about-cta-heading">Let&rsquo;s Build Something Great Together</h2>
+          <p>Partner with HM UNIQUE for reliable, exceptional service and lasting business relationships.</p>
+        </div>
+        <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
+          Request a Quote
+          {ICONS['circle-right']}
+        </button>
+        <div class="cta-band__media">
+          {img_placeholder('HM UNIQUE team illustration', 'aspect-box--wide')}
         </div>
       </div>
     </section>"""
@@ -1508,14 +1527,14 @@ def build_about_main():
 def build_contact_main():
     banner = f"""    <section class="page-banner text-on-dark" aria-label="Contact Us">
       <div class="container page-banner__inner">
-        <span class="page-banner__eyebrow">Get In Touch</span>
+        <span class="eyebrow page-banner__eyebrow">Get In Touch</span>
         <h1 class="page-banner__title">Contact Us</h1>
         <p class="page-banner__desc">We&rsquo;re here to help you find the right products and solutions for your business.</p>
         <div class="page-banner__quicklinks">
-          <span class="page-banner__quicklink">{ICONS['phone']} Call Us: +91 98765 43210</span>
-          <span class="page-banner__quicklink">{ICONS['mail']} Email Us: info@hmunique.com</span>
+          <span class="page-banner__quicklink">{ICONS['phone']} Call Us: +91 78100 01288</span>
+          <span class="page-banner__quicklink">{ICONS['mail']} Email Us: hmunitecenterprises02@gmail.com</span>
           <span class="page-banner__quicklink">{ICONS['clock']} Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span>
-          <span class="page-banner__quicklink">{ICONS['whatsapp']} WhatsApp: +91 98765 43210</span>
+          <span class="page-banner__quicklink">{ICONS['whatsapp']} WhatsApp: +91 78100 01288</span>
         </div>
       </div>
     </section>"""
@@ -1525,7 +1544,7 @@ def build_contact_main():
           <p class="text-body mb-5">Fill out the form and our team will get back to you shortly.</p>
 
           <p class="form-submit-error" data-form-error hidden role="alert">
-            Something went wrong sending your message. Please try again, or call us directly at <a href="tel:+919876543210">+91 98765 43210</a>.
+            Something went wrong sending your message. Please try again, or call us directly at <a href="tel:+917810001288">+91 78100 01288</a>.
           </p>
 
           <form class="contact-form" data-form="contact" novalidate>
@@ -1580,18 +1599,18 @@ def build_contact_main():
 
             <button type="submit" class="btn btn--primary btn--block mt-4">
               Send Message
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </form>
         </div>"""
 
     contact_info = f"""        <div>
-          <div class="info-card">
+          <div class="card info-card">
             <h3 class="info-card__title">Contact Information</h3>
             <ul class="info-card__list">
-              <li>{ICONS['map-pin']}<span>Head Office<br />123, Industrial Estate, Phase 1, Coimbatore &ndash; 641 021, Tamil Nadu, India</span></li>
-              <li>{ICONS['phone']}<span>+91 98765 43210<br />+91 422 456 7890</span></li>
-              <li>{ICONS['mail']}<span>info@hmunique.com<br />sales@hmunique.com</span></li>
+              <li>{ICONS['map-pin']}<span>{ADDRESS_LINE1}<br />{ADDRESS_LINE2}<br />{ADDRESS_LINE3}</span></li>
+              <li>{ICONS['phone']}<span>{PHONE_DISPLAY}</span></li>
+              <li>{ICONS['mail']}<span>{EMAIL_PRIMARY}<br />{EMAIL_SECONDARY}</span></li>
               <li>{ICONS['clock']}<span>Monday &ndash; Saturday: 9:00 AM &ndash; 6:00 PM<br />Sunday: Closed</span></li>
             </ul>
 
@@ -1601,7 +1620,7 @@ def build_contact_main():
                 <strong>Chat with us on WhatsApp</strong>
                 <p class="mb-0">Get a quick response to your queries.</p>
               </div>
-              <a class="btn btn--sm btn--primary" href="https://wa.me/919876543210" target="_blank" rel="noopener">Chat Now</a>
+              <a class="btn btn--sm btn--primary" href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener">Chat Now</a>
             </div>
           </div>
         </div>"""
@@ -1615,19 +1634,24 @@ def build_contact_main():
 
     map_section = f"""    <section class="section--sm section--surface" aria-label="Our location">
       <div class="container">
-        <div class="info-card">
+        <div class="card info-card">
           <div class="flex flex--between flex--wrap flex--gap-3 mb-4">
             <div>
               <h3 class="info-card__title mb-1">Find Us Here</h3>
-              <p class="text-body mb-0">We are located in the heart of the industrial hub for better connectivity and faster support.</p>
+              <p class="text-body mb-0">{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}.</p>
             </div>
-            <a class="btn btn--outline btn--sm" href="https://maps.google.com" target="_blank" rel="noopener">
+            <a class="btn btn--outline btn--sm" href="https://www.google.com/maps/search/?api=1&amp;query={MAPS_QUERY_ENCODED}" target="_blank" rel="noopener">
               Get Directions
               {ICONS['arrow-right']}
             </a>
           </div>
-          <div class="aspect-box aspect-box--wide">
-            {img_placeholder('Google Map showing HM UNIQUE head office location')}
+          <div class="aspect-box aspect-box--wide map-embed">
+            <iframe
+              src="https://www.google.com/maps?q={MAPS_QUERY_ENCODED}&amp;output=embed"
+              title="HM UNIQUE location map"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen></iframe>
           </div>
         </div>
       </div>
@@ -1639,16 +1663,16 @@ def build_contact_main():
           <span class="eyebrow">Our Branch</span>
           <h2 class="section-heading__title" id="branch-heading">Chennai Branch</h2>
         </div>
-        <article class="branch-card">
+        <article class="card branch-card">
           <div class="branch-card__media">
             {img_placeholder('HM UNIQUE Chennai branch office', 'aspect-box--wide')}
           </div>
           <div class="branch-card__body">
             <h3 class="branch-card__title">HM UNIQUE &ndash; Chennai Branch</h3>
             <ul class="info-card__list">
-              <li>{ICONS['map-pin']}<span>45, SIDCO Industrial Estate, Ambattur, Chennai &ndash; 600 098, Tamil Nadu, India</span></li>
-              <li>{ICONS['phone']}<span>+91 44 2363 4567</span></li>
-              <li>{ICONS['mail']}<span>chennai@hmunique.com</span></li>
+              <li>{ICONS['map-pin']}<span>{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}</span></li>
+              <li>{ICONS['phone']}<span>{PHONE_DISPLAY}</span></li>
+              <li>{ICONS['mail']}<span>{EMAIL_SECONDARY}</span></li>
               <li>{ICONS['clock']}<span>Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span></li>
             </ul>
           </div>
@@ -1656,22 +1680,18 @@ def build_contact_main():
       </div>
     </section>"""
 
-    cta_section = f"""    <section class="section--sm" aria-labelledby="contact-cta-heading">
-      <div class="container">
-        <div class="cta-band text-on-dark">
-          <div class="cta-band__inner">
-            <div class="cta-band__text">
-              <h2 class="cta-band__title" id="contact-cta-heading">Looking for the Right Products for Your Project?</h2>
-              <p>Talk to our experts and get the best solution for your business.</p>
-              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
-                Request a Quote
-                {ICONS['arrow-right']}
-              </button>
-            </div>
-            <div class="cta-band__media">
-              {img_placeholder('Contact HM UNIQUE illustration', 'aspect-box--square')}
-            </div>
-          </div>
+    cta_section = f"""    <section class="cta-band cta-band--full text-on-dark" aria-labelledby="contact-cta-heading">
+      <div class="container cta-band__inner">
+        <div class="cta-band__text">
+          <h2 class="cta-band__title" id="contact-cta-heading">Looking for the Right Products for Your Project?</h2>
+          <p>Talk to our experts and get the best solution for your business.</p>
+        </div>
+        <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
+          Request a Quote
+          {ICONS['circle-right']}
+        </button>
+        <div class="cta-band__media">
+          {img_placeholder('Contact HM UNIQUE illustration', 'aspect-box--wide')}
         </div>
       </div>
     </section>"""
@@ -1685,79 +1705,6 @@ def build_contact_main():
     ])
 
 
-# ---------------------------------------------------------------------
-# DOWNLOAD CENTRE PAGE
-# ---------------------------------------------------------------------
-
-DOWNLOAD_ITEMS = [
-    ("file", "Electrical Catalogue", "Wires &amp; Cables, Switches, MCBs, Distribution Boards, Lighting and more.", "../assets/catalogue/electricals-catalogue.pdf"),
-    ("chip", "Electronics Catalogue", "Passive, active, and semiconductor components for design and production.", "../assets/catalogue/electronics-catalogue.pdf"),
-    ("wrench", "Hardware Catalogue", "Fasteners, hand tools, power tools, and industrial hardware accessories.", "../assets/catalogue/hardwares-catalogue.pdf"),
-    ("factory", "Industrial Catalogue", "Material handling, pumps &amp; motors, ventilation, and facility equipment.", "../assets/catalogue/industrial-catalogue.pdf"),
-    ("building", "Company Profile", "An overview of HM UNIQUE, our history, values, and capabilities.", "../assets/catalogue/company-profile.pdf"),
-    ("box", "Product Datasheets", "Technical specifications and datasheets across our full product range.", "../assets/catalogue/product-datasheets.pdf"),
-]
-
-
-def build_download_centre_main():
-    banner = f"""    <section class="page-banner text-on-dark" aria-label="Download Centre">
-      <div class="container page-banner__inner">
-        <span class="page-banner__eyebrow">Resources</span>
-        <h1 class="page-banner__title">Download Centre</h1>
-        <p class="page-banner__desc">Access our complete range of product catalogues, datasheets and company information &mdash; all in one place.</p>
-      </div>
-    </section>"""
-
-    cards_html = "\n".join(
-        f"""          <article class="card card--hover" data-animate="fade-up">
-            <div class="download-card__media">
-              {img_placeholder(title + ' cover', 'aspect-box--tall')}
-            </div>
-            <h3 class="download-card__title">{title}</h3>
-            <p class="download-card__desc">{desc}</p>
-            <a class="btn btn--gold btn--block" href="{href}" download>
-              {ICONS['download']}
-              Download PDF
-            </a>
-          </article>"""
-        for icon, title, desc, href in DOWNLOAD_ITEMS
-    )
-
-    cards_section = f"""    <section class="section section--light" aria-labelledby="downloads-heading">
-      <div class="container">
-        <div class="section-heading section-heading--center">
-          <span class="eyebrow">Resources</span>
-          <h2 class="section-heading__title" id="downloads-heading">Available Downloads</h2>
-        </div>
-        <div class="grid grid--3">
-{cards_html}
-        </div>
-      </div>
-    </section>"""
-
-    cta_section = f"""    <section class="section--sm" aria-labelledby="download-cta-heading">
-      <div class="container">
-        <div class="cta-band text-on-dark">
-          <div class="cta-band__inner">
-            <div class="cta-band__text">
-              <h2 class="cta-band__title" id="download-cta-heading">Can&rsquo;t Find What You&rsquo;re Looking For?</h2>
-              <p>Reach out to our team and we&rsquo;ll send you the specific documents or specifications you need.</p>
-              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
-                Request a Quote
-                {ICONS['arrow-right']}
-              </button>
-            </div>
-            <div class="cta-band__media">
-              {img_placeholder('Download Centre illustration', 'aspect-box--square')}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>"""
-
-    return "\n\n".join([banner, cards_section, cta_section])
-
-
 def build_organization_schema():
     """Organization + LocalBusiness JSON-LD, sitewide (identical on
     every page — this is the entity graph for the business itself,
@@ -1769,14 +1716,14 @@ def build_organization_schema():
         "url": SITE_URL,
         "logo": f"{SITE_URL}/assets/logo/hm-unique-logo.svg",
         "description": "Supplier of Electricals, Electronics Components, Hardwares and Industrial & Commercial Equipment.",
-        "telephone": "+91-98765-43210",
-        "email": "info@hmunique.com",
+        "telephone": "+91-78100-01288",
+        "email": "hmunitecenterprises02@gmail.com",
         "address": {
             "@type": "PostalAddress",
-            "streetAddress": "123, Industrial Estate, Phase 1",
-            "addressLocality": "Coimbatore",
+            "streetAddress": "No.271, Linghi Chetty Street, George Town",
+            "addressLocality": "Chennai",
             "addressRegion": "Tamil Nadu",
-            "postalCode": "641021",
+            "postalCode": "600001",
             "addressCountry": "IN",
         },
         "openingHoursSpecification": {
@@ -1787,9 +1734,9 @@ def build_organization_schema():
         },
         "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "+91-98765-43210",
+            "telephone": "+91-78100-01288",
             "contactType": "customer service",
-            "email": "info@hmunique.com",
+            "email": "hmunitecenterprises02@gmail.com",
             "areaServed": "IN",
             "availableLanguage": ["en"],
         },
@@ -1944,6 +1891,17 @@ def build_head(page, depth):
   <meta name="twitter:description" content="{page['description']}" />
   <meta name="twitter:image" content="{og_image}" />
 
+  <!-- Google Fonts: Plus Jakarta Sans (primary headings), Manrope
+       (secondary headings), Inter (body/buttons/nav/labels/specs) —
+       see css/variables.css for the full typography hierarchy this
+       feeds into. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Manrope:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome (icon system) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   {links}
 
   <!-- Structured data (JSON-LD) -->
@@ -1975,8 +1933,6 @@ def build_page(page):
         main_content = build_about_main()
     elif key == "contact":
         main_content = build_contact_main()
-    elif key == "download-centre":
-        main_content = build_download_centre_main()
     else:
         main_content = f"    <!-- {PAGE_MAIN_COMMENTS[key]} -->"
 

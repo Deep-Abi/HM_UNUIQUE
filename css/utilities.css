@@ -75,6 +75,13 @@
   height: 100%;
   object-fit: cover;
 }
+.aspect-box > iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 
 /* Aspect-ratio modifiers — used instead of an inline style="--aspect-ratio: …"
    so every value still traces back to a class, not a per-element inline
@@ -94,7 +101,7 @@
 .eyebrow {
   display: inline-block;
   font-size: var(--fs-eyebrow);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
   color: var(--color-teal-500);

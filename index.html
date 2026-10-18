@@ -31,6 +31,17 @@
   <meta name="twitter:description" content="HM UNIQUE supplies quality Electricals, Electronics Components, Hardwares and Industrial &amp; Commercial Equipment. Trusted brands, wide product range and pan-India delivery." />
   <meta name="twitter:image" content="https://www.hmunique.com/assets/common/og-default.jpg" />
 
+  <!-- Google Fonts: Plus Jakarta Sans (primary headings), Manrope
+       (secondary headings), Inter (body/buttons/nav/labels/specs) —
+       see css/variables.css for the full typography hierarchy this
+       feeds into. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Manrope:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome (icon system) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/utilities.css" />
   <link rel="stylesheet" href="css/animations.css" />
@@ -50,14 +61,14 @@
   "url": "https://www.hmunique.com",
   "logo": "https://www.hmunique.com/assets/logo/hm-unique-logo.svg",
   "description": "Supplier of Electricals, Electronics Components, Hardwares and Industrial & Commercial Equipment.",
-  "telephone": "+91-98765-43210",
-  "email": "info@hmunique.com",
+  "telephone": "+91-78100-01288",
+  "email": "hmunitecenterprises02@gmail.com",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "123, Industrial Estate, Phase 1",
-    "addressLocality": "Coimbatore",
+    "streetAddress": "No.271, Linghi Chetty Street, George Town",
+    "addressLocality": "Chennai",
     "addressRegion": "Tamil Nadu",
-    "postalCode": "641021",
+    "postalCode": "600001",
     "addressCountry": "IN"
   },
   "openingHoursSpecification": {
@@ -75,9 +86,9 @@
   },
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+91-98765-43210",
+    "telephone": "+91-78100-01288",
     "contactType": "customer service",
-    "email": "info@hmunique.com",
+    "email": "hmunitecenterprises02@gmail.com",
     "areaServed": "IN",
     "availableLanguage": [
       "en"
@@ -100,17 +111,19 @@
 <header class="site-header" data-site-header>
   <div class="utility-bar">
     <div class="container utility-bar__inner">
-      <div class="utility-bar__contact">
-        <a href="tel:+919876543210"><span>+91 98765 43210</span></a>
-        <a href="mailto:info@hmunique.com"><span>info@hmunique.com</span></a>
-      </div>
-      <div class="utility-bar__links">
-        <a href="pages/download-centre.html">Download Centre</a>
-        <div class="utility-bar__socials">
-          <a aria-label="Facebook" aria-disabled="true">FB</a>
-          <a aria-label="LinkedIn" aria-disabled="true">IN</a>
-          <a aria-label="Instagram" aria-disabled="true">IG</a>
-        </div>
+      <a class="utility-bar__phone" href="tel:+917810001288">
+        <i class="fa-solid fa-phone" aria-hidden="true"></i>
+        <span>+91 78100 01288</span>
+      </a>
+      <div class="utility-bar__emails">
+        <a class="utility-bar__email" href="mailto:hmunitecenterprises02@gmail.com">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>hmunitecenterprises02@gmail.com</span>
+        </a>
+        <a class="utility-bar__email" href="mailto:haribabu2004@gmail.com">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>haribabu2004@gmail.com</span>
+        </a>
       </div>
     </div>
   </div>
@@ -133,31 +146,31 @@
         <li class="primary-nav__item primary-nav__item--dropdown" data-nav-dropdown>
           <button type="button" class="primary-nav__link" data-nav-dropdown-trigger aria-haspopup="true" aria-expanded="false" aria-controls="products-dropdown-menu">
             Products
-            <svg class="primary-nav__chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            <i class="fa-solid fa-chevron-down primary-nav__chevron" aria-hidden="true"></i>
           </button>
           <ul class="products-dropdown" id="products-dropdown-menu">
           <li>
             <a class="products-dropdown__link" href="pages/electricals.html" data-nav-key-link="electricals">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Electricals
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Electricals</span>
             </a>
           </li>
           <li>
             <a class="products-dropdown__link" href="pages/electronics.html" data-nav-key-link="electronics">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Electronics Components
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Electronics Components</span>
             </a>
           </li>
           <li>
             <a class="products-dropdown__link" href="pages/hardwares.html" data-nav-key-link="hardwares">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Hardwares
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Hardwares</span>
             </a>
           </li>
           <li>
             <a class="products-dropdown__link" href="pages/industrial-equipment.html" data-nav-key-link="industrial">
-              <span class="products-dropdown__icon" aria-hidden="true"></span>
-              Industrial &amp; Commercial Equipment
+              <span class="products-dropdown__icon" aria-hidden="true"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
+              <span class="products-dropdown__text">Industrial &amp; Commercial Equipment</span>
             </a>
           </li>
           </ul>
@@ -172,9 +185,9 @@
     </nav>
 
     <div class="site-header__actions">
-      <button type="button" class="btn btn--primary hide-on-mobile" data-modal-open="quote">
+      <button type="button" class="btn btn--dark hide-on-mobile" data-modal-open="quote">
         Request a Quote
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
       </button>
       <button type="button" class="nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation">
         <span class="nav-toggle__bar"></span>
@@ -189,105 +202,278 @@
   <nav class="mobile-nav" id="mobile-navigation" data-mobile-nav aria-label="Mobile navigation">
     <div class="mobile-nav__header">
       <span class="site-logo__name">HM UNIQUE</span>
-      <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu">&times;</button>
+      <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <ul class="mobile-nav__list">
       <li><a class="mobile-nav__link" href="index.html" data-nav-key-link="home" aria-current="page">Home</a></li>
       <li class="mobile-nav__item" data-mobile-nav-item>
         <button type="button" class="mobile-nav__link mobile-nav__submenu-toggle" data-mobile-submenu-toggle aria-expanded="false" aria-controls="mobile-products-submenu">
           Products
-          <svg class="primary-nav__chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <i class="fa-solid fa-chevron-down primary-nav__chevron" aria-hidden="true"></i>
         </button>
         <ul class="mobile-nav__submenu" id="mobile-products-submenu">
-            <li><a class="mobile-nav__submenu-link" href="pages/electricals.html" data-nav-key-link="electricals">Electricals</a></li>
-            <li><a class="mobile-nav__submenu-link" href="pages/electronics.html" data-nav-key-link="electronics">Electronics Components</a></li>
-            <li><a class="mobile-nav__submenu-link" href="pages/hardwares.html" data-nav-key-link="hardwares">Hardwares</a></li>
-            <li><a class="mobile-nav__submenu-link" href="pages/industrial-equipment.html" data-nav-key-link="industrial">Industrial &amp; Commercial Equipment</a></li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="pages/electricals.html" data-nav-key-link="electricals">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+                <span>Electricals</span>
+              </a>
+            </li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="pages/electronics.html" data-nav-key-link="electronics">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
+                <span>Electronics Components</span>
+              </a>
+            </li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="pages/hardwares.html" data-nav-key-link="hardwares">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span>
+                <span>Hardwares</span>
+              </a>
+            </li>
+            <li>
+              <a class="mobile-nav__submenu-link" href="pages/industrial-equipment.html" data-nav-key-link="industrial">
+                <span class="mobile-nav__submenu-icon" aria-hidden="true"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
+                <span>Industrial &amp; Commercial Equipment</span>
+              </a>
+            </li>
         </ul>
       </li>
       <li><a class="mobile-nav__link" href="pages/about.html" data-nav-key-link="about">About Us</a></li>
       <li><a class="mobile-nav__link" href="pages/contact.html" data-nav-key-link="contact">Contact Us</a></li>
-      <li><a class="mobile-nav__link" href="pages/download-centre.html" data-nav-key-link="download-centre">Download Centre</a></li>
     </ul>
     <div class="mobile-nav__cta">
-      <button type="button" class="btn btn--primary btn--block" data-modal-open="quote">Request a Quote</button>
+      <button type="button" class="btn btn--dark btn--block" data-modal-open="quote">
+        Request a Quote
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
+      </button>
     </div>
   </nav>
 
   <main id="main-content">
-    <section class="hero text-on-dark" aria-label="Hero">
-      <div class="container hero__inner">
-        <div class="hero__content">
-          <span class="hero__eyebrow">One Source. Complete Solution.</span>
-          <h1 class="hero__title">Your Trusted Partner in <span class="text-accent">Electricals, Electronics, Hardwares &amp; Industrial Tools</span></h1>
-          <p class="hero__desc">Supplying quality products that power industries, build infrastructure and drive innovation.</p>
+    <section class="hero text-on-dark" aria-label="Hero" data-slider>
+      <div class="hero__slider-track" data-slider-track>
+          <div class="hero__slide" data-slider-slide>
+            <div class="hero__slide-media">
+              <picture>
+                <source srcset="assets/images/home/hero/avif/electricals_hero.avif" type="image/avif" />
+                <source srcset="assets/images/home/hero/webp/electricals_hero.webp" type="image/webp" />
+                <img
+                  src="assets/images/home/hero/jpg/electricals_hero.jpg"
+                  alt="Collection of HM UNIQUE electrical products including a distribution panel, MCBs, cable reels, switches, sockets and an LED flood light"
+                  width="1717"
+                  height="916"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+              </picture>
+            </div>
+            <div class="hero__slide-overlay"></div>
+            <div class="container hero__inner">
+              <div class="hero__content">
+              <span class="eyebrow hero__eyebrow">One Source. Complete Solution.</span>
+              <h1 class="hero__title">Your Trusted Partner in <span class="text-accent">Electricals</span></h1>
+              <p class="hero__desc">Supplying quality electrical products and solutions for residential, commercial and industrial applications.</p>
 
-          <div class="hero__badges">
-            <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
-              <span>Wide Product Range</span>
-            </div>
-            <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span>Quality Assured</span>
-            </div>
-            <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
-              <span>Trusted Brands</span>
-            </div>
-            <div class="trust-badge">
-              <span class="trust-badge__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M13 10h4l4 3v3h-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="17" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
-              <span>Timely Delivery</span>
-            </div>
-          </div>
+              <div class="hero__badges">
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+                <span>Wide Product Range</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                <span>Quality Assured</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-building-columns" aria-hidden="true"></i></span>
+                <span>Trusted Brands</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span>
+                <span>Timely Delivery</span>
+              </div>
+              </div>
 
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="pages/electricals.html">
-              Explore Products
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-            </a>
-            <a class="btn btn--outline-light" href="pages/about.html">
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l8 5-8 5V3z" fill="currentColor"/></svg>
-              About HM Unique
-            </a>
-          </div>
-        </div>
+              <div class="hero__actions">
+                <a class="btn btn--primary" href="pages/electricals.html">
+                  Explore Electricals
+                  <i class="fa-solid fa-circle-right" aria-hidden="true"></i>
+                </a>
+                <a class="hero__watch-link" href="pages/about.html">
+                  <span class="hero__watch-link__icon"><i class="fa-solid fa-play" aria-hidden="true"></i></span>
+                  About HM Unique
+                </a>
+              </div>
+            </div>
+            </div>
+            </div>
+          <div class="hero__slide" data-slider-slide>
+            <div class="hero__slide-media">
+              <picture>
+                <source srcset="assets/images/home/hero/avif/electronics_components_hero.avif" type="image/avif" />
+                <source srcset="assets/images/home/hero/webp/electronics_components_hero.webp" type="image/webp" />
+                <img
+                  src="assets/images/home/hero/jpg/electronics_components_hero.jpg"
+                  alt="Collection of HM UNIQUE electronics components including CCTV cameras, PLC modules, an HMI touch panel, sensors, relays and a network switch"
+                  width="1200"
+                  height="640"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="hero__slide-overlay"></div>
+            <div class="container hero__inner">
+              <div class="hero__content">
+              <span class="eyebrow hero__eyebrow">Smart Electronics. Reliable Solutions.</span>
+              <h1 class="hero__title">Reliable <span class="text-accent">Electronics Components</span></h1>
+              <p class="hero__desc">Quality electronic components and solutions for automation, surveillance, control and industrial applications.</p>
 
-        <div class="hero__media">
-          <div class="hero__slider" data-slider>
-            <div class="hero__slider-track" data-slider-track>
+              <div class="hero__badges">
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
+                <span>Quality Components</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                <span>Reliable Performance</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-table-cells" aria-hidden="true"></i></span>
+                <span>Wide Selection</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span>Technical Support</span>
+              </div>
+              </div>
+
+              <div class="hero__actions">
+                <a class="btn btn--primary" href="pages/electronics.html">
+                  Explore Electronics
+                  <i class="fa-solid fa-circle-right" aria-hidden="true"></i>
+                </a>
+                <a class="hero__watch-link" href="pages/about.html">
+                  <span class="hero__watch-link__icon"><i class="fa-solid fa-play" aria-hidden="true"></i></span>
+                  About HM Unique
+                </a>
+              </div>
+            </div>
+            </div>
+            </div>
           <div class="hero__slide" data-slider-slide>
-            <div class="aspect-box aspect-box--tall" role="img" aria-label="Electricals, electronics and industrial tools product collage — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+            <div class="hero__slide-media">
+              <picture>
+                <source srcset="assets/images/home/hero/avif/hardwares_hero.avif" type="image/avif" />
+                <source srcset="assets/images/home/hero/webp/hardwares_hero.webp" type="image/webp" />
+                <img
+                  src="assets/images/home/hero/jpg/hardwares_hero.jpg"
+                  alt="Collection of HM UNIQUE hardware and tools including a cordless drill, circular saw, angle grinder, toolbox, wrenches, pliers and screwdrivers"
+                  width="1672"
+                  height="941"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
             </div>
-          </div>
+            <div class="hero__slide-overlay"></div>
+            <div class="container hero__inner">
+              <div class="hero__content">
+              <span class="eyebrow hero__eyebrow">Built for Every Project.</span>
+              <h1 class="hero__title">Quality <span class="text-accent">Hardware</span></h1>
+              <p class="hero__desc">Dependable hand tools, power tools, fasteners and hardware solutions for professional and industrial applications.</p>
+
+              <div class="hero__badges">
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+                <span>Durable Products</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-table-cells" aria-hidden="true"></i></span>
+                <span>Wide Range</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span>
+                <span>Professional Tools</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                <span>Reliable Quality</span>
+              </div>
+              </div>
+
+              <div class="hero__actions">
+                <a class="btn btn--primary" href="pages/hardwares.html">
+                  Explore Hardwares
+                  <i class="fa-solid fa-circle-right" aria-hidden="true"></i>
+                </a>
+                <a class="hero__watch-link" href="pages/about.html">
+                  <span class="hero__watch-link__icon"><i class="fa-solid fa-play" aria-hidden="true"></i></span>
+                  About HM Unique
+                </a>
+              </div>
+            </div>
+            </div>
+            </div>
           <div class="hero__slide" data-slider-slide>
-            <div class="aspect-box aspect-box--tall" role="img" aria-label="Electricals, electronics and industrial tools product collage — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+            <div class="hero__slide-media">
+              <picture>
+                <source srcset="assets/images/home/hero/avif/industrial_commercial_equipment_hero.avif" type="image/avif" />
+                <source srcset="assets/images/home/hero/webp/industrial_commercial_equipment_hero.webp" type="image/webp" />
+                <img
+                  src="assets/images/home/hero/jpg/industrial_commercial_equipment_hero.jpg"
+                  alt="Collection of HM UNIQUE industrial equipment including an electric motor, pump, control panel, variable frequency drives, safety gear and cabling"
+                  width="1672"
+                  height="941"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
             </div>
-          </div>
-          <div class="hero__slide" data-slider-slide>
-            <div class="aspect-box aspect-box--tall" role="img" aria-label="Electricals, electronics and industrial tools product collage — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+            <div class="hero__slide-overlay"></div>
+            <div class="container hero__inner">
+              <div class="hero__content">
+              <span class="eyebrow hero__eyebrow">Powering Industrial Performance.</span>
+              <h1 class="hero__title">Industrial Equipment <span class="text-accent">You Can Depend On</span></h1>
+              <p class="hero__desc">Reliable industrial and commercial equipment supporting demanding applications across multiple industries.</p>
+
+              <div class="hero__badges">
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
+                <span>Industrial Grade</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-building-columns" aria-hidden="true"></i></span>
+                <span>Trusted Products</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-table-cells" aria-hidden="true"></i></span>
+                <span>Wide Applications</span>
+              </div>
+              <div class="trust-badge">
+                <span class="trust-badge__icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+                <span>Reliable Support</span>
+              </div>
+              </div>
+
+              <div class="hero__actions">
+                <a class="btn btn--primary" href="pages/industrial-equipment.html">
+                  Explore Industrial Equipment
+                  <i class="fa-solid fa-circle-right" aria-hidden="true"></i>
+                </a>
+                <a class="hero__watch-link" href="pages/about.html">
+                  <span class="hero__watch-link__icon"><i class="fa-solid fa-play" aria-hidden="true"></i></span>
+                  About HM Unique
+                </a>
+              </div>
             </div>
-          </div>
-          <div class="hero__slide" data-slider-slide>
-            <div class="aspect-box aspect-box--tall" role="img" aria-label="Electricals, electronics and industrial tools product collage — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
             </div>
-          </div>
-          <div class="hero__slide" data-slider-slide>
-            <div class="aspect-box aspect-box--tall" role="img" aria-label="Electricals, electronics and industrial tools product collage — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
             </div>
-          </div>
-            </div>
-            <button type="button" class="btn-icon hero__nav hero__nav--prev" data-slider-prev aria-label="Previous slide"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 2 4 8l6 6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
-            <button type="button" class="btn-icon hero__nav hero__nav--next" data-slider-next aria-label="Next slide"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
-          </div>
-          <div class="hero__dots" data-slider-dots aria-label="Slide navigation"></div>
-        </div>
       </div>
+
+      <button type="button" class="btn-icon hero__nav hero__nav--prev" data-slider-prev aria-label="Previous slide"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <button type="button" class="btn-icon hero__nav hero__nav--next" data-slider-next aria-label="Next slide"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      <div class="hero__dots" data-slider-dots aria-label="Slide navigation"></div>
     </section>
 
     <section class="section section--light" aria-labelledby="categories-heading">
@@ -298,59 +484,59 @@
         </div>
         <div class="grid grid--4">
           <article class="card card--hover category-card" data-animate="fade-up">
-            <span class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+            <span class="card__icon"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
             <div class="category-card__media">
               <div class="aspect-box" role="img" aria-label="Electricals category image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="category-card__title">Electricals</h3>
             <p class="category-card__desc">Wires &amp; Cables, Switches, MCBs, Distribution Boards, Lighting &amp; more.</p>
-            <a class="link-arrow" href="pages/electricals.html">
+            <a class="btn btn--outline btn--sm" href="pages/electricals.html">
               Explore Category
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
           </article>
           <article class="card card--hover category-card" data-animate="fade-up">
-            <span class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <span class="card__icon"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
             <div class="category-card__media">
               <div class="aspect-box" role="img" aria-label="Electronics Components category image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="category-card__title">Electronics Components</h3>
             <p class="category-card__desc">CCTV, Sensors, Power Supplies, Automation, Test Instruments &amp; more.</p>
-            <a class="link-arrow" href="pages/electronics.html">
+            <a class="btn btn--outline btn--sm" href="pages/electronics.html">
               Explore Category
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
           </article>
           <article class="card card--hover category-card" data-animate="fade-up">
-            <span class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 18l3 3 6.6-6.3a4 4 0 0 0 5.1-5.4l-2.8 2.8-2-2 2.8-2.8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+            <span class="card__icon"><i class="fa-solid fa-wrench" aria-hidden="true"></i></span>
             <div class="category-card__media">
               <div class="aspect-box" role="img" aria-label="Hardwares category image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="category-card__title">Hardwares</h3>
             <p class="category-card__desc">Fasteners, Hand Tools, Power Tools, Safety, Plumbing &amp; more.</p>
-            <a class="link-arrow" href="pages/hardwares.html">
+            <a class="btn btn--outline btn--sm" href="pages/hardwares.html">
               Explore Category
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
           </article>
           <article class="card card--hover category-card" data-animate="fade-up">
-            <span class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V11l5 3v-3l5 3V8l6 4v9H3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M7 21v-4M12 21v-4M17 21v-4" stroke="currentColor" stroke-width="1.4"/></svg></span>
+            <span class="card__icon"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
             <div class="category-card__media">
               <div class="aspect-box" role="img" aria-label="Industrial &amp; Commercial Equipment category image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="category-card__title">Industrial &amp; Commercial Equipment</h3>
             <p class="category-card__desc">Motors, Bearings, Pneumatics, Hydraulics, Welding &amp; more.</p>
-            <a class="link-arrow" href="pages/industrial-equipment.html">
+            <a class="btn btn--outline btn--sm" href="pages/industrial-equipment.html">
               Explore Category
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
           </article>
         </div>
@@ -366,14 +552,14 @@
           </div>
           <a class="link-arrow" href="#product-categories">
             View All Products
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
         <div class="grid grid--6">
           <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Polycab FRLS Copper Cable product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="product-card__title">Polycab FRLS Copper Cable</h3>
@@ -383,7 +569,7 @@
           <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Schneider iC65N MCB product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="product-card__title">Schneider iC65N MCB</h3>
@@ -393,7 +579,7 @@
           <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Philips LED Highbay Light product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="product-card__title">Philips LED Highbay Light</h3>
@@ -403,7 +589,7 @@
           <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Hikvision CCTV Camera product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="product-card__title">Hikvision CCTV Camera</h3>
@@ -413,7 +599,7 @@
           <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Crompton Industrial Motor product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="product-card__title">Crompton Industrial Motor</h3>
@@ -423,7 +609,7 @@
           <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
               <div class="aspect-box aspect-box--square" role="img" aria-label="Bosch Professional Drill product image — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
             </div>
             <h3 class="product-card__title">Bosch Professional Drill</h3>
@@ -440,31 +626,41 @@
           <span class="eyebrow">Why Choose Us</span>
           <h2 class="section-heading__title" id="why-choose-heading">Commitment to Quality &amp; Service</h2>
         </div>
-        <div class="grid grid--5">
-          <div class="feature-item" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <h3 class="feature-item__title">Quality Products</h3>
-            <p class="feature-item__desc">We supply only high quality products from trusted manufacturers.</p>
+        <div class="grid grid--5 why-choose-grid">
+          <div class="feature-item feature-item--row" data-animate="fade-up">
+            <span class="feature-item__icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="feature-item__title">Quality Products</h3>
+              <p class="feature-item__desc">We supply only high quality products from trusted manufacturers.</p>
+            </div>
           </div>
-          <div class="feature-item" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
-            <h3 class="feature-item__title">Wide Range</h3>
-            <p class="feature-item__desc">One-stop solution for Electricals, Electronics, Hardwares &amp; Industrial tools.</p>
+          <div class="feature-item feature-item--row" data-animate="fade-up">
+            <span class="feature-item__icon"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="feature-item__title">Wide Range</h3>
+              <p class="feature-item__desc">One-stop solution for Electricals, Electronics, Hardwares &amp; Industrial tools.</p>
+            </div>
           </div>
-          <div class="feature-item" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3h6a3 3 0 0 1 3 3v6l-9 9-9-9 9-9z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="15" cy="9" r="1.4" fill="currentColor"/></svg></span>
-            <h3 class="feature-item__title">Competitive Pricing</h3>
-            <p class="feature-item__desc">Best value for your money across all products.</p>
+          <div class="feature-item feature-item--row" data-animate="fade-up">
+            <span class="feature-item__icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="feature-item__title">Competitive Pricing</h3>
+              <p class="feature-item__desc">Best value for your money across all products.</p>
+            </div>
           </div>
-          <div class="feature-item" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M13 10h4l4 3v3h-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="17" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
-            <h3 class="feature-item__title">Timely Delivery</h3>
-            <p class="feature-item__desc">Prompt delivery ensuring minimal downtime for your projects.</p>
+          <div class="feature-item feature-item--row" data-animate="fade-up">
+            <span class="feature-item__icon"><i class="fa-solid fa-truck" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="feature-item__title">Timely Delivery</h3>
+              <p class="feature-item__desc">Prompt delivery ensuring minimal downtime for your projects.</p>
+            </div>
           </div>
-          <div class="feature-item" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="2.5" y="13" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="17.5" y="13" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M20 19v1a3 3 0 0 1-3 3h-3" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
-            <h3 class="feature-item__title">Expert Support</h3>
-            <p class="feature-item__desc">Our team is always ready to help you find the right products.</p>
+          <div class="feature-item feature-item--row" data-animate="fade-up">
+            <span class="feature-item__icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="feature-item__title">Expert Support</h3>
+              <p class="feature-item__desc">Our team is always ready to help you find the right products.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -478,59 +674,55 @@
         </div>
         <div class="industries-grid">
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V11l5 3v-3l5 3V8l6 4v9H3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M7 21v-4M12 21v-4M17 21v-4" stroke="currentColor" stroke-width="1.4"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-industry" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Manufacturing</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0 1 16 0z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M2 17h20M11 5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-hard-hat" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Construction</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Power &amp; Energy</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-droplet" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Oil &amp; Gas</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M13 10h4l4 3v3h-8z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="17" cy="18" r="1.8" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-truck" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Transportation</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M8 8h2M14 8h2M8 12h2M14 12h2M8 16h2M14 16h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-city" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Infrastructure</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1M18.4 18.4l-2.1-2.1M7.7 7.7 5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-gears" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">Automation</h3>
           </div>
           <div class="feature-item feature-item--compact" data-animate="fade-up">
-            <span class="feature-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8M12 13v9" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></span>
+            <span class="feature-item__icon"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i></span>
             <h3 class="feature-item__title">OEMs</h3>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section section--sm" aria-labelledby="cta-heading">
-      <div class="container">
-        <div class="cta-band text-on-dark">
-          <div class="cta-band__inner">
-            <div class="cta-band__text">
-              <h2 class="cta-band__title" id="cta-heading">Looking for the Right Products for Your Project?</h2>
-              <p>Send us your requirement and our experts will get back to you with the best solution.</p>
-              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
-                Request a Quote Now
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-              </button>
+    <section class="cta-band cta-band--full text-on-dark" aria-labelledby="cta-heading">
+      <div class="container cta-band__inner">
+        <div class="cta-band__text">
+          <h2 class="cta-band__title" id="cta-heading">Looking for the Right Products for Your Project?</h2>
+          <p>Send us your requirement and our experts will get back to you with the best solution.</p>
+        </div>
+        <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
+          Request a Quote
+          <i class="fa-solid fa-circle-right" aria-hidden="true"></i>
+        </button>
+        <div class="cta-band__media">
+          <div class="aspect-box aspect-box--wide" role="img" aria-label="Request a quote illustration — placeholder, pending final product photography">
+              <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
             </div>
-            <div class="cta-band__media">
-              <div class="aspect-box aspect-box--square" role="img" aria-label="Request a quote illustration — placeholder, pending final product photography">
-              <div class="img-placeholder"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div>
-            </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -551,10 +743,10 @@
         </a>
         <p class="site-footer__about">HM UNIQUE is a trusted supplier of Electricals, Electronics, Hardwares and Industrial Tools committed to quality, reliability and customer satisfaction.</p>
         <div class="site-footer__socials">
-          <a aria-label="Facebook" aria-disabled="true">FB</a>
-          <a aria-label="LinkedIn" aria-disabled="true">IN</a>
-          <a aria-label="Instagram" aria-disabled="true">IG</a>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noopener" aria-label="WhatsApp">WA</a>
+          <a aria-label="Facebook" aria-disabled="true"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+          <a aria-label="LinkedIn" aria-disabled="true"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
+          <a aria-label="Instagram" aria-disabled="true"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
 
@@ -564,7 +756,6 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="pages/about.html">About Us</a></li>
           <li><a href="pages/contact.html">Contact Us</a></li>
-          <li><a href="pages/download-centre.html">Download Centre</a></li>
         </ul>
       </div>
 
@@ -581,9 +772,9 @@
       <div class="site-footer__col">
         <h3 class="site-footer__heading">Contact Us</h3>
         <ul class="site-footer__contact">
-          <li><span>123, Industrial Estate, Phase 1, Coimbatore &ndash; 641 021, Tamil Nadu, India</span></li>
-          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
-          <li><a href="mailto:info@hmunique.com">info@hmunique.com</a></li>
+          <li><span>No.271, Linghi Chetty Street, George Town, Chennai &ndash; 600001, Tamil Nadu, India</span></li>
+          <li><a href="tel:+917810001288">+91 78100 01288</a></li>
+          <li><a href="mailto:hmunitecenterprises02@gmail.com">hmunitecenterprises02@gmail.com</a></li>
           <li><span>Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span></li>
         </ul>
       </div>
@@ -603,7 +794,7 @@
 
 <div class="modal-overlay" data-modal="quote" aria-hidden="true">
   <div class="modal modal--quote" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <div class="modal__form-col">
       <div class="modal__header">
@@ -689,16 +880,16 @@
         </label>
 
         <p class="form-submit-error" data-form-error hidden role="alert">
-          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+919876543210">+91 98765 43210</a>.
+          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+917810001288">+91 78100 01288</a>.
         </p>
 
         <button type="submit" class="btn btn--primary btn--block mt-4">
           Submit Request
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </button>
 
         <p class="modal__note">
-          <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14"><path d="M8 1l6 2.5v4c0 4-2.6 6.7-6 7.5-3.4-.8-6-3.5-6-7.5v-4L8 1z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
           Your information is safe with us. We never share your data.
         </p>
       </form>
@@ -713,7 +904,7 @@
         <li><span aria-hidden="true">&#10003;</span><span><strong>Customer Satisfaction</strong><br />Your satisfaction is our top priority in every collaboration.</span></li>
       </ul>
       <div class="modal__help-box">
-        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+919876543210">+91 98765 43210</a></p>
+        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+917810001288">+91 78100 01288</a></p>
       </div>
     </aside>
   </div>
@@ -721,7 +912,7 @@
 
 <div class="modal-overlay" data-modal="thank-you" aria-hidden="true">
   <div class="modal modal--thank-you" role="dialog" aria-modal="true" aria-labelledby="thank-you-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <svg class="success-check" viewBox="0 0 84 84" aria-hidden="true">
       <circle class="success-check__circle" cx="42" cy="42" r="40" fill="none" stroke="currentColor" stroke-width="3" />
@@ -744,17 +935,17 @@
 </div>
 
 <div class="floating-actions floating-actions--left">
-  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/919876543210" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z" fill="currentColor"/></svg>
+  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
   </a>
 </div>
 <div class="floating-actions floating-actions--right">
-  <a class="floating-btn floating-btn--call" href="tel:+919876543210" aria-label="Call HM UNIQUE">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1z" fill="currentColor"/></svg>
+  <a class="floating-btn floating-btn--call" href="tel:+917810001288" aria-label="Call HM UNIQUE">
+    <i class="fa-solid fa-phone" aria-hidden="true"></i>
   </a>
 </div>
 <button type="button" class="scroll-top-btn" data-scroll-top aria-label="Scroll to top">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5l7 7M12 5l-7 7M12 5v14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
 </button>
 
   <script type="module" src="js/main.js" defer></script>

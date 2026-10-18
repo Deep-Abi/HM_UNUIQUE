@@ -14,11 +14,14 @@
   justify-content: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-pill);
-  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-medium);
   font-size: var(--fs-body-sm);
   line-height: 1;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
   transition: background-color var(--transition-base), color var(--transition-base),
     border-color var(--transition-base), transform var(--transition-base),
     box-shadow var(--transition-base);
@@ -28,20 +31,22 @@
   width: 16px;
   height: 16px;
 }
+.btn i {
+  font-size: 14px;
+}
 
 .btn:hover {
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Primary — solid teal */
 .btn--primary {
   background-color: var(--color-teal-500);
   color: var(--color-white);
-  box-shadow: var(--shadow-sm);
 }
 .btn--primary:hover {
   background-color: var(--color-teal-600);
-  box-shadow: var(--shadow-md);
 }
 
 /* Secondary — outline teal */
@@ -53,18 +58,6 @@
 .btn--outline:hover {
   background-color: var(--color-teal-500);
   color: var(--color-white);
-}
-
-/* Outline on dark background (hero / dark bands) */
-.btn--outline-light {
-  background-color: transparent;
-  color: var(--color-white);
-  border: 1.5px solid var(--overlay-white-50);
-}
-.btn--outline-light:hover {
-  background-color: var(--color-white);
-  color: var(--color-navy-900);
-  border-color: var(--color-white);
 }
 
 /* Dark solid — used on light backgrounds for secondary emphasis */
@@ -118,7 +111,8 @@
   color: transparent;
   pointer-events: none;
 }
-.btn.is-loading svg {
+.btn.is-loading svg,
+.btn.is-loading i {
   visibility: hidden;
 }
 .btn.is-loading::after {
@@ -134,27 +128,31 @@
   border-radius: 50%;
   animation: spin 700ms linear infinite;
 }
-.btn--outline.is-loading::after,
-.btn--outline-light.is-loading::after {
+.btn--outline.is-loading::after {
   border-color: var(--overlay-navy-40);
   border-top-color: var(--color-teal-500);
 }
 
-/* Text link with trailing arrow (e.g. "Explore Category", "View All Products") */
+/* Text link with trailing arrow (e.g. "View All Products") */
 .link-arrow {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   font-weight: var(--fw-semibold);
   font-size: var(--fs-body-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--color-teal-500);
 }
-.link-arrow svg {
+.link-arrow svg,
+.link-arrow i {
   width: 14px;
   height: 14px;
+  font-size: 12px;
   transition: transform var(--transition-fast);
 }
-.link-arrow:hover svg {
+.link-arrow:hover svg,
+.link-arrow:hover i {
   transform: translateX(3px);
 }
 
@@ -169,11 +167,14 @@
   background-color: var(--color-white);
   color: var(--color-navy-900);
   box-shadow: var(--shadow-md);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 .btn-icon:hover {
   background-color: var(--color-teal-500);
   color: var(--color-white);
+}
+.btn-icon i {
+  font-size: 16px;
 }
 
 /* ---------------------------------------------------------------------
@@ -226,6 +227,7 @@
 
 .breadcrumb__sep {
   color: var(--color-border);
+  font-size: 10px;
 }
 
 /* ---------------------------------------------------------------------
@@ -259,12 +261,15 @@
   width: 22px;
   height: 22px;
 }
+.card__icon i {
+  font-size: 20px;
+}
 
 /* .card__media, .card__title, .card__desc intentionally removed here
    (Phase 6 dead-code cleanup) — every actual card on the site uses a
    prefixed BEM variant instead (.category-card__title,
-   .product-card__title, .download-card__title, etc.), so these
-   generic unprefixed versions were never consumed by any page. */
+   .product-card__title, etc.), so these generic unprefixed versions
+   were never consumed by any page. */
 
 .card__specs {
   margin-bottom: var(--space-4);
@@ -274,6 +279,7 @@
   align-items: flex-start;
   gap: var(--space-2);
   font-size: var(--fs-body-sm);
+  font-weight: var(--fw-regular);
   color: var(--color-text-body);
 }
 .card__specs li + li {
@@ -284,6 +290,12 @@
   width: 14px;
   height: 14px;
   margin-top: 3px;
+  color: var(--color-teal-500);
+}
+.card__specs i {
+  flex-shrink: 0;
+  font-size: 12px;
+  margin-top: 4px;
   color: var(--color-teal-500);
 }
 
@@ -317,12 +329,44 @@
   color: var(--color-white);
 }
 
+/* Row layout variant — icon beside text (not centered above it),
+   plain outline icon with no circle badge background. Matches the
+   Home page's "Why Choose Us" dark-band treatment specifically,
+   which looks different from the shared centered/badged .feature-item
+   used elsewhere (e.g. About page) — scoped as a modifier so the base
+   .feature-item stays correct for those other, different contexts. */
+.feature-item--row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  text-align: left;
+}
+.feature-item--row .feature-item__icon {
+  background-color: transparent;
+  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+.feature-item--row .feature-item__icon i {
+  font-size: 32px;
+}
+
 /* Compact variant — icon + label only, no description paragraph.
-   Used by the Industries We Serve grid. */
+   Used by the Industries We Serve grid. Plain outline icon, no
+   circle badge background (unlike the base .feature-item__icon),
+   matching the concept reference exactly. */
 .feature-item--compact .feature-item__icon {
   width: 44px;
   height: 44px;
   margin-bottom: var(--space-3);
+  background-color: transparent;
+  border-radius: 0;
+  color: var(--color-navy-700);
+}
+.feature-item--compact .feature-item__icon i {
+  font-size: 36px;
 }
 .feature-item--compact .feature-item__title {
   font-size: var(--fs-body-sm);
@@ -368,6 +412,37 @@
   background-color: var(--color-navy-800-solid);
 }
 
+/* Full-bleed variant — the global "Looking for the Right Products"
+   CTA, which spans edge-to-edge with no rounded corners and sits
+   directly against the footer with zero gap, matching the concept
+   reference. Distinct from the base .cta-band (still used, rounded
+   and contained, by the category pages' catalogue download band). */
+.cta-band--full {
+  position: relative;
+  background-color: var(--color-cta-band-bg);
+  border-radius: 0;
+}
+/* Subtle diagonal light-streak texture visible in the reference —
+   CSS-only (no image asset), very low opacity so it reads as a faint
+   decorative pattern rather than a visible design element. */
+.cta-band--full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    var(--overlay-white-08) 0,
+    var(--overlay-white-08) 1px,
+    transparent 1px,
+    transparent 48px
+  );
+  pointer-events: none;
+}
+.cta-band--full > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Inner layout: text column + optional image column. Mobile-first —
    stacks by default, becomes a row at Tablet+ (see responsive.css).
    Reused on every page wherever a CTA band appears (Home, and every
@@ -376,22 +451,27 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-6);
-  padding: var(--space-7) var(--space-6);
+  gap: var(--space-5);
+  padding-block: var(--space-7);
 }
 
 .cta-band__text {
   flex: 1;
+  max-width: 420px;
 }
 
 .cta-band__title {
   margin-bottom: var(--space-2);
 }
 
+.cta-band__action {
+  flex-shrink: 0;
+}
+
 .cta-band__media {
   flex-shrink: 0;
   width: 100%;
-  max-width: 220px;
+  max-width: 320px;
 }
 
 /* ---------------------------------------------------------------------
@@ -423,6 +503,9 @@
 .trust-badge__icon svg {
   width: 100%;
   height: 100%;
+}
+.trust-badge__icon i {
+  font-size: 16px;
 }
 
 /* ---------------------------------------------------------------------
@@ -477,6 +560,10 @@
   height: 40%;
   max-width: 64px;
   max-height: 64px;
+  opacity: 0.5;
+}
+.img-placeholder i {
+  font-size: 40px;
   opacity: 0.5;
 }
 
@@ -562,6 +649,9 @@
 .category-tabs__item svg {
   width: 22px;
   height: 22px;
+}
+.category-tabs__item i {
+  font-size: 20px;
 }
 
 .category-tabs__item span {
@@ -659,6 +749,11 @@
   color: var(--color-teal-500);
   flex-shrink: 0;
 }
+.catalogue-band__feature i {
+  font-size: 14px;
+  color: var(--color-teal-500);
+  flex-shrink: 0;
+}
 
 /* ---------------------------------------------------------------------
    13. STATS STRIP
@@ -704,6 +799,9 @@
   width: 24px;
   height: 24px;
 }
+.floating-btn i {
+  font-size: 22px;
+}
 
 .floating-btn--whatsapp {
   background-color: var(--color-whatsapp-brand);
@@ -740,6 +838,9 @@
 .scroll-top-btn svg {
   width: 18px;
   height: 18px;
+}
+.scroll-top-btn i {
+  font-size: 16px;
 }
 
 /* When the WhatsApp/Call floating buttons and scroll-to-top would
@@ -809,6 +910,9 @@
 }
 .modal__close:hover {
   background-color: var(--color-border);
+}
+.modal__close i {
+  font-size: 15px;
 }
 
 .modal__form-col {
@@ -985,10 +1089,10 @@ textarea.form-field__control {
 
 /* ---------------------------------------------------------------------
    14. PAGE BANNER (dark inner hero)
-   Shared by About Us, Contact Us, and Download Centre — the "inner
-   banner hero" pattern from the Phase 1 architecture (distinct from
-   both the Home hero and the light-background category-hero). Mobile-
-   first: single column, centered; media/badge overlay is optional.
+   Shared by About Us and Contact Us — the "inner banner hero" pattern
+   from the Phase 1 architecture (distinct from both the Home hero and
+   the light-background category-hero). Mobile-first: single column,
+   centered; media/badge overlay is optional.
    --------------------------------------------------------------------- */
 .page-banner {
   position: relative;
@@ -1002,13 +1106,10 @@ textarea.form-field__control {
   z-index: 1;
 }
 
+/* Modifier only — base label styling comes from the shared .eyebrow
+   utility (composed together in the HTML: class="eyebrow page-banner__eyebrow"),
+   this class exists purely to widen the bottom margin for this context. */
 .page-banner__eyebrow {
-  display: inline-block;
-  font-size: var(--fs-eyebrow);
-  font-weight: var(--fw-semibold);
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-teal-500);
   margin-bottom: var(--space-3);
 }
 
@@ -1036,6 +1137,11 @@ textarea.form-field__control {
 .page-banner__quicklink svg {
   width: 18px;
   height: 18px;
+  color: var(--color-teal-500);
+  flex-shrink: 0;
+}
+.page-banner__quicklink i {
+  font-size: 16px;
   color: var(--color-teal-500);
   flex-shrink: 0;
 }
@@ -1069,14 +1175,13 @@ textarea.form-field__control {
 /* ---------------------------------------------------------------------
    15. MILESTONE ITEM (About page journey/strengths grid)
    --------------------------------------------------------------------- */
+/* Base visual styling (background, border, radius, padding) now comes
+   from the shared .card class (composed in HTML: class="card milestone")
+   — this rule only adds the flex-column layout unique to milestones. */
 .milestone {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
 }
 .milestone__icon {
   display: inline-flex;
@@ -1090,7 +1195,7 @@ textarea.form-field__control {
 }
 .milestone__year {
   font-size: var(--fs-label);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
   color: var(--color-teal-600);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1105,13 +1210,12 @@ textarea.form-field__control {
 
 /* ---------------------------------------------------------------------
    16. INFO CARD (Contact page — contact details / branch card)
+   Base visual styling (background, border, radius, padding) now comes
+   entirely from the shared .card class (composed in HTML as
+   class="card info-card") — .info-card itself has no rules of its
+   own, it exists purely as a scoping hook for its child elements
+   below (.info-card__title, .info-card__list, etc.).
    --------------------------------------------------------------------- */
-.info-card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
-}
 
 .info-card__title {
   margin-bottom: var(--space-4);
@@ -1133,6 +1237,13 @@ textarea.form-field__control {
   height: 18px;
   color: var(--color-teal-500);
   margin-top: 2px;
+}
+.info-card__list i {
+  flex-shrink: 0;
+  font-size: 16px;
+  width: 18px;
+  color: var(--color-teal-500);
+  margin-top: 3px;
 }
 
 /* ---------------------------------------------------------------------
@@ -1178,28 +1289,11 @@ textarea.form-field__control {
   width: 20px;
   height: 20px;
 }
+.whatsapp-cta__icon i {
+  font-size: 18px;
+}
 .whatsapp-cta__text {
   flex: 1;
-}
-
-/* ---------------------------------------------------------------------
-   17. DOWNLOAD CARD (Download Centre)
-   Composes from the base .card + a dedicated media/action layout.
-   --------------------------------------------------------------------- */
-.download-card__media {
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  margin-bottom: var(--space-4);
-  background-color: var(--color-surface-light);
-}
-.download-card__title {
-  margin-bottom: var(--space-2);
-}
-.download-card__desc {
-  font-size: var(--fs-body-sm);
-  color: var(--color-text-body);
-  margin-bottom: var(--space-4);
-  flex-grow: 1;
 }
 
 /* ---------------------------------------------------------------------
@@ -1212,13 +1306,21 @@ textarea.form-field__control {
   align-items: start;
 }
 
+/* Google Maps embed — rounded corners matching the site's media
+   containers, sits inside the "Find Us Here" info-card. */
+.map-embed {
+  border-radius: var(--radius-sm);
+}
+
+/* Base visual styling comes from the shared .card class (composed in
+   HTML: class="card branch-card") — padding is reset to 0 here since
+   the card's image must bleed to the edge; padding lives on
+   .branch-card__body instead (below) for the text portion only. */
 .branch-card {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  padding: 0;
   overflow: hidden;
 }
 .branch-card__media .aspect-box {

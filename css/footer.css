@@ -54,6 +54,9 @@
 .site-footer__socials a:hover {
   background-color: var(--color-teal-500);
 }
+.site-footer__socials a i {
+  font-size: 15px;
+}
 
 .site-footer__heading {
   font-size: var(--fs-body-sm);
@@ -92,6 +95,13 @@
   height: 18px;
   color: var(--color-teal-500);
   margin-top: 2px;
+}
+.site-footer__contact i {
+  flex-shrink: 0;
+  font-size: 16px;
+  width: 18px;
+  color: var(--color-teal-500);
+  margin-top: 3px;
 }
 
 .site-footer__bottom {

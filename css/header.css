@@ -8,6 +8,9 @@
 
 /* ---------------------------------------------------------------------
    1. TOP UTILITY BAR
+   Phone (left), two email addresses (right) — no social icons or
+   secondary links here (social icons live only in the footer; see
+   footer.css).
    --------------------------------------------------------------------- */
 .utility-bar {
   background-color: var(--color-navy-900);
@@ -23,66 +26,35 @@
   padding-block: var(--space-2);
 }
 
-.utility-bar__contact {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-}
-
-/* Mobile-first: only the first contact item (phone) shows by default
-   to avoid crowding a 320-375px header; responsive.css reveals the
-   rest from Large Mobile upward. */
-.utility-bar__contact > *:not(:first-child) {
-  display: none;
-}
-
-.utility-bar__contact a {
+.utility-bar__phone,
+.utility-bar__email {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   color: var(--color-text-on-dark-muted);
+  white-space: nowrap;
   transition: color var(--transition-fast);
 }
-.utility-bar__contact a:hover {
+.utility-bar__phone:hover,
+.utility-bar__email:hover {
   color: var(--color-white);
 }
+.utility-bar__phone i,
+.utility-bar__email i {
+  font-size: 13px;
+}
 
-/* Mobile-first: hidden by default (Download Centre / social icons
-   icons need more width than a phone screen comfortably offers);
-   responsive.css reveals this from Tablet upward. */
-.utility-bar__links {
-  display: none;
+.utility-bar__emails {
+  display: flex;
   align-items: center;
   gap: var(--space-5);
 }
 
-.utility-bar__links a {
-  color: var(--color-text-on-dark-muted);
-  transition: color var(--transition-fast);
-}
-.utility-bar__links a:hover {
-  color: var(--color-white);
-}
-
-.utility-bar__socials {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.utility-bar__socials a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: var(--overlay-white-08);
-  color: var(--color-white);
-  transition: background-color var(--transition-fast);
-}
-.utility-bar__socials a:hover {
-  background-color: var(--color-teal-500);
+/* Mobile-first: only the phone shows by default to avoid crowding a
+   320-375px header; responsive.css reveals the primary email from
+   Tablet upward, and the secondary email from Desktop upward. */
+.utility-bar__emails {
+  display: none;
 }
 
 /* ---------------------------------------------------------------------
@@ -94,6 +66,15 @@
   z-index: var(--z-header);
   background-color: var(--color-white);
   box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
+}
+
+/* Toggled by navigation.js once the page scrolls past the utility
+   bar — a slightly stronger shadow so the sticky header reads as
+   "elevated" above the page content. No layout/height change, so
+   this never causes layout shift. */
+.site-header.is-scrolled {
+  box-shadow: var(--shadow-md);
 }
 
 .site-header__inner {
@@ -131,6 +112,7 @@
 
 .site-logo__tagline {
   font-size: 0.6875rem;
+  font-weight: var(--fw-medium);
   letter-spacing: 0.03em;
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -186,13 +168,21 @@
 }
 
 .primary-nav__chevron {
-  width: 10px;
-  height: 10px;
+  font-size: 10px;
   transition: transform var(--transition-fast);
 }
 
 .primary-nav__item--dropdown:hover .primary-nav__chevron,
 .primary-nav__item--dropdown.is-open .primary-nav__chevron {
+  transform: rotate(180deg);
+}
+
+/* Same chevron-flip treatment for the mobile drawer's Products
+   accordion toggle, which shares the .primary-nav__chevron icon but
+   sits inside a different wrapper (.mobile-nav__item, not
+   .primary-nav__item--dropdown) — without this rule the desktop
+   dropdown's chevron animated on open but the mobile one never did. */
+.mobile-nav__item--expanded .primary-nav__chevron {
   transform: rotate(180deg);
 }
 
@@ -255,9 +245,8 @@
   color: var(--color-white);
   flex-shrink: 0;
 }
-.products-dropdown__icon svg {
-  width: 16px;
-  height: 16px;
+.products-dropdown__icon i {
+  font-size: 14px;
 }
 
 /* ---------------------------------------------------------------------
@@ -268,6 +257,11 @@
   align-items: center;
   gap: var(--space-4);
 }
+
+/* Uppercase text is now part of the shared .btn base class (see
+   components.css) since it's used consistently across every button
+   sitewide, not just navigation — this scoped override is no longer
+   needed. */
 
 /* Mobile-first: the hamburger is visible by default; responsive.css
    hides it again once .primary-nav takes over at the Laptop tier. */
@@ -336,6 +330,9 @@
   border-radius: 50%;
   background-color: var(--color-surface-light);
 }
+.mobile-nav__close i {
+  font-size: 16px;
+}
 
 .mobile-nav__list > li {
   border-bottom: 1px solid var(--color-border);
@@ -366,14 +363,27 @@
 }
 
 .mobile-nav__submenu-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   padding-block: var(--space-3);
   padding-left: var(--space-4);
+  font-weight: var(--fw-medium);
   color: var(--color-text-body);
 }
 .mobile-nav__submenu-link:hover,
 .mobile-nav__submenu-link[aria-current="page"] {
   color: var(--color-teal-500);
+}
+
+.mobile-nav__submenu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex-shrink: 0;
+  color: var(--color-teal-500);
+  font-size: 15px;
 }
 
 .mobile-nav__cta {
