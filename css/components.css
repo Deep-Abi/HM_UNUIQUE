@@ -42,21 +42,21 @@
 
 /* Primary — solid teal */
 .btn--primary {
-  background-color: var(--color-teal-500);
+  background-color: var(--color-teal-brand);
   color: var(--color-white);
 }
 .btn--primary:hover {
-  background-color: var(--color-teal-600);
+  background-color: var(--color-teal-brand-hover);
 }
 
 /* Secondary — outline teal */
 .btn--outline {
   background-color: transparent;
-  color: var(--color-teal-500);
-  border: 1.5px solid var(--color-teal-500);
+  color: var(--color-teal-brand);
+  border: 1.5px solid var(--color-teal-brand);
 }
 .btn--outline:hover {
-  background-color: var(--color-teal-500);
+  background-color: var(--color-teal-brand);
   color: var(--color-white);
 }
 
@@ -142,7 +142,7 @@
   font-size: var(--fs-body-sm);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
 }
 .link-arrow svg,
 .link-arrow i {
@@ -217,7 +217,7 @@
   transition: color var(--transition-fast);
 }
 .breadcrumb a:hover {
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
 }
 
 .breadcrumb__current {
@@ -299,14 +299,23 @@
   color: var(--color-teal-500);
 }
 
+/* Root cause of the category-page product cards overflowing at 768 and
+   992-1080px: from 480px this row switched to side-by-side, and its two
+   nowrap buttons (156px + 154px + gap) made every card's min-content
+   width 372px. With 1fr grid tracks that floor could not shrink, so two
+   or three 372px cards needed more than the container had. The row now
+   wraps (buttons keep their natural width and drop to a second line when
+   the card is narrower) and the grid tracks are minmax(0, 1fr). */
 .card__actions {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   gap: var(--space-3);
 }
 .card__actions .btn {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
 }
 
 /* Icon-badge feature column (why-choose-us style repeated block) */
@@ -581,7 +590,7 @@
 
 .category-hero__inner {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: var(--space-6);
 }
@@ -597,7 +606,7 @@
 
 .category-hero__badges {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3) var(--space-5);
 }
 
@@ -661,11 +670,11 @@
 }
 
 .category-tabs__item:hover {
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
 }
 
 .category-tabs__item.is-active {
-  color: var(--color-teal-600);
+  color: var(--color-teal-brand);
   border-bottom-color: var(--color-teal-500);
 }
 
@@ -760,7 +769,7 @@
    --------------------------------------------------------------------- */
 .stats-strip {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-5);
   text-align: center;
 }
@@ -768,25 +777,34 @@
 /* ---------------------------------------------------------------------
    6. FLOATING ACTION BUTTONS (WhatsApp / Call / Scroll to top)
    --------------------------------------------------------------------- */
+/* Diagnosis: three fixed controls (WhatsApp 52px, Call 52px, scroll-top
+   44px) sat 24px in from the corners at every size. On a 320-568px-tall
+   landscape phone that is roughly a third of the visible height, and on a
+   portrait phone they land directly on hero/section text. They stay
+   fixed and below the drawer (600/599) and modal (900) layers, but are
+   now smaller and tighter on small screens (full size returns from
+   768px), respect device safe areas, and shrink again on short screens;
+   the page also reserves bottom clearance (see .site-footer__bottom and
+   --floating-clearance) so they never rest on the last line of content. */
 .floating-actions {
   position: fixed;
-  bottom: var(--space-5);
+  bottom: max(var(--space-3), env(safe-area-inset-bottom));
   z-index: var(--z-floating-buttons);
 }
 
 .floating-actions--left {
-  left: var(--space-5);
+  left: max(var(--space-3), env(safe-area-inset-left));
 }
 .floating-actions--right {
-  right: var(--space-5);
+  right: max(var(--space-3), env(safe-area-inset-right));
 }
 
 .floating-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   color: var(--color-white);
   box-shadow: var(--shadow-lg);
@@ -800,7 +818,34 @@
   height: 24px;
 }
 .floating-btn i {
-  font-size: 22px;
+  font-size: 20px;
+}
+
+/* Eased out of the way while they would sit on top of copy or a call to
+   action (see js/floating-avoid.js). Keyboard focus always shows them. */
+.floating-btn,
+.scroll-top-btn {
+  transition-property: transform, opacity, visibility;
+}
+/* The fixed .floating-actions wrappers keep a 44px box even when the button
+   inside is eased away, and that empty box still swallowed clicks on a form
+   field beneath it. Only the buttons themselves take pointer input now (an
+   eased-away button is pointer-events:none, below). */
+.floating-actions {
+  pointer-events: none;
+}
+.floating-actions .floating-btn {
+  pointer-events: auto;
+}
+.floating-btn.is-avoiding,
+.scroll-top-btn.is-visible.is-avoiding {
+  opacity: 0;
+  pointer-events: none;
+}
+.floating-btn.is-avoiding:focus-visible,
+.scroll-top-btn.is-visible.is-avoiding:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .floating-btn--whatsapp {
@@ -812,10 +857,13 @@
 
 .scroll-top-btn {
   position: fixed;
-  right: var(--space-5);
-  bottom: var(--space-5);
-  width: 44px;
-  height: 44px;
+  /* Sits to the LEFT of the Call button (not stacked above it), so the
+     bottom-right stack is one button tall: it leaves the footer's legal
+     links uncovered and Call no longer jumps when scroll-top appears. */
+  right: calc(max(var(--space-3), env(safe-area-inset-right)) + 44px + var(--space-2));
+  bottom: calc(max(var(--space-3), env(safe-area-inset-bottom)) + 2px);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: var(--color-navy-900);
   color: var(--color-white);
@@ -843,18 +891,18 @@
   font-size: 16px;
 }
 
-/* When the WhatsApp/Call floating buttons and scroll-to-top would
-   collide (bottom-right), scroll-to-top stacks above the call button;
-   handled by navigation.js toggling a `.has-scroll-top` class on
-   .floating-actions--right so spacing stays consistent site-wide. */
-.floating-actions--right.has-scroll-top .floating-btn--call {
-  margin-bottom: var(--space-7);
-}
+/* main.js still toggles `.has-scroll-top` on .floating-actions--right when
+   scroll-top is shown. It used to lift the Call button above scroll-top;
+   scroll-top now sits beside Call, so the class needs no rule. */
 
 /* ---------------------------------------------------------------------
    7. MODALS — Request a Quote + Thank You
    --------------------------------------------------------------------- */
 .modal-overlay {
+  /* Mobile-base gutter around the dialog; responsive.css restores the
+     roomier 24px from 480px up. The dialog's max-height is derived from
+     this same value so the two can never disagree. */
+  --modal-gutter: var(--space-3);
   position: fixed;
   inset: 0;
   background-color: var(--overlay-navy-55);
@@ -862,7 +910,7 @@
   display: none;
   align-items: center;
   justify-content: center;
-  padding: var(--space-5);
+  padding: var(--modal-gutter);
 }
 .modal-overlay.is-open {
   display: flex;
@@ -874,8 +922,13 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-modal);
   width: 100%;
-  max-height: 90vh;
+  /* 90vh counted the area behind a mobile browser's URL bar and ignored
+     the overlay padding; on a 320px-tall landscape phone that let the
+     dialog run past the screen. dvh + the gutter keeps it inside. */
+  max-height: calc(100vh - 2 * var(--modal-gutter));
+  max-height: calc(100dvh - 2 * var(--modal-gutter));
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* Mobile-first: the Quote modal's two-column layout collapses to a
@@ -884,19 +937,30 @@
 .modal--quote {
   max-width: 900px;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+}
+.modal--quote .modal__form-col {
+  grid-area: 1 / 1;
+}
+.modal--quote .modal__aside-col {
+  grid-area: 2 / 1;
 }
 
 .modal--thank-you {
   max-width: 460px;
   text-align: center;
-  padding: var(--space-8) var(--space-6);
+  /* No top padding: the sticky close button must start at the very top of
+     the dialog's content box (a sticky item cannot sit outside it), and the
+     checkmark below carries the 64px of top space as its own margin. */
+  padding: 0 var(--space-6) var(--space-8);
 }
 
 .modal__close {
   position: absolute;
   top: var(--space-4);
   right: var(--space-4);
+  flex-shrink: 0;
   width: 34px;
   height: 34px;
   display: inline-flex;
@@ -910,6 +974,32 @@
 }
 .modal__close:hover {
   background-color: var(--color-border);
+}
+/* The dialog scrolls (it is capped to the screen height), and an absolutely
+   positioned close button scrolls away with the content, so on a short
+   screen it was unreachable once the form was scrolled. Sticky keeps it in
+   view. The quote dialog is a grid, and a sticky item can only stick within
+   its own grid area, so the button is given an area spanning the whole
+   dialog; the thank-you dialog is a plain block, so margins pull the button
+   back to the corner without adding any height. */
+.modal--quote .modal__close {
+  position: sticky;
+  grid-area: 1 / 1 / -1 / -1;
+  align-self: start;
+  justify-self: end;
+  top: var(--space-3);
+  right: auto;
+  margin: var(--space-3) var(--space-3) 0 0;
+}
+.modal--thank-you .modal__close {
+  position: sticky;
+  display: flex;
+  top: var(--space-3);
+  right: auto;
+  margin: var(--space-3) calc(var(--space-3) - var(--space-6)) calc(-34px - var(--space-3)) auto;
+}
+.modal--thank-you .success-check {
+  margin-top: var(--space-8);
 }
 .modal__close i {
   font-size: 15px;
@@ -931,6 +1021,11 @@
   align-items: flex-start;
   gap: var(--space-3);
   margin-bottom: var(--space-5);
+  /* keep the title and subtitle clear of the close button in the corner */
+  padding-right: var(--space-7);
+}
+.modal__header > div {
+  min-width: 0;
 }
 
 .modal__header-icon {
@@ -959,6 +1054,13 @@
   align-items: flex-start;
   gap: var(--space-3);
   font-size: var(--fs-body-sm);
+}
+.modal__why-list li > span:last-child,
+.modal__help-box,
+.modal__note,
+.modal--thank-you .modal__note-box > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .modal__why-list li + li {
   margin-top: var(--space-4);
@@ -1003,12 +1105,13 @@
    --------------------------------------------------------------------- */
 .form-row {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
 }
 
 .form-field {
   margin-bottom: var(--space-4);
+  min-width: 0;
 }
 
 .form-field__label {
@@ -1024,17 +1127,30 @@
 }
 
 .form-field__control {
+  /* A text input / select has an intrinsic width (about 350px once its
+     padding is added) that counts toward its parent's min-content size
+     even though width is 100%. Inside a 1fr grid track that floor held
+     the whole form open, which is what pushed the Contact form 55px
+     past the viewport at 320px and 15px at 360px. min-width: 0 lets the
+     control shrink to its container; max-width keeps it from exceeding. */
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
   background-color: var(--color-white);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 .form-field__control:focus {
-  outline: none;
-  border-color: var(--color-teal-500);
-  box-shadow: 0 0 0 3px var(--color-teal-100);
+  /* Stage 7A: the old focus cue was a 1px teal-500 border (3.57:1) and a
+     teal-100 halo (1.1:1). Border and a 2px ring are now brand teal
+     (7.70:1); the transparent outline keeps a visible ring in forced-
+     colours mode, where box-shadow is dropped. */
+  outline: 2px solid transparent;
+  border-color: var(--color-teal-brand);
+  box-shadow: 0 0 0 2px var(--color-teal-brand);
 }
 
 textarea.form-field__control {
@@ -1050,6 +1166,7 @@ textarea.form-field__control {
   font-size: var(--fs-label);
   color: var(--color-error);
   margin-top: var(--space-2);
+  overflow-wrap: anywhere;
 }
 .form-field--error .form-field__error-msg {
   display: block;
@@ -1064,18 +1181,45 @@ textarea.form-field__control {
 }
 .form-checkbox input {
   margin-top: 3px;
+  flex-shrink: 0;
+}
+.form-checkbox > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .form-checkbox a {
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
+}
+/* Matches the .btn[aria-disabled="true"] treatment used elsewhere on
+   the site: a link with no destination yet (e.g. the privacy policy,
+   pending an approved page) is shown as visibly non-interactive rather
+   than looking like a working link that silently does nothing. */
+.form-checkbox a[aria-disabled="true"] {
+  /* Stage 7A: the old opacity:0.6 teal measured 2.09:1 on white. It is
+     now body-grey (5.87:1) with a dotted underline: still visibly NOT a
+     working link, but legible. No policy text or link target is added. */
+  color: var(--color-text-body);
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Required-checkbox validation error (e.g. unchecked privacy consent)
+   reuses the existing .form-field--error wrapper convention so no new
+   JS pattern is needed. */
+.form-field--error .form-checkbox {
+  color: var(--color-error);
 }
 
 /* Form-level submission error message — shown instead of a
    console.error() when the (future) submit endpoint fails, so the
    person sees what went wrong rather than it being silently logged. */
 .form-submit-error {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  /* block (not flex): the message is running text with an inline phone
+     link, and as flex items the text and link could not wrap together. */
+  display: block;
+  overflow-wrap: anywhere;
   font-size: var(--fs-body-sm);
   color: var(--color-error);
   background-color: var(--color-error-tint);
@@ -1085,6 +1229,10 @@ textarea.form-field__control {
 }
 .form-submit-error[hidden] {
   display: none;
+}
+.form-submit-error a {
+  text-decoration: underline;
+  font-weight: var(--fw-semibold);
 }
 
 /* ---------------------------------------------------------------------
@@ -1231,6 +1379,10 @@ textarea.form-field__control {
 .info-card__list li + li {
   margin-top: var(--space-4);
 }
+.info-card__list li > :not(svg):not(i) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .info-card__list svg {
   flex-shrink: 0;
   width: 18px;
@@ -1257,7 +1409,7 @@ textarea.form-field__control {
    --------------------------------------------------------------------- */
 .industries-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-6) var(--space-4);
   text-align: center;
 }
@@ -1267,6 +1419,10 @@ textarea.form-field__control {
    WhatsApp button which stays global on every page. */
 .whatsapp-cta {
   display: flex;
+  /* wrap: icon + text + a nowrap button need ~270px, more than the
+     contact card has inside its padding at 320px, so the button dropped
+     6px past the viewport. Wrapping lets the button take its own line. */
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3);
   background-color: var(--color-teal-100);
@@ -1293,7 +1449,8 @@ textarea.form-field__control {
   font-size: 18px;
 }
 .whatsapp-cta__text {
-  flex: 1;
+  flex: 1 1 10rem;
+  min-width: 0;
 }
 
 /* ---------------------------------------------------------------------
@@ -1301,7 +1458,7 @@ textarea.form-field__control {
    --------------------------------------------------------------------- */
 .contact-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
 }
@@ -1318,7 +1475,7 @@ textarea.form-field__control {
    .branch-card__body instead (below) for the text portion only. */
 .branch-card {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   padding: 0;
   overflow: hidden;
@@ -1340,7 +1497,7 @@ textarea.form-field__control {
    --------------------------------------------------------------------- */
 .who-we-are {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: center;
 }

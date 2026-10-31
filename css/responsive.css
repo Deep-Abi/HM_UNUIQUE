@@ -19,18 +19,52 @@
 
    No layout shift, no horizontal scrolling, no overlapping elements
    at any tier.
+
+   One deliberate exception to "every rule is a min-width query": the
+   two visibility-helper BASE rules directly below. They must live in a
+   stylesheet that loads after components.css (see the note in
+   utilities.css), and this is the only such file that also owns the
+   tablet flip they pair with.
    ========================================================================== */
 
 /* ---------------------------------------------------------------------
+   VISIBILITY HELPERS — mobile base state (flipped at TABLET below)
+   --------------------------------------------------------------------- */
+.hide-on-mobile {
+  display: none;
+}
+.show-on-mobile {
+  display: inline-flex;
+}
+
+/* ---------------------------------------------------------------------
    LARGE MOBILE — >= 480px
+   The logo tagline is secondary information: below this width it would
+   wrap onto 3-5 lines beside the hamburger and make the sticky header
+   disproportionately tall, so it's hidden there (the logo link keeps
+   its aria-label, so nothing is lost for assistive tech) and returns
+   once there's room for it.
    --------------------------------------------------------------------- */
 @media (min-width: 480px) {
   .grid--2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .card__actions {
     flex-direction: row;
+  }
+
+  .site-logo__tagline {
+    display: block;
+  }
+
+  .site-logo__mark img {
+    height: 44px;
+  }
+
+  /* roomier gutter around quote / thank-you dialogs */
+  .modal-overlay {
+    --modal-gutter: var(--space-5);
   }
 }
 
@@ -70,18 +104,54 @@
   .grid--3,
   .grid--4,
   .grid--5 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .grid--6 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .form-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
-  .modal--quote {
-    grid-template-columns: 1.2fr 1fr;
+  /* Stage 7A: the quote modal's form|sidebar split (and paired fields) used
+     to start here, leaving inputs ~156px wide at 768px. Below 992px the modal
+     stays a single column; see the 992px block and the container query. */
+  .modal--quote .form-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .modal__form-col {
+    container-type: inline-size;
+    container-name: quote-form;
+  }
+  @container quote-form (min-width: 32rem) {
+    .modal--quote .form-row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  /* floating controls return to full size and the roomier inset */
+  .floating-actions {
+    bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  }
+  .floating-actions--left {
+    left: max(var(--space-5), env(safe-area-inset-left));
+  }
+  .floating-actions--right {
+    right: max(var(--space-5), env(safe-area-inset-right));
+  }
+  .floating-btn {
+    width: 52px;
+    height: 52px;
+  }
+  .floating-btn i {
+    font-size: 22px;
+  }
+  .scroll-top-btn {
+    width: 44px;
+    height: 44px;
+    right: calc(max(var(--space-5), env(safe-area-inset-right)) + 52px + var(--space-3));
+    bottom: calc(max(var(--space-5), env(safe-area-inset-bottom)) + 4px);
   }
 
   .cta-band__inner {
@@ -97,11 +167,11 @@
   }
 
   .industries-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .category-hero__inner {
-    grid-template-columns: 1.15fr 1fr;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   }
 
   .catalogue-band__inner {
@@ -115,23 +185,23 @@
   }
 
   .stats-strip {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .contact-grid {
-    grid-template-columns: 1.3fr 1fr;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   }
 
   .who-we-are {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .branch-card {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 220px minmax(0, 1fr);
   }
 
   .site-footer__grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .site-footer__bottom-inner {
@@ -147,6 +217,14 @@
    nominal column counts; footer moves to its full 4-column layout.
    --------------------------------------------------------------------- */
 @media (min-width: 992px) {
+  .modal--quote {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+  .modal--quote .modal__aside-col {
+    grid-area: 1 / 2;
+  }
+
   .primary-nav {
     display: flex;
   }
@@ -156,20 +234,20 @@
   }
 
   .grid--3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .grid--4 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .grid--5 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .grid--6 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .site-footer__grid {
-    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
   }
 }
 
@@ -197,27 +275,27 @@
   }
 
   .grid--2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .grid--3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .grid--4 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .grid--5 {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
   .grid--6 {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .industries-grid {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 
   .stats-strip {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   /* Column divider lines between Why Choose Us items — only added
@@ -232,6 +310,212 @@
 
   .hide-on-desktop {
     display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   HOMEPAGE — Stage 3
+   Everything below targets hooks that exist only on the homepage
+   (.category-grid, .why-choose-grid, .cta-band--home, .hero__*), so no
+   other page is affected. NOTE ON SPECIFICITY: pages/home.css loads AFTER
+   this file, so a bare one-class selector here would lose to the same
+   selector's base rule in home.css; the hero rules below are therefore
+   prefixed with .hero to out-rank them.
+   --------------------------------------------------------------------- */
+
+/* Category cards: FIVE cards. One column on phones; from 552px centred
+   flex rows (2 per row to 991px: 2+2+1, 3 per row from 992px: 3+2), so an
+   incomplete last row is centred instead of hanging on the left, and no
+   card is squeezed into a cramped five-across row. (The previous
+   four-column rule from 1200px would have left a single orphan.) The
+   shared .grid--4 jumped to FOUR columns at 992px, where each card was
+   only ~218px wide: narrower than the "Explore Category" button, which
+   spilled into the card's padding; 2-3 roomy columns avoid that. Cards in
+   a row stay equal height (flex stretch). */
+@media (min-width: 552px) {
+  .grid.category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .category-grid > * {
+    flex: 0 0 calc((100% - var(--grid-gap)) / 2);
+    min-width: 0;
+  }
+}
+@media (min-width: 992px) {
+  .category-grid > * {
+    flex: 0 0 calc((100% - 2 * var(--grid-gap)) / 3);
+  }
+}
+
+/* Why Choose Us: five items. As a plain grid they left a single orphan
+   (2+2+1 at tablet, 4+1 at 992-1199). Between 768 and 1199 the rows are
+   centred flex rows instead (2 per row, then 3 per row), so an incomplete
+   last row is centred rather than hanging on the left. From 1200px the
+   original five-column grid returns. */
+@media (min-width: 768px) {
+  .grid.why-choose-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .why-choose-grid > * {
+    flex: 0 0 calc((100% - var(--grid-gap)) / 2);
+  }
+}
+@media (min-width: 992px) {
+  .why-choose-grid > * {
+    flex: 0 0 calc((100% - 2 * var(--grid-gap)) / 3);
+  }
+}
+@media (min-width: 1200px) {
+  .grid.why-choose-grid {
+    display: grid;
+  }
+  .why-choose-grid > * {
+    flex: initial;
+  }
+}
+
+/* Bottom CTA band. Between 768 and 991 the shared row layout gave the
+   heading whatever width was left after a 232px button and a 320px image
+   (about 130px: six lines of heading), and the image was pinned low and
+   far right. Here the button sits under the text and the image takes its
+   own column. From 992px the original single row is back. */
+@media (min-width: 768px) {
+  .cta-band--home .cta-band__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+    grid-template-areas:
+      "text media"
+      "action media";
+    column-gap: var(--space-6);
+    row-gap: var(--space-4);
+    align-items: center;
+    justify-content: stretch;
+  }
+  .cta-band--home .cta-band__text {
+    grid-area: text;
+    max-width: 460px;
+    align-self: end;
+  }
+  .cta-band--home .cta-band__action {
+    grid-area: action;
+    justify-self: start;
+    align-self: start;
+  }
+  .cta-band--home .cta-band__media {
+    grid-area: media;
+    max-width: none;
+  }
+}
+@media (min-width: 992px) {
+  .cta-band--home .cta-band__inner {
+    display: flex;
+  }
+  .cta-band--home .cta-band__media {
+    max-width: 320px;
+  }
+}
+
+/* Hero arrows and pager (see pages/home.css). The arrows are bigger and
+   sit a little further in from 768px, and further still from 1440px, where
+   the headline is also nudged back 16px left of the gutter (--hero-nudge
+   feeds the arrow's reserved side room, so the nudge never reaches it).
+   Prefixed .hero[data-slider]: pages/home.css loads after this file. */
+@media (min-width: 768px) {
+  .hero[data-slider] {
+    --hero-arrow-size: 40px;
+    --hero-arrow-inset: var(--space-3);
+    --hero-arrow-air: var(--space-3);
+  }
+}
+@media (min-width: 1440px) {
+  .hero[data-slider] {
+    --hero-arrow-inset: var(--space-4);
+    --hero-nudge: var(--space-4);
+  }
+}
+
+/* Hero highlights on small screens. The copy loses ~100px to the side
+   arrows, so below 480px the two columns get a tighter column gap, and below
+   360px (about 216px of copy) the highlights stack in one column rather than
+   squeezing a word such as "Performance" out of its cell. Prefixed .hero:
+   pages/home.css loads after this file. */
+@media (max-width: 479.98px) {
+  .hero .hero__badges {
+    column-gap: var(--space-3);
+  }
+}
+@media (max-width: 359.98px) {
+  .hero .hero__badges {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* From 992px the copy occupies the left ~55% of the slide (container text
+   column is ~520px), so a left-weighted gradient keeps the scrim heavy
+   behind the text and lets the right of the photo show through. */
+@media (min-width: 992px) {
+  .hero .hero__slide-overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(14, 43, 59, 0.9) 0%,
+      rgba(14, 43, 59, 0.82) 58%,
+      rgba(14, 43, 59, 0) 92%
+    );
+  }
+}
+
+/* From 1440px the headline is nudged left of the gutter again. */
+@media (min-width: 1440px) {
+  .hero .hero__content {
+    margin-left: calc(var(--space-4) * -1);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   SHORT VIEWPORTS (e.g. phones in landscape) — height-driven, not
+   width-driven. The sticky header (utility bar + main row) is ~110px
+   tall, which on a 320-480px-tall screen is a quarter to a third of
+   everything visible, so below this height it scrolls away with the
+   page instead of pinning, and nothing needs to be offset for it.
+   --------------------------------------------------------------------- */
+@media (max-height: 480px) {
+  :root {
+    --header-offset: 0px;
+    --floating-clearance: 3.5rem;
+  }
+
+  .site-header {
+    position: static;
+  }
+
+  /* On a short screen the floating controls are a larger share of what is
+     visible, so they compact further (this also overrides the tablet+
+     sizes above for short desktop windows). */
+  .floating-actions {
+    bottom: max(var(--space-2), env(safe-area-inset-bottom));
+  }
+  .floating-actions--left {
+    left: max(var(--space-3), env(safe-area-inset-left));
+  }
+  .floating-actions--right {
+    right: max(var(--space-3), env(safe-area-inset-right));
+  }
+  .floating-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .floating-btn i {
+    font-size: 18px;
+  }
+  .scroll-top-btn {
+    width: 36px;
+    height: 36px;
+    right: calc(max(var(--space-3), env(safe-area-inset-right)) + 40px + var(--space-2));
+    bottom: calc(max(var(--space-2), env(safe-area-inset-bottom)) + 2px);
   }
 }
 
@@ -263,4 +547,48 @@
     animation: none;
     stroke-dashoffset: 0;
   }
+}
+
+/* Handpicked Products: FIVE product cards, then the category-level card
+   (Industrial Safety & Packing Materials) in its own full-width row. As the
+   original auto-fit grid, five cards wrapped 2+2+1 and 4+1 and left a lone
+   card hanging at the left, so from 552px the product cards sit in centred
+   flex rows instead (same pattern as the category cards): 2 per row to 991px
+   (2+2+1, last one centred), 3 per row from 992px (3+2, centred) and a single
+   row of five from 1400px, where the container (1272px) leaves each card
+   ~235px, still above the 224px content floor (the nowrap "View Details"
+   button). One column below 552px. Rows stay equal height (flex stretch).
+   */
+@media (min-width: 552px) {
+  .grid.featured-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .featured-grid > * {
+    flex: 0 0 calc((100% - var(--grid-gap)) / 2);
+    min-width: 0;
+  }
+  /* .product-card is height:100% (right in a grid area, but a fixed height
+     blocks flex "stretch"), so let it size to the row instead. */
+  .featured-grid > .product-card {
+    height: auto;
+  }
+}
+@media (min-width: 992px) {
+  .featured-grid > * {
+    flex-basis: calc((100% - 2 * var(--grid-gap)) / 3);
+  }
+}
+@media (min-width: 1400px) {
+  .featured-grid > * {
+    flex-basis: calc((100% - 4 * var(--grid-gap)) / 5);
+  }
+}
+
+/* Branding: on the narrowest phones keep "HM UNIQUE" on one line beside the icon. */
+@media (max-width: 359px) {
+  .site-header .site-logo__mark img { height: 30px; }
+  .site-header .site-logo__name { font-size: 1.0625rem; white-space: nowrap; }
+  .site-header .site-logo { gap: var(--space-2); }
 }

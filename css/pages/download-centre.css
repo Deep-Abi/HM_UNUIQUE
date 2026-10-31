@@ -3,5 +3,94 @@
    Page-specific overrides only. This file must never redefine a
    component's core look (that belongs in components.css) — it may
    only add layout-specific spacing/positioning unique to this page.
-   Populated in Phase 3 once this page's sections are built.
+
+   Stage 6 responsive corrections (Download Centre only). Every rule is
+   scoped to this page's own components so no other page is affected.
    ========================================================================== */
+
+/* 1. Placeholder positioning defect (document covers and CTA media):
+   .img-placeholder collapsed to its icon height instead of filling the
+   aspect-box's reserved ratio, leaving a large empty area with a thin band
+   at its bottom. Pin it to the box. No image is added. */
+.download-card__media .img-placeholder,
+.cta-band__media .img-placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+/* 2. Download cards: equal heights with the buttons on one line.
+   Cards stretch to the row height; the button is pushed to the bottom of
+   each card so descriptions of different lengths cannot misalign them. The
+   title/description spacing was also missing (title sat on its description). */
+.grid > .card.card--hover {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.download-card__media {
+  margin-bottom: var(--space-4);
+}
+.download-card__title {
+  margin-bottom: var(--space-2);
+  overflow-wrap: break-word;
+}
+.download-card__desc {
+  margin-bottom: var(--space-4);
+  overflow-wrap: break-word;
+}
+.download-card__desc + .btn {
+  margin-top: auto;
+}
+.download-card__media + .download-card__title ~ .btn {
+  white-space: normal;
+}
+
+/* 3. "Can't Find What You're Looking For?" band.
+   This rounded band has no inner container, so its text and media touched
+   the band's edges (the shared .cta-band__inner only pads top and bottom).
+   Give it the same inner padding the catalogue band uses, keep the text
+   column readable beside the media at tablet widths, and let the media sit
+   centred when stacked. */
+.cta-band:not(.cta-band--full) > .cta-band__inner {
+  padding-inline: var(--space-6);
+}
+@media (max-width: 479px) {
+  .cta-band:not(.cta-band--full) > .cta-band__inner {
+    padding-inline: var(--space-5);
+    padding-block: var(--space-6);
+  }
+}
+.cta-band:not(.cta-band--full) .cta-band__text {
+  min-width: 0;
+}
+.cta-band:not(.cta-band--full) .cta-band__text .btn {
+  max-width: 100%;
+  white-space: normal;
+}
+
+/* 5. Draft / placeholder disclosure. The six PDFs are placeholder documents
+   pending approval; this notice says so above the cards. Existing palette
+   only (yellow accent, navy text on a pale yellow tint). */
+.download-notice {
+  max-width: 760px;
+  margin: 0 auto var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(245, 180, 0, 0.55);
+  border-left: 4px solid var(--color-gold-500, #f5b400);
+  border-radius: var(--radius-md, 8px);
+  background: rgba(245, 180, 0, 0.12);
+  color: var(--color-navy-900, #0b2338);
+  font-size: var(--text-sm, 0.9375rem);
+  line-height: 1.55;
+  overflow-wrap: break-word;
+}
+.download-notice__label {
+  display: block;
+  margin-bottom: 2px;
+}
+@media (min-width: 552px) {
+  .download-notice__label {
+    display: inline;
+    margin-right: 4px;
+  }
+}

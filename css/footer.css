@@ -19,13 +19,58 @@
    Laptop/Desktop. */
 .site-footer__grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-7);
 }
 
 .site-footer__brand .site-logo__name,
 .site-footer__brand .site-logo__tagline {
   color: var(--color-white);
+}
+
+/* Company name: two-level lockup (footer only — header branding untouched).
+   "HM UNIQUE" is the primary line; "Technology Enterprises" sits beneath
+   it, smaller but readable. Normal word spacing, restrained tracking. */
+.site-footer__brand .site-footer__name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  letter-spacing: normal;
+  word-spacing: normal;
+  line-height: 1.2;
+}
+
+.site-footer__name-main {
+  font-size: 1.375rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.01em;
+  word-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.site-footer__name-sub {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.01em;
+  word-spacing: normal;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.site-footer__brand .site-logo__text {
+  gap: 0.35rem;
+  line-height: 1.2;
+}
+
+.site-footer__brand .site-logo__tagline {
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+.site-footer__brand .site-footer__about {
+  margin-top: var(--space-5);
+  line-height: 1.65;
 }
 
 .site-footer__about {
@@ -86,6 +131,17 @@
   gap: var(--space-3);
   font-size: var(--fs-body-sm);
 }
+/* The address, phone and (long) email sit in flex rows. A flex item will
+   not shrink below its longest unbreakable run, so a long email address
+   could not wrap and pushed the footer column wider than the screen. */
+.site-footer__contact li > :not(svg):not(i) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.site-footer__links a,
+.site-footer__about {
+  overflow-wrap: anywhere;
+}
 .site-footer__contact li + li {
   margin-top: var(--space-4);
 }
@@ -106,7 +162,10 @@
 
 .site-footer__bottom {
   border-top: 1px solid var(--overlay-white-12);
-  padding-block: var(--space-4);
+  padding-top: var(--space-4);
+  /* Extra bottom space so the fixed floating controls never rest on the
+     copyright / legal line when the page is scrolled to the end. */
+  padding-bottom: calc(var(--space-4) + var(--floating-clearance));
 }
 
 /* Mobile-first: stacked and centered by default; responsive.css
@@ -122,7 +181,9 @@
 
 .site-footer__bottom-links {
   display: flex;
-  gap: var(--space-5);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-5);
 }
 
 .site-footer__bottom-links a {

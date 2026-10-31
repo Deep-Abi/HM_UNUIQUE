@@ -16,11 +16,20 @@ SITE_URL = "https://www.hmunique.com"
 # email/address usage across the site. Update here only; every page
 # regenerates from these constants.
 # ---------------------------------------------------------------------
-PHONE_DISPLAY = "+91 78100 01288"
-PHONE_TEL = "+917810001288"
-PHONE_WA = "917810001288"
+# Approved contact numbers (user-approved 2026-10-30). Kept as strings.
+# Which person/department answers each number is deliberately NOT stated
+# anywhere on the site. PHONE_* = primary; PHONE2_* = secondary;
+# WA_* = the WhatsApp number (currently the same as the secondary).
+PHONE_DISPLAY = "+91 97101 81944"
+PHONE_TEL = "+919710181944"
+PHONE_SCHEMA = "+91-97101-81944"
+PHONE2_DISPLAY = "+91 63796 20433"
+PHONE2_TEL = "+916379620433"
+PHONE2_SCHEMA = "+91-63796-20433"
+WA_DISPLAY = "+91 63796 20433"
+PHONE_WA = "916379620433"
 EMAIL_PRIMARY = "hmunitecenterprises02@gmail.com"
-EMAIL_SECONDARY = "haribabu2004@gmail.com"
+EMAIL_SECONDARY = "business@hmunique.com"
 ADDRESS_LINE1 = "No.271, Linghi Chetty Street"
 ADDRESS_LINE2 = "George Town, Chennai &ndash; 600001"
 ADDRESS_LINE3 = "Tamil Nadu, India"
@@ -39,7 +48,7 @@ PAGES = [
         "path": "index.html",
         "depth": 0,
         "breadcrumb": None,  # no breadcrumb on Home
-        "description": "HM UNIQUE supplies quality Electricals, Electronics Components, Hardwares and Industrial &amp; Commercial Equipment. Trusted brands, wide product range and pan-India delivery.",
+        "description": "HM UNIQUE supplies quality Electricals, Electronics Components, Hardwares, Industrial &amp; Commercial Equipment and Industrial Safety &amp; Packing Materials. Trusted brands, wide product range and pan-India delivery.",
         "canonical": "/",
     },
     {
@@ -79,12 +88,21 @@ PAGES = [
         "canonical": "/pages/industrial-equipment.html",
     },
     {
+        "key": "safety-packing",
+        "title": "Industrial Safety &amp; Packing Materials | HM UNIQUE",
+        "path": "pages/industrial-safety-packing.html",
+        "depth": 1,
+        "breadcrumb": [("Home", "../index.html"), ("Industrial Safety &amp; Packing Materials", None)],
+        "description": "Industrial safety and packing materials from HM UNIQUE. Product details are being prepared &mdash; contact us to discuss your requirements.",
+        "canonical": "/pages/industrial-safety-packing.html",
+    },
+    {
         "key": "about",
         "title": "About Us | HM UNIQUE",
         "path": "pages/about.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("About Us", None)],
-        "description": "Learn about HM UNIQUE &mdash; 7+ years supplying Electricals, Electronics, Hardwares and Industrial Tools with a commitment to quality and customer satisfaction.",
+        "description": "Learn about HM UNIQUE &mdash; 7+ years supplying Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials with a commitment to quality and customer satisfaction.",
         "canonical": "/pages/about.html",
     },
     {
@@ -95,6 +113,15 @@ PAGES = [
         "breadcrumb": [("Home", "../index.html"), ("Contact Us", None)],
         "description": "Get in touch with HM UNIQUE. Call, email or WhatsApp our team, or visit our Chennai office.",
         "canonical": "/pages/contact.html",
+    },
+    {
+        "key": "download-centre",
+        "title": "Download Centre | HM UNIQUE",
+        "path": "pages/download-centre.html",
+        "depth": 1,
+        "breadcrumb": [("Home", "../index.html"), ("Download Centre", None)],
+        "description": "Download HM UNIQUE&rsquo;s product catalogues, company profile and datasheets for Electricals, Electronics, Hardwares and Industrial Equipment.",
+        "canonical": "/pages/download-centre.html",
     },
 ]
 
@@ -110,6 +137,7 @@ PRODUCT_ITEMS = [
     ("electronics", "Electronics Components", "pages/electronics.html", "chip"),
     ("hardwares", "Hardwares", "pages/hardwares.html", "wrench"),
     ("industrial", "Industrial &amp; Commercial Equipment", "pages/industrial-equipment.html", "factory"),
+    ("safety-packing", "Industrial Safety &amp; Packing Materials", "pages/industrial-safety-packing.html", "helmet-safety"),
 ]
 
 
@@ -139,10 +167,16 @@ def nav_current(key, current_key):
 def build_utility_bar(current_key, depth):
     return f"""  <div class="utility-bar">
     <div class="container utility-bar__inner">
-      <a class="utility-bar__phone" href="tel:{PHONE_TEL}">
-        <i class="fa-solid fa-phone" aria-hidden="true"></i>
-        <span>{PHONE_DISPLAY}</span>
-      </a>
+      <div class="utility-bar__phones">
+        <a class="utility-bar__phone" href="tel:{PHONE_TEL}">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i>
+          <span>{PHONE_DISPLAY}</span>
+        </a>
+        <a class="utility-bar__phone" href="tel:{PHONE2_TEL}">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i>
+          <span>{PHONE2_DISPLAY}</span>
+        </a>
+      </div>
       <div class="utility-bar__emails">
         <a class="utility-bar__email" href="mailto:{EMAIL_PRIMARY}">
           <i class="fa-solid fa-envelope" aria-hidden="true"></i>
@@ -176,7 +210,7 @@ def build_primary_nav(current_key, depth):
     home_active = nav_current("home", current_key)
     about_active = nav_current("about", current_key)
     contact_active = nav_current("contact", current_key)
-    products_open = current_key in {"electricals", "electronics", "hardwares", "industrial"}
+    products_open = current_key in {key for key, _label, _path, _icon in PRODUCT_ITEMS}
     products_current = ' aria-current="page"' if products_open else ""
 
     return f"""      <ul class="primary-nav__list">
@@ -201,6 +235,23 @@ def build_primary_nav(current_key, depth):
       </ul>"""
 
 
+def brand_icon_picture(depth, loading="eager"):
+    """Supplied HM UNIQUE icon (cropped transparent derivatives; originals untouched
+    in assets/logo/icon/). Decorative: the surrounding link/text carries the name."""
+    b = rel("assets/logo/web/hm-unique-icon", depth)
+    def ss(ext):
+        return f"{b}-48.{ext} 1x, {b}-96.{ext} 2x, {b}-144.{ext} 3x"
+    fp = ' fetchpriority="high"' if loading == "eager" else ""
+    return (
+        f'<picture>'
+        f'<source type="image/avif" srcset="{ss("avif")}" />'
+        f'<source type="image/webp" srcset="{ss("webp")}" />'
+        f'<img src="{b}-96.png" alt="" width="112" height="48" loading="{loading}" decoding="async"{fp} />'
+        f'</picture>'
+    )
+
+
+
 def build_mobile_nav(current_key, depth):
     home_active = nav_current("home", current_key)
     about_active = nav_current("about", current_key)
@@ -219,10 +270,13 @@ def build_mobile_nav(current_key, depth):
         )
     product_links_html = "\n".join(product_links)
 
-    return f"""  <div class="mobile-nav-overlay" data-mobile-nav-overlay></div>
-  <nav class="mobile-nav" id="mobile-navigation" data-mobile-nav aria-label="Mobile navigation">
+    return f"""  <div class="mobile-nav-overlay" data-mobile-nav-overlay inert></div>
+  <nav class="mobile-nav" id="mobile-navigation" data-mobile-nav aria-label="Mobile navigation" aria-hidden="true" inert>
     <div class="mobile-nav__header">
-      <span class="site-logo__name">HM UNIQUE</span>
+      <a class="site-logo mobile-nav__brand" href="{rel('index.html', depth)}" aria-label="HM UNIQUE home">
+        <span class="site-logo__mark">{brand_icon_picture(depth, "lazy")}</span>
+        <span class="site-logo__name">HM UNIQUE</span>
+      </a>
       <button type="button" class="mobile-nav__close" data-mobile-nav-close aria-label="Close menu"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <ul class="mobile-nav__list">
@@ -254,7 +308,7 @@ def build_header(current_key, depth):
   <div class="container site-header__inner">
     <a class="site-logo" href="{rel('index.html', depth)}" aria-label="HM UNIQUE home">
       <span class="site-logo__mark">
-        <img src="{rel('assets/logo/hm-unique-logo.svg', depth)}" alt="HM UNIQUE logo" width="44" height="44" loading="eager" decoding="async" />
+        {brand_icon_picture(depth, "eager")}
       </span>
       <span class="site-logo__text">
         <span class="site-logo__name">HM UNIQUE</span>
@@ -309,20 +363,20 @@ def build_footer(depth):
     <div class="container site-footer__grid">
       <div class="site-footer__brand">
         <a class="site-logo" href="{rel('index.html', depth)}" aria-label="HM UNIQUE home">
-          <span class="site-logo__mark">
-            <img src="{rel('assets/logo/hm-unique-logo-light.svg', depth)}" alt="HM UNIQUE logo" width="44" height="44" loading="lazy" decoding="async" />
+          <span class="site-logo__mark site-logo__mark--backed">
+            {brand_icon_picture(depth, "lazy")}
           </span>
           <span class="site-logo__text">
-            <span class="site-logo__name">HM UNIQUE</span>
+            <span class="site-logo__name site-footer__name"><span class="site-footer__name-main">HM UNIQUE</span> <span class="site-footer__name-sub">Technology Enterprises</span></span>
             <span class="site-logo__tagline">Electricals &middot; Electronics &middot; Hardwares &middot; Industrial Tools</span>
           </span>
         </a>
-        <p class="site-footer__about">HM UNIQUE is a trusted supplier of Electricals, Electronics, Hardwares and Industrial Tools committed to quality, reliability and customer satisfaction.</p>
+        <p class="site-footer__about">HM UNIQUE is a trusted supplier of Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials committed to quality, reliability and customer satisfaction.</p>
         <div class="site-footer__socials">
           <a aria-label="Facebook" aria-disabled="true"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
           <a aria-label="LinkedIn" aria-disabled="true"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
           <a aria-label="Instagram" aria-disabled="true"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-          <a href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+          <a href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
 
@@ -332,6 +386,7 @@ def build_footer(depth):
           <li><a href="{rel('index.html', depth)}">Home</a></li>
           <li><a href="{rel('pages/about.html', depth)}">About Us</a></li>
           <li><a href="{rel('pages/contact.html', depth)}">Contact Us</a></li>
+          <li><a href="{rel('pages/download-centre.html', depth)}">Download Centre</a></li>
         </ul>
       </div>
 
@@ -342,6 +397,7 @@ def build_footer(depth):
           <li><a href="{rel('pages/electronics.html', depth)}">Electronics Components</a></li>
           <li><a href="{rel('pages/hardwares.html', depth)}">Hardwares</a></li>
           <li><a href="{rel('pages/industrial-equipment.html', depth)}">Industrial &amp; Commercial Equipment</a></li>
+          <li><a href="{rel('pages/industrial-safety-packing.html', depth)}">Industrial Safety &amp; Packing Materials</a></li>
         </ul>
       </div>
 
@@ -350,8 +406,9 @@ def build_footer(depth):
         <ul class="site-footer__contact">
           <li><span>{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}</span></li>
           <li><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></li>
+          <li><a href="tel:{PHONE2_TEL}">{PHONE2_DISPLAY}</a></li>
           <li><a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a></li>
-          <li><span>Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span></li>
+          <li><span>Mon &ndash; Sat: 9:00 AM &ndash; 9:00 PM</span></li>
         </ul>
       </div>
     </div>
@@ -359,7 +416,7 @@ def build_footer(depth):
 
   <div class="site-footer__bottom">
     <div class="container site-footer__bottom-inner">
-      <span>&copy; <span data-current-year></span> HM UNIQUE. All Rights Reserved.</span>
+      <span>&copy; <span data-current-year></span> HM UNIQUE Technology Enterprises. All Rights Reserved.</span>
       <div class="site-footer__bottom-links">
         <a aria-disabled="true">Privacy Policy</a>
         <a aria-disabled="true">Terms &amp; Conditions</a>
@@ -369,24 +426,33 @@ def build_footer(depth):
 </footer>"""
 
 
+def fill_phones(html):
+    """Substitutes the phone placeholders in the two shared templates
+    that are plain (non-f) strings, from the single set of constants
+    at the top of this file."""
+    return (html.replace("{PHONE_TEL}", PHONE_TEL)
+                .replace("{PHONE_DISPLAY}", PHONE_DISPLAY)
+                .replace("{PHONE_WA}", PHONE_WA))
+
+
 def build_floating_actions():
-    return """<div class="floating-actions floating-actions--left">
-  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/917810001288" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    return fill_phones("""<div class="floating-actions floating-actions--left">
+  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
     <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
   </a>
 </div>
 <div class="floating-actions floating-actions--right">
-  <a class="floating-btn floating-btn--call" href="tel:+917810001288" aria-label="Call HM UNIQUE">
+  <a class="floating-btn floating-btn--call" href="tel:{PHONE_TEL}" aria-label="Call HM UNIQUE">
     <i class="fa-solid fa-phone" aria-hidden="true"></i>
   </a>
 </div>
 <button type="button" class="scroll-top-btn" data-scroll-top aria-label="Scroll to top">
   <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
-</button>"""
+</button>""")
 
 
 def build_quote_modal():
-    return """<div class="modal-overlay" data-modal="quote" aria-hidden="true">
+    return fill_phones("""<div class="modal-overlay" data-modal="quote" aria-hidden="true">
   <div class="modal modal--quote" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
     <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
@@ -448,6 +514,7 @@ def build_quote_modal():
               <option value="electronics">Electronics Components</option>
               <option value="hardwares">Hardwares</option>
               <option value="industrial">Industrial &amp; Commercial Equipment</option>
+              <option value="safety-packing">Industrial Safety &amp; Packing Materials</option>
             </select>
             <span class="form-field__error-msg">Please select a category.</span>
           </div>
@@ -468,13 +535,16 @@ def build_quote_modal():
           <span class="form-field__error-msg">Please tell us about your requirement.</span>
         </div>
 
-        <label class="form-checkbox">
-          <input type="checkbox" name="privacy" data-required />
-          <span>I agree to the <a aria-disabled="true">privacy policy</a>.</span>
-        </label>
+        <div class="form-field">
+          <label class="form-checkbox">
+            <input type="checkbox" id="quote-privacy" name="privacy" data-required />
+            <span>I agree to the <a aria-disabled="true">privacy policy</a>.</span>
+          </label>
+          <span class="form-field__error-msg">Please agree to the privacy policy to continue.</span>
+        </div>
 
         <p class="form-submit-error" data-form-error hidden role="alert">
-          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:+917810001288">+91 78100 01288</a>.
+          Something went wrong sending your request. Please try again, or call us directly at <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>.
         </p>
 
         <button type="submit" class="btn btn--primary btn--block mt-4">
@@ -498,11 +568,11 @@ def build_quote_modal():
         <li><span aria-hidden="true">&#10003;</span><span><strong>Customer Satisfaction</strong><br />Your satisfaction is our top priority in every collaboration.</span></li>
       </ul>
       <div class="modal__help-box">
-        <p><strong>Need Help?</strong><br />Call us at <a href="tel:+917810001288">+91 78100 01288</a></p>
+        <p><strong>Need Help?</strong><br />Call us at <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></p>
       </div>
     </aside>
   </div>
-</div>"""
+</div>""")
 
 
 def build_thank_you_modal():
@@ -549,6 +619,7 @@ ICONS = {
     "chip": '<i class="fa-solid fa-microchip" aria-hidden="true"></i>',
     "wrench": '<i class="fa-solid fa-wrench" aria-hidden="true"></i>',
     "factory": '<i class="fa-solid fa-industry" aria-hidden="true"></i>',
+    "helmet-safety": '<i class="fa-solid fa-helmet-safety" aria-hidden="true"></i>',
     "grid": '<i class="fa-solid fa-table-cells" aria-hidden="true"></i>',
     "shield-check": '<i class="fa-solid fa-shield-halved" aria-hidden="true"></i>',
     "award": '<i class="fa-solid fa-award" aria-hidden="true"></i>',
@@ -560,6 +631,8 @@ ICONS = {
     "building": '<i class="fa-solid fa-building" aria-hidden="true"></i>',
     "gear": '<i class="fa-solid fa-gear" aria-hidden="true"></i>',
     "box": '<i class="fa-solid fa-box" aria-hidden="true"></i>',
+    "boxes-stacked": '<i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>',
+    "triangle-exclamation": '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>',
     "users": '<i class="fa-solid fa-users" aria-hidden="true"></i>',
     "circle-check": '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>',
     "landmark": '<i class="fa-solid fa-building-columns" aria-hidden="true"></i>',
@@ -608,67 +681,216 @@ def img_placeholder(label, ratio_class=""):
 def build_home_main():
     # -------------------------------------------------------------
     # 3. HERO BANNER
+    #
+    # Five slides (one per product category; slide 5 has no image yet), each a
+    # self-contained mini-hero with its own photo, copy and CTA — see
+    # css/pages/home.css's header comment. This block was previously
+    # out of sync with the real, hand-finished markup in index.html
+    # (it still generated 5 identical image-placeholder slides from an
+    # earlier phase); it's brought up to date here, content copied
+    # verbatim from the approved index.html, including Batch 3's
+    # accessibility additions (the play/pause control and each slide's
+    # static aria-hidden/inert baseline), so a future regeneration
+    # reproduces the real hero instead of overwriting it with
+    # placeholders.
     # -------------------------------------------------------------
-    hero_badges = [
-        ("users", "Wide Product Range"),
-        ("circle-check", "Quality Assured"),
-        ("landmark", "Trusted Brands"),
-        ("box", "Timely Delivery"),
+    hero_slides_data = [
+        {
+            "img_base": "electricals_hero",
+            "img_w": 1717,
+            "img_h": 916,
+            "loading": "eager",
+            "fetchpriority": ' fetchpriority="high"',
+            "alt": "Collection of HM UNIQUE electrical products including a distribution panel, MCBs, cable reels, switches, sockets and an LED flood light",
+            "eyebrow": "One Source. Complete Solution.",
+            "title_html": 'Your Trusted Partner in <span class="text-accent">Electricals</span>',
+            "desc": "Supplying quality electrical products and solutions for residential, commercial and industrial applications.",
+            "badges": [
+                ("users", "Wide Product Range"),
+                ("circle-check", "Quality Assured"),
+                ("landmark", "Trusted Brands"),
+                ("box", "Timely Delivery"),
+            ],
+            "cta_label": "Explore Electricals",
+            "cta_href": "pages/electricals.html",
+        },
+        {
+            "img_base": "electronics_components_hero",
+            "img_w": 1717,
+            "img_h": 916,
+            "loading": "lazy",
+            "fetchpriority": "",
+            "alt": "Collection of electronics tools and equipment including a soldering station, hot-air rework tool, digital multimeter, solder reel, screwdriver bit set, tweezers, pliers and crimpers",
+            "eyebrow": "Smart Electronics. Reliable Solutions.",
+            "title_html": 'Reliable <span class="text-accent">Electronics Components</span>',
+            "desc": "Quality electronic components, test instruments and tools for automation, control and industrial applications.",
+            "badges": [
+                ("chip", "Quality Components"),
+                ("circle-check", "Reliable Performance"),
+                ("grid", "Wide Selection"),
+                ("headset", "Technical Support"),
+            ],
+            "cta_label": "Explore Electronics",
+            "cta_href": "pages/electronics.html",
+        },
+        {
+            "img_base": "hardwares_hero",
+            "img_w": 1672,
+            "img_h": 941,
+            "loading": "lazy",
+            "fetchpriority": "",
+            "alt": "Collection of HM UNIQUE hardware and tools including a cordless drill, circular saw, angle grinder, toolbox, wrenches, pliers and screwdrivers",
+            "eyebrow": "Built for Every Project.",
+            "title_html": 'Quality <span class="text-accent">Hardware</span>',
+            "desc": "Dependable hand tools, power tools, fasteners and hardware solutions for professional and industrial applications.",
+            "badges": [
+                ("shield-check", "Durable Products"),
+                ("grid", "Wide Range"),
+                ("wrench", "Professional Tools"),
+                ("circle-check", "Reliable Quality"),
+            ],
+            "cta_label": "Explore Hardwares",
+            "cta_href": "pages/hardwares.html",
+        },
+        {
+            # Slide 4 keeps its original Industrial & Commercial Equipment
+            # image. (A 2026-10-28 instruction to temporarily reuse the
+            # Electronics hero here was SUPERSEDED before release: the
+            # Electronics image then in use showed products the client does
+            # not sell. That image has since been replaced by an approved
+            # one; slide 4 keeps its own image.)
+            "img_base": "industrial_commercial_equipment_hero",
+            "img_w": 1672,
+            "img_h": 941,
+            "loading": "lazy",
+            "fetchpriority": "",
+            "alt": "Collection of HM UNIQUE industrial equipment including an electric motor, pump, control panel, variable frequency drives, safety gear and cabling",
+            "eyebrow": "INDUSTRIAL &amp; COMMERCIAL EQUIPMENT",
+            "title_html": 'Industrial &amp; <span class="text-accent">Commercial Equipment</span>',
+            "desc": "Explore our industrial and commercial equipment range and contact us to discuss your requirements.",
+            "badges": [
+                ("factory", "Industrial Grade"),
+                ("landmark", "Trusted Products"),
+                ("grid", "Wide Applications"),
+                ("headset", "Reliable Support"),
+            ],
+            "cta_label": "Explore Industrial Equipment",
+            "cta_href": "pages/industrial-equipment.html",
+        },
+        {
+            # Slide 5 now uses the approved image (2026-10-30). The files
+            # supplied on disk are named "industrial_safety_&_packing
+            # materials_hero.{avif,webp,jpg}" (an "&" and a space, unsafe in
+            # URLs/srcset), so byte-identical URL-safe copies named
+            # industrial_safety_packing_materials_hero.* are what the markup
+            # references. The "no_image" flag / .hero__slide--no-image
+            # treatment is no longer used by any slide; the generator branch
+            # is kept so a future image-less slide still works. Like slides
+            # 1-4 it carries four icon-and-text highlights (added 2026-10-31).
+            # Bright cardboard/packing sits behind the copy on narrow screens,
+            # so this slide gets a slightly stronger scrim below 992px
+            # (css/pages/home.css, .hero__slide--packing).
+            "extra_class": "hero__slide--packing",
+            "img_base": "industrial_safety_packing_materials_hero",
+            "img_w": 1717,
+            "img_h": 916,
+            "loading": "lazy",
+            "fetchpriority": "",
+            "alt": "Collection of safety and packing supplies including a yellow hard hat, hi-visibility vest, ear defenders, safety goggles, work gloves, safety boots, cardboard boxes, stretch film, bubble wrap, packing tape and strapping",
+            "eyebrow": "INDUSTRIAL SAFETY &amp; PACKING MATERIALS",
+            "title_html": 'Industrial Safety &amp; <span class="text-accent">Packing Materials</span>',
+            "desc": "Explore safety and packing supplies for industrial and commercial requirements. Contact us to discuss your needs.",
+            "badges": [
+                ("helmet-safety", "Personal Protection"),
+                ("triangle-exclamation", "Workplace Safety"),
+                ("box", "Packing Materials"),
+                ("boxes-stacked", "Packing Accessories"),
+            ],
+            "cta_label": "Explore Safety &amp; Packing",
+            "cta_href": "pages/industrial-safety-packing.html",
+        },
     ]
-    hero_badges_html = "\n".join(
-        f'''            <div class="trust-badge">
-              <span class="trust-badge__icon">{ICONS[icon]}</span>
-              <span>{label}</span>
-            </div>'''
-        for icon, label in hero_badges
+
+    def build_hero_slide(slide, index):
+        badges_html = "\n".join(
+            f'''              <div class="trust-badge">
+                <span class="trust-badge__icon">{ICONS[icon]}</span>
+                <span>{label}</span>
+              </div>'''
+            for icon, label in slide["badges"]
+        )
+        # Every slide except the first starts aria-hidden + inert, so a
+        # page that loads with JS disabled or still initializing never
+        # exposes 2-4's links/buttons to keyboard or assistive tech —
+        # the same static-baseline-plus-JS-toggle pattern already used
+        # for the mobile nav drawer (see build_mobile_nav()). Once
+        # slider.js runs, it owns this state from here via goTo().
+        hidden_attrs = ' aria-hidden="true" inert' if index > 0 else ""
+        if slide.get("no_image"):
+            slide_class = "hero__slide hero__slide--no-image"
+            media_html = '<div class="hero__slide-media hero__slide-media--navy" aria-hidden="true"></div>'
+        else:
+            slide_class = "hero__slide" + (f" {slide['extra_class']}" if slide.get("extra_class") else "")
+            media_html = f"""<div class="hero__slide-media">
+              <picture>
+                <source srcset="assets/images/home/hero/avif/{slide['img_base']}.avif" type="image/avif" />
+                <source srcset="assets/images/home/hero/webp/{slide['img_base']}.webp" type="image/webp" />
+                <img
+                  src="assets/images/home/hero/jpg/{slide['img_base']}.jpg"
+                  alt="{slide['alt']}"
+                  width="{slide['img_w']}"
+                  height="{slide['img_h']}"
+                  loading="{slide['loading']}"
+                  decoding="async"{slide['fetchpriority']}
+                />
+              </picture>
+            </div>"""
+        if slide["badges"]:
+            badges_block = f"""
+
+              <div class="hero__badges">
+{badges_html}
+              </div>"""
+        else:
+            badges_block = ""
+        return f"""          <div class="{slide_class}" data-slider-slide{hidden_attrs}>
+            {media_html}
+            <div class="hero__slide-overlay"></div>
+            <div class="container hero__inner">
+              <div class="hero__content">
+              <span class="eyebrow hero__eyebrow">{slide['eyebrow']}</span>
+              <h1 class="hero__title">{slide['title_html']}</h1>
+              <p class="hero__desc">{slide['desc']}</p>{badges_block}
+
+              <div class="hero__actions">
+                <a class="btn btn--primary" href="{slide['cta_href']}">
+                  {slide['cta_label']}
+                  {ICONS['circle-right']}
+                </a>
+                <a class="hero__watch-link" href="pages/about.html">
+                  <span class="hero__watch-link__icon">{ICONS['play']}</span>
+                  About HM Unique
+                </a>
+              </div>
+            </div>
+            </div>
+            </div>"""
+
+    hero_slides_html = "\n".join(
+        build_hero_slide(slide, i) for i, slide in enumerate(hero_slides_data)
     )
 
-    # The concept shows 5 pagination dots on the hero carousel. Only one
-    # hero design/copy was approved in the PDF, so every slide below
-    # reuses that exact approved content rather than inventing new
-    # marketing copy — this demonstrates the required slider mechanism
-    # (autoplay, dots, manual arrows) without fabricating content that
-    # wasn't in the source. Real slide variations (rotating photography,
-    # alternate copy) should replace slides 2-5 once supplied.
-    hero_slide = """          <div class="hero__slide" data-slider-slide>
-            {}
-          </div>""".format(img_placeholder("Electricals, electronics and industrial tools product collage", "aspect-box--tall"))
-    hero_slides_html = "\n".join([hero_slide] * 5)
-
-    hero_html = f"""    <section class="hero text-on-dark" aria-label="Hero">
-      <div class="container">
-        <div class="hero__inner">
-          <div class="hero__content">
-            <span class="eyebrow hero__eyebrow">One Source. Complete Solution.</span>
-            <h1 class="hero__title">Your Trusted Partner in <span class="text-accent">Electricals, Electronics, Hardwares &amp; Industrial Tools</span></h1>
-            <p class="hero__desc">Supplying quality products that power industries, build infrastructure and drive innovation.</p>
-
-            <div class="hero__badges">
-{hero_badges_html}
-            </div>
-
-            <div class="hero__actions">
-              <a class="btn btn--primary" href="pages/electricals.html">
-                Explore Products
-                {ICONS['circle-right']}
-              </a>
-              <a class="hero__watch-link" href="pages/about.html">
-                <span class="hero__watch-link__icon">{ICONS['play']}</span>
-                About HM Unique
-              </a>
-            </div>
-          </div>
-
-          <div class="hero__media">
-            <div class="hero__slider" data-slider>
-              <div class="hero__slider-track" data-slider-track>
+    hero_html = f"""    <section class="hero text-on-dark" aria-label="Hero" data-slider data-float-avoid=".hero__content, .hero__nav, .hero__pager" tabindex="-1">
+      <div class="hero__slider-track" data-slider-track>
 {hero_slides_html}
-              </div>
-              <button type="button" class="btn-icon hero__nav hero__nav--prev" data-slider-prev aria-label="Previous slide">{ICONS['chevron-left']}</button>
-              <button type="button" class="btn-icon hero__nav hero__nav--next" data-slider-next aria-label="Next slide">{ICONS['chevron-right']}</button>
-            </div>
-          </div>
-        </div>
+      </div>
+
+      <button type="button" class="btn-icon hero__nav hero__nav--prev" data-slider-prev aria-label="Previous slide">{ICONS['chevron-left']}</button>
+      <button type="button" class="btn-icon hero__nav hero__nav--next" data-slider-next aria-label="Next slide">{ICONS['chevron-right']}</button>
+      <div class="hero__pager">
+        <button type="button" class="btn-icon hero__nav hero__nav--playpause" data-slider-playpause aria-label="Pause slideshow">
+          <i class="fa-solid fa-pause" aria-hidden="true" data-slider-playpause-icon></i>
+        </button>
         <div class="hero__dots" data-slider-dots aria-label="Slide navigation"></div>
       </div>
     </section>"""
@@ -678,9 +900,10 @@ def build_home_main():
     # -------------------------------------------------------------
     categories = [
         ("bolt", "Electricals", "Wires &amp; Cables, Switches, MCBs, Distribution Boards, Lighting &amp; more.", "pages/electricals.html"),
-        ("chip", "Electronics Components", "CCTV, Sensors, Power Supplies, Automation, Test Instruments &amp; more.", "pages/electronics.html"),
+        ("chip", "Electronics Components", "Sensors, Power Supplies, Automation, Test Instruments &amp; more.", "pages/electronics.html"),
         ("wrench", "Hardwares", "Fasteners, Hand Tools, Power Tools, Safety, Plumbing &amp; more.", "pages/hardwares.html"),
         ("factory", "Industrial &amp; Commercial Equipment", "Motors, Bearings, Pneumatics, Hydraulics, Welding &amp; more.", "pages/industrial-equipment.html"),
+        ("helmet-safety", "Industrial Safety &amp; Packing Materials", "Protective equipment, workplace safety and packing materials.", "pages/industrial-safety-packing.html"),
     ]
     category_cards_html = "\n".join(
         f"""          <article class="card card--hover category-card" data-animate="fade-up">
@@ -704,7 +927,7 @@ def build_home_main():
           <span class="eyebrow">Our Categories</span>
           <h2 class="section-heading__title" id="categories-heading">Explore Our <span class="text-accent">Product Categories</span></h2>
         </div>
-        <div class="grid grid--4">
+        <div class="grid grid--4 category-grid">
 {category_cards_html}
         </div>
       </div>
@@ -717,7 +940,6 @@ def build_home_main():
         ("Polycab FRLS Copper Cable", "High quality flame retardant electric cables."),
         ("Schneider iC65N MCB", "Advanced protection &amp; performance."),
         ("Philips LED Highbay Light", "High efficiency industrial LED lighting."),
-        ("Hikvision CCTV Camera", "High clarity surveillance solutions."),
         ("Crompton Industrial Motor", "Energy efficient motor for industrial use."),
         ("Bosch Professional Drill", "Powerful, durable &amp; built for industrial use."),
     ]
@@ -745,8 +967,57 @@ def build_home_main():
             {ICONS['arrow-right']}
           </a>
         </div>
-        <div class="grid grid--6">
+        <div class="grid featured-grid">
 {product_cards_html}
+        </div>
+      </div>
+    </section>"""
+
+    # -------------------------------------------------------------
+    # 5b. SAFETY & PACKING GROUPS
+    # Three cards below Handpicked Products, one per sub-group of the
+    # Industrial Safety & Packing Materials page. They replace the former
+    # single full-width category card. Each links straight to a group on
+    # pages/industrial-safety-packing.html using that page's own group key as
+    # the URL fragment (see js/pages/industrial-safety-packing-catalog.js,
+    # which activates the matching tab). Keys in use: "personal-protective-
+    # equipment", "workplace-safety-signage" and "boxes-strapping-packing-
+    # accessories" (the group that carries the "Packing Accessories" label;
+    # the page's other two packing groups are one tab away). Descriptions
+    # are deliberately generic: no product, brand, specification or
+    # certification claim, and they say plainly that the listing is still
+    # being prepared. Images stay placeholders until approved photography
+    # is supplied.
+    # -------------------------------------------------------------
+    safety_packing_groups = [
+        ("helmet-safety", "Personal Protective Equipment", "Protective equipment for industrial and commercial workplaces. Our product listing is being prepared; contact us for availability.", "pages/industrial-safety-packing.html#personal-protective-equipment"),
+        ("triangle-exclamation", "Workplace Safety &amp; Signage", "Safety and signage supplies for workplaces. Our product listing is being prepared; contact us for availability.", "pages/industrial-safety-packing.html#workplace-safety-signage"),
+        ("boxes-stacked", "Packing Materials &amp; Accessories", "Packing materials and accessories for industrial and commercial requirements. Our product listing is being prepared; contact us for availability.", "pages/industrial-safety-packing.html#boxes-strapping-packing-accessories"),
+    ]
+    safety_packing_cards_html = "\n".join(
+        f"""          <article class="card card--hover category-card" data-animate="fade-up">
+            <span class="card__icon">{ICONS[icon]}</span>
+            <div class="category-card__media">
+              {img_placeholder(name + ' image')}
+            </div>
+            <h3 class="category-card__title">{name}</h3>
+            <p class="category-card__desc">{desc}</p>
+            <a class="btn btn--outline btn--sm" href="{href}">
+              Explore Group
+              {ICONS['arrow-right']}
+            </a>
+          </article>"""
+        for icon, name, desc, href in safety_packing_groups
+    )
+
+    safety_packing_html = f"""    <section class="section section--light" aria-labelledby="safety-packing-heading">
+      <div class="container">
+        <div class="section-heading section-heading--center">
+          <span class="eyebrow">Industrial Safety &amp; Packing Materials</span>
+          <h2 class="section-heading__title" id="safety-packing-heading">Explore Safety &amp; <span class="text-accent">Packing Supplies</span></h2>
+        </div>
+        <div class="grid grid--3 category-grid safety-packing-grid">
+{safety_packing_cards_html}
         </div>
       </div>
     </section>"""
@@ -756,7 +1027,7 @@ def build_home_main():
     # -------------------------------------------------------------
     why_choose = [
         ("box", "Quality Products", "We supply only high quality products from trusted manufacturers."),
-        ("diagram-project", "Wide Range", "One-stop solution for Electricals, Electronics, Hardwares &amp; Industrial tools."),
+        ("diagram-project", "Wide Range", "One-stop solution for Electricals, Electronics, Hardwares, Industrial tools and Industrial Safety &amp; Packing Materials."),
         ("tag", "Competitive Pricing", "Best value for your money across all products."),
         ("truck", "Timely Delivery", "Prompt delivery ensuring minimal downtime for your projects."),
         ("headset", "Expert Support", "Our team is always ready to help you find the right products."),
@@ -820,7 +1091,7 @@ def build_home_main():
     # -------------------------------------------------------------
     # 8. BOTTOM CTA BANNER
     # -------------------------------------------------------------
-    cta_section = f"""    <section class="cta-band cta-band--full text-on-dark" aria-labelledby="cta-heading">
+    cta_section = f"""    <section class="cta-band cta-band--full cta-band--home text-on-dark" aria-labelledby="cta-heading">
       <div class="container cta-band__inner">
         <div class="cta-band__text">
           <h2 class="cta-band__title" id="cta-heading">Looking for the Right Products for Your Project?</h2>
@@ -840,6 +1111,7 @@ def build_home_main():
         hero_html,
         categories_html,
         featured_html,
+        safety_packing_html,
         why_choose_section,
         industries_section,
         cta_section,
@@ -1094,7 +1366,139 @@ CATEGORIES = {
         "catalogue_name": "Industrial &amp; Commercial Equipment Catalogue",
         "href": "industrial-equipment.html",
     },
+    # ---- Fifth category (Step 1: dedicated page only) --------------------
+    # NO approved product information, brands, specifications, images or
+    # catalogue exist yet, so this entry carries NO products (=> no Product
+    # JSON-LD is generated), NO trust badges, NO stats strip and NO catalogue
+    # download: the page shows honest "coming soon" states instead. The seven
+    # sub-category labels are PROVISIONAL grouping labels, not verified
+    # inventory (see DYNAMIC_CATALOGS["safety-packing"]).
+    "safety-packing": {
+        "key": "safety-packing",
+        "nav_key": "safety-packing",
+        "icon": "shield-check",
+        "empty_state": True,
+        "h1": "Industrial Safety &amp; Packing Materials",
+        "desc": "Safety and packing supplies for industrial and commercial use. Our product listing for this category is being prepared &mdash; contact us to discuss your requirements.",
+        "trust_badges": [],
+        "subcategories": [],
+        "popular_heading": "Personal Protective Equipment",
+        "popular_sub": "Our product listing for this group is being prepared. Contact us for availability and details.",
+        "products": [],
+        "catalogue_name": "Industrial Safety &amp; Packing Materials Catalogue",
+        "href": "industrial-safety-packing.html",
+    },
 }
+
+
+# ---------------------------------------------------------------------
+# DYNAMIC CATALOGUE PAGES (approved implementation)
+# Every category page (Electricals, Electronics, Hardwares, Industrial) is
+# driven by its own js/pages/<script>.js: the product grid is rendered
+# client-side from that file's CATALOG object, so the generated page carries
+# an empty [data-catalog-grid] plus the data-catalog-* hooks the script binds
+# to. The tab keys / labels below MUST match CATALOG in each script
+# (checked by check_dynamic_tabs() on every build). `heading` / `desc` are
+# the first tab's initial server-side text, `pdf` is the catalogue PDF
+# basename and `script` the page script.
+# ---------------------------------------------------------------------
+DYNAMIC_CATALOGS = {
+    "electricals": {
+        "script": "electricals-catalog.js",
+        "pdf": "electricals-catalogue.pdf",
+        "tabs": [
+            ("wires-cables", "fa-plug", "Wires &amp; Cables"),
+            ("switches-sockets", "fa-toggle-on", "Switches &amp; Sockets"),
+            ("mcb-rccb", "fa-bolt", "MCB &amp; RCCB"),
+            ("distribution-boards", "fa-table-cells", "Distribution Boards"),
+            ("lighting-solutions", "fa-lightbulb", "Lighting Solutions"),
+            ("conduits-accessories", "fa-wrench", "Conduits &amp; Accessories"),
+            ("electrical-accessories", "fa-box", "Electrical Accessories"),
+        ],
+    },
+    "electronics": {
+        "script": "electronics-catalog.js",
+        "pdf": "electronics-catalogue.pdf",
+        "heading": "Popular Passive Components",
+        "desc": "Resistors, capacitors and inductors for reliable circuit design and prototyping.",
+        "tabs": [
+            ("passive-components", "fa-microchip", "Passive Components"),
+            ("active-components", "fa-gear", "Active Components"),
+            ("semiconductors", "fa-microchip", "Semiconductors"),
+            ("connectors", "fa-box", "Connectors"),
+            ("sensors", "fa-shield-halved", "Sensors"),
+            ("circuit-protection", "fa-shield-halved", "Circuit Protection"),
+            ("development-boards", "fa-microchip", "Development Boards"),
+        ],
+    },
+    "hardwares": {
+        "script": "hardwares-catalog.js",
+        "pdf": "hardwares-catalogue.pdf",
+        "heading": "Popular Fasteners",
+        "desc": "Bolts, nuts, screws and rivets built for strength and reliable, long-lasting joints.",
+        "tabs": [
+            ("fasteners", "fa-screwdriver", "Fasteners"),
+            ("hand-tools", "fa-wrench", "Hand Tools"),
+            ("power-tools", "fa-gear", "Power Tools"),
+            ("plumbing-fittings", "fa-gauge-high", "Plumbing Fittings"),
+            ("pipes-fittings", "fa-plug", "Pipes &amp; Fittings"),
+            ("safety-products", "fa-shield-halved", "Safety Products"),
+            ("hardware-accessories", "fa-box", "Hardware Accessories"),
+        ],
+    },
+    "industrial": {
+        "script": "industrial-catalog.js",
+        "pdf": "industrial-catalogue.pdf",
+        "heading": "Popular Material Handling Equipment",
+        "desc": "Pallet trucks, trolleys and lifting equipment for safe, efficient material movement.",
+        "tabs": [
+            ("material-handling-equipment", "fa-box", "Material Handling Equipment"),
+            ("pumps-motors", "fa-gauge-high", "Pumps &amp; Motors"),
+            ("electrical-enclosures", "fa-table-cells", "Electrical Enclosures"),
+            ("safety-security-equipment", "fa-shield-halved", "Safety &amp; Security Equipment"),
+            ("lighting-solutions", "fa-bolt", "Lighting Solutions"),
+            ("power-backup-stabilizers", "fa-bolt", "Power Backup &amp; Stabilizers"),
+            ("cleaning-equipment", "fa-droplet", "Cleaning Equipment"),
+        ],
+    },
+    # Provisional grouping labels (NOT verified inventory). No "pdf": there is
+    # no approved catalogue, so the page shows "Catalogue coming soon" instead
+    # of any download.
+    "safety-packing": {
+        "script": "industrial-safety-packing-catalog.js",
+        "pdf": None,
+        "heading": "Personal Protective Equipment",
+        "desc": "Our product listing for this group is being prepared. Contact us for availability and details.",
+        "tabs": [
+            ("personal-protective-equipment", "fa-shield-halved", "Personal Protective Equipment"),
+            ("safety-footwear-head-protection", "fa-helmet-safety", "Safety Footwear &amp; Head Protection"),
+            ("eye-face-hearing-protection", "fa-glasses", "Eye, Face &amp; Hearing Protection"),
+            ("workplace-safety-signage", "fa-triangle-exclamation", "Workplace Safety &amp; Signage"),
+            ("tapes-adhesives", "fa-tape", "Tapes &amp; Adhesives"),
+            ("wrapping-cushioning-materials", "fa-box-open", "Wrapping &amp; Cushioning Materials"),
+            ("boxes-strapping-packing-accessories", "fa-boxes-stacked", "Boxes, Strapping &amp; Packing Accessories"),
+        ],
+    },
+}
+DYNAMIC_CATALOG_KEYS = set(DYNAMIC_CATALOGS)
+
+
+def check_dynamic_tabs(cat_key):
+    """Fail loudly if the generated tab keys/labels drift from the CATALOG
+    object in the page's catalogue script."""
+    import html as _html
+    import re as _re
+    cfg = DYNAMIC_CATALOGS[cat_key]
+    js_path = os.path.join(ROOT, "js", "pages", cfg["script"])
+    if not os.path.exists(js_path):
+        raise SystemExit(f"{cat_key}: catalogue script missing: {js_path}")
+    js = open(js_path, encoding="utf-8").read()
+    start = js.index("CATALOG")
+    pairs = _re.findall(r'"([a-z0-9-]+)"\s*:\s*\{\s*label\s*:\s*"([^"]+)"', js[start:])
+    pairs = [(k, _html.unescape(l)) for k, l in pairs]
+    gen = [(k, _html.unescape(l)) for k, _i, l in cfg["tabs"]]
+    if not pairs or pairs != gen:
+        raise SystemExit(f"{cat_key} tab drift!\n  generator: {gen}\n  script:    {pairs}")
 
 
 def build_category_main(cat_key):
@@ -1115,16 +1519,22 @@ def build_category_main(cat_key):
             </div>"""
         for icon, label in cat["trust_badges"]
     )
+    empty_state = cat.get("empty_state", False)
+    badges_block = (
+        f"""          <div class="category-hero__badges">
+{badges_html}
+          </div>
+"""
+        if badges_html
+        else ""
+    )
 
     hero_html = f"""    <section class="category-hero" aria-label="{cat['h1']} overview">
       <div class="container category-hero__inner">
         <div class="category-hero__content">
           <h1 class="category-hero__title">{cat['h1']}</h1>
           <p class="category-hero__desc">{cat['desc']}</p>
-          <div class="category-hero__badges">
-{badges_html}
-          </div>
-        </div>
+{badges_block}        </div>
         <div class="category-hero__media">
           {img_placeholder(cat['h1'] + ' hero image', 'aspect-box--tall')}
         </div>
@@ -1134,17 +1544,28 @@ def build_category_main(cat_key):
     # -------------------------------------------------------------
     # SUB-CATEGORY TAB STRIP
     # -------------------------------------------------------------
-    tabs_html = "\n".join(
-        f"""          <button type="button" class="category-tabs__item{' is-active' if i == 0 else ''}"{' aria-current="true"' if i == 0 else ''}>
+    dynamic = cat_key in DYNAMIC_CATALOG_KEYS
+    if dynamic:
+        tabs_html = "\n".join(
+            f"""          <button type="button" class="category-tabs__item{' is-active' if i == 0 else ''}" data-category="{key}"{' aria-current="true"' if i == 0 else ''}>
+            <i class="fa-solid {icon}" aria-hidden="true"></i>
+            <span>{label}</span>
+          </button>"""
+            for i, (key, icon, label) in enumerate(DYNAMIC_CATALOGS[cat_key]["tabs"])
+        )
+    else:
+        tabs_html = "\n".join(
+            f"""          <button type="button" class="category-tabs__item{' is-active' if i == 0 else ''}"{' aria-current="true"' if i == 0 else ''}>
             {ICONS[icon]}
             <span>{label}</span>
           </button>"""
-        for i, (icon, label) in enumerate(cat["subcategories"])
-    )
+            for i, (icon, label) in enumerate(cat["subcategories"])
+        )
+    tabs_attr = "data-catalog-tabs" if dynamic else "data-tabs"
 
     tabs_section = f"""    <section class="section--sm section--light" aria-label="Sub-categories">
       <div class="container">
-        <div class="category-tabs" data-tabs aria-label="{cat['h1']} sub-categories">
+        <div class="category-tabs" {tabs_attr} aria-label="{cat['h1']} sub-categories">
 {tabs_html}
         </div>
       </div>
@@ -1178,30 +1599,62 @@ def build_category_main(cat_key):
         for name, specs in cat["products"]
     )
 
+    popular_heading = DYNAMIC_CATALOGS[cat_key].get("heading", cat["popular_heading"]) if dynamic else cat["popular_heading"]
+    popular_sub = DYNAMIC_CATALOGS[cat_key].get("desc", cat["popular_sub"]) if dynamic else cat["popular_sub"]
+    heading_attr = " data-catalog-heading" if dynamic else ""
+    desc_attr = " data-catalog-description" if dynamic else ""
+    grid_open = (
+        '<div class="grid grid--3" data-catalog-grid></div>'
+        if dynamic
+        else f'<div class="grid grid--3">\n{product_cards_html}\n        </div>'
+    )
+    if empty_state:
+        first_label = DYNAMIC_CATALOGS[cat_key]["tabs"][0][2]
+        grid_open = f'''<div class="grid grid--3" data-catalog-grid>
+          <div class="catalog-empty" data-catalog-empty>
+            <div class="catalog-empty__media">
+              {img_placeholder(first_label + ' image', 'aspect-box--wide')}
+            </div>
+            <div class="catalog-empty__body">
+              <h3 class="catalog-empty__title">Products coming soon</h3>
+              <p>We have not published products for {first_label} yet. Contact us to discuss your requirements.</p>
+              <div class="catalog-empty__actions">
+                <button type="button" class="btn btn--primary" data-modal-open="quote" data-catalog-quote-trigger data-product-name="{first_label}">Request a Quote</button>
+                <a class="btn btn--outline" href="contact.html">Contact Us</a>
+              </div>
+            </div>
+          </div>
+        </div>'''
     products_section = f"""    <section class="section section--surface" aria-labelledby="popular-heading">
       <div class="container">
         <div class="section-heading section-heading--center">
-          <h2 class="section-heading__title" id="popular-heading">{cat['popular_heading']}</h2>
-          <p class="section-heading__subtitle">{cat['popular_sub']}</p>
+          <h2 class="section-heading__title" id="popular-heading"{heading_attr}>{popular_heading}</h2>
+          <p class="section-heading__subtitle"{desc_attr}>{popular_sub}</p>
         </div>
-        <div class="grid grid--3">
-{product_cards_html}
-        </div>
+        {grid_open}
       </div>
     </section>"""
 
     # -------------------------------------------------------------
     # INLINE CTA
     # -------------------------------------------------------------
+    inline_title_attr = " data-catalog-inline-title" if dynamic else ""
+    quote_trigger_attr = " data-catalog-quote-trigger" if dynamic else ""
+    if empty_state:
+        inline_title_text = f"Looking for {DYNAMIC_CATALOGS[cat_key]['tabs'][0][2]}?"
+        inline_text = "Share your requirements and contact us to discuss them."
+    else:
+        inline_title_text = f"Looking for more {cat['h1']} products?"
+        inline_text = "We supply hundreds of additional variants from leading brands to match your exact requirements."
     inline_cta = f"""    <section class="section--sm section--light" aria-label="Request more products">
       <div class="container">
         <div class="inline-cta">
           <span class="inline-cta__icon">{ICONS['file']}</span>
           <div class="inline-cta__text">
-            <h3 class="inline-cta__title">Looking for more {cat['h1']} products?</h3>
-            <p>We supply hundreds of additional variants from leading brands to match your exact requirements.</p>
+            <h3 class="inline-cta__title"{inline_title_attr}>{inline_title_text}</h3>
+            <p>{inline_text}</p>
           </div>
-          <button type="button" class="btn btn--primary" data-modal-open="quote">
+          <button type="button" class="btn btn--primary" data-modal-open="quote"{quote_trigger_attr}>
             Request a Quote
             {ICONS['arrow-right']}
           </button>
@@ -1223,6 +1676,17 @@ def build_category_main(cat_key):
         for icon, label in catalogue_features
     )
 
+    band_heading_attr = " data-catalog-catalogue-heading" if dynamic else ""
+    if dynamic:
+        band_cta = f"""<a class="btn btn--gold" href="../assets/catalogue/{DYNAMIC_CATALOGS[cat_key]['pdf']}#{DYNAMIC_CATALOGS[cat_key]['tabs'][0][0]}" download data-catalog-catalogue-pdf>
+                {ICONS['download']}
+                Download Catalogue PDF
+              </a>"""
+    else:
+        band_cta = f"""<button type="button" class="btn btn--gold">
+                {ICONS['download']}
+                Download Catalogue PDF
+              </button>"""
     catalogue_section = f"""    <section class="section--sm" aria-labelledby="catalogue-heading">
       <div class="container">
         <div class="cta-band cta-band--catalogue text-on-dark">
@@ -1231,15 +1695,12 @@ def build_category_main(cat_key):
               {img_placeholder(cat['catalogue_name'] + ' cover', 'aspect-box--square')}
             </div>
             <div class="catalogue-band__text">
-              <h2 class="catalogue-band__title" id="catalogue-heading">Download Complete<br />{cat['catalogue_name']}</h2>
+              <h2 class="catalogue-band__title" id="catalogue-heading"{band_heading_attr}>Download Complete<br />{cat['catalogue_name']}</h2>
               <p>Browse detailed specifications, technical drawings, certifications and complete product information.</p>
               <div class="catalogue-band__features">
 {catalogue_features_html}
               </div>
-              <button type="button" class="btn btn--gold">
-                {ICONS['download']}
-                Download Catalogue PDF
-              </button>
+              {band_cta}
             </div>
           </div>
         </div>
@@ -1272,6 +1733,30 @@ def build_category_main(cat_key):
       </div>
     </section>"""
 
+    if empty_state:
+        # Honest "coming soon" band replaces the catalogue download band, and
+        # the stats strip (unverified product/brand/years figures) is omitted.
+        catalogue_section = f"""    <section class="section--sm" aria-labelledby="catalogue-heading">
+      <div class="container">
+        <div class="cta-band cta-band--catalogue text-on-dark">
+          <div class="catalogue-band__inner">
+            <div class="catalogue-band__media">
+              {img_placeholder(cat['catalogue_name'] + ' cover', 'aspect-box--square')}
+            </div>
+            <div class="catalogue-band__text">
+              <h2 class="catalogue-band__title" id="catalogue-heading">Catalogue coming soon&mdash;contact us for details</h2>
+              <p>No catalogue has been published for this category yet.</p>
+              <a class="btn btn--gold" href="contact.html">
+                Contact Us
+                {ICONS['arrow-right']}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>"""
+        return "\n\n".join([hero_html, tabs_section, products_section, inline_cta, catalogue_section])
+
     return "\n\n".join([
         hero_html,
         tabs_section,
@@ -1280,6 +1765,104 @@ def build_category_main(cat_key):
         catalogue_section,
         stats_section,
     ])
+
+
+# ---------------------------------------------------------------------
+# DOWNLOAD CENTRE PAGE
+# Reproduces the approved live pages/download-centre.html (its inline-SVG
+# icon set and "/" breadcrumb separator are part of that approved
+# implementation, so they are kept as-is rather than swapped for the
+# Font Awesome variants used by newer templates). All six PDFs under
+# assets/catalogue/ are one-page PLACEHOLDER documents that say so on
+# their cover; the full documents are pending approval.
+# ---------------------------------------------------------------------
+DOWNLOAD_PLACEHOLDER_SVG = (
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/>'
+    '<circle cx="8.5" cy="9.5" r="1.6" stroke="currentColor" stroke-width="1.4" fill="none"/>'
+    '<path d="M21 16l-5.5-5.5L9 17" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg>'
+)
+DOWNLOAD_BTN_SVG = (
+    '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M2 12v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" '
+    'stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+)
+DOWNLOAD_ARROW_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>'
+
+# (card title, description, file under assets/catalogue/) — order is the
+# approved on-page order. Titles/descriptions are the approved card copy.
+DOWNLOAD_ITEMS = [
+    ("Electrical Catalogue", "Wires &amp; Cables, Switches, MCBs, Distribution Boards, Lighting and more.", "electricals-catalogue.pdf"),
+    ("Electronics Catalogue", "Passive, active, and semiconductor components for design and production.", "electronics-catalogue.pdf"),
+    ("Hardware Catalogue", "Fasteners, hand tools, power tools, and industrial hardware accessories.", "hardwares-catalogue.pdf"),
+    ("Industrial Catalogue", "Material handling, pumps &amp; motors, ventilation, and facility equipment.", "industrial-catalogue.pdf"),
+    ("Company Profile", "An overview of HM UNIQUE, our history, values, and capabilities.", "company-profile.pdf"),
+    ("Product Datasheets", "Technical specifications and datasheets across our full product range.", "product-datasheets.pdf"),
+]
+
+
+def _dc_placeholder(label, ratio_class):
+    return f"""<div class="aspect-box {ratio_class}" role="img" aria-label="{label} — placeholder, pending final product photography">
+              <div class="img-placeholder">{DOWNLOAD_PLACEHOLDER_SVG}</div>
+            </div>"""
+
+
+def build_download_centre_main():
+    cards = "\n".join(
+        f"""          <article class="card card--hover" data-animate="fade-up">
+            <div class="download-card__media">
+              {_dc_placeholder(title.replace(' Catalogue', ' Catalogue') + ' cover', 'aspect-box--tall')}
+            </div>
+            <h3 class="download-card__title">{title}</h3>
+            <p class="download-card__desc">{desc}</p>
+            <a class="btn btn--gold btn--block" href="../assets/catalogue/{filename}" download>
+              {DOWNLOAD_BTN_SVG}
+              Download PDF
+            </a>
+          </article>"""
+        for title, desc, filename in DOWNLOAD_ITEMS
+    )
+    return f"""    <section class="page-banner text-on-dark" aria-label="Download Centre">
+      <div class="container page-banner__inner">
+        <span class="page-banner__eyebrow">Resources</span>
+        <h1 class="page-banner__title">Download Centre</h1>
+        <p class="page-banner__desc">Access our complete range of product catalogues, datasheets and company information &mdash; all in one place.</p>
+      </div>
+    </section>
+
+    <section class="section section--light" aria-labelledby="downloads-heading">
+      <div class="container">
+        <div class="section-heading section-heading--center">
+          <span class="eyebrow">Resources</span>
+          <h2 class="section-heading__title" id="downloads-heading">Available Downloads</h2>
+        </div>
+        <p class="download-notice" role="note">
+          <strong class="download-notice__label">Draft documents &mdash; pending approval.</strong>
+          The files below are placeholder drafts provided for review only. They are not final catalogues, datasheets or company documents.
+        </p>
+        <div class="grid grid--3">
+{cards}
+        </div>
+      </div>
+    </section>
+
+    <section class="section--sm" aria-labelledby="download-cta-heading">
+      <div class="container">
+        <div class="cta-band text-on-dark">
+          <div class="cta-band__inner">
+            <div class="cta-band__text">
+              <h2 class="cta-band__title" id="download-cta-heading">Can&rsquo;t Find What You&rsquo;re Looking For?</h2>
+              <p>Reach out to our team and we&rsquo;ll send you the specific documents or specifications you need.</p>
+              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
+                Request a Quote
+                {DOWNLOAD_ARROW_SVG}
+              </button>
+            </div>
+            <div class="cta-band__media">
+              {_dc_placeholder('Download Centre illustration', 'aspect-box--square')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>"""
 
 
 # ---------------------------------------------------------------------
@@ -1297,7 +1880,7 @@ def build_about_main():
       <div class="container page-banner__inner">
         <span class="eyebrow page-banner__eyebrow">About HM UNIQUE</span>
         <h1 class="page-banner__title">Building Connections. Powering Industries.</h1>
-        <p class="page-banner__desc">With 7+ years of experience, HM UNIQUE has emerged as a trusted supplier of Electricals, Electronics, Hardwares and Industrial Tools. Our commitment to quality, reliability and customer satisfaction drives everything we do.</p>
+        <p class="page-banner__desc">With 7+ years of experience, HM UNIQUE has emerged as a trusted supplier of Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials. Our commitment to quality, reliability and customer satisfaction drives everything we do.</p>
         <div class="page-banner__badge">
           <div class="page-banner__badge-item">
             <div class="page-banner__badge-value">7+</div>
@@ -1432,7 +2015,7 @@ def build_about_main():
 
     # Why Choose HM UNIQUE (real PDF data, 6 items)
     why_choose = [
-        ("grid", "Wide Product Range", "One-stop solution for Electricals, Electronics, Hardwares and Industrial Tools."),
+        ("grid", "Wide Product Range", "One-stop solution for Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials."),
         ("tag", "Competitive Pricing", "Best value for your money without compromising on quality."),
         ("truck", "Timely Delivery", "Efficient logistics and on-time delivery to keep your projects on track."),
         ("headset", "Expert Support", "Our experienced team is always ready to help you choose the right products."),
@@ -1531,10 +2114,11 @@ def build_contact_main():
         <h1 class="page-banner__title">Contact Us</h1>
         <p class="page-banner__desc">We&rsquo;re here to help you find the right products and solutions for your business.</p>
         <div class="page-banner__quicklinks">
-          <span class="page-banner__quicklink">{ICONS['phone']} Call Us: +91 78100 01288</span>
-          <span class="page-banner__quicklink">{ICONS['mail']} Email Us: hmunitecenterprises02@gmail.com</span>
-          <span class="page-banner__quicklink">{ICONS['clock']} Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span>
-          <span class="page-banner__quicklink">{ICONS['whatsapp']} WhatsApp: +91 78100 01288</span>
+          <a class="page-banner__quicklink" href="tel:{PHONE_TEL}">{ICONS['phone']} Call Us: {PHONE_DISPLAY}</a>
+          <a class="page-banner__quicklink" href="tel:{PHONE2_TEL}">{ICONS['phone']} Call Us: {PHONE2_DISPLAY}</a>
+          <a class="page-banner__quicklink" href="mailto:{EMAIL_PRIMARY}">{ICONS['mail']} Email Us: {EMAIL_PRIMARY}</a>
+          <span class="page-banner__quicklink">{ICONS['clock']} Mon &ndash; Sat: 9:00 AM &ndash; 9:00 PM</span>
+          <a class="page-banner__quicklink" href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener">{ICONS['whatsapp']} WhatsApp: {WA_DISPLAY}</a>
         </div>
       </div>
     </section>"""
@@ -1543,11 +2127,7 @@ def build_contact_main():
           <h2 class="mb-2">Get In Touch</h2>
           <p class="text-body mb-5">Fill out the form and our team will get back to you shortly.</p>
 
-          <p class="form-submit-error" data-form-error hidden role="alert">
-            Something went wrong sending your message. Please try again, or call us directly at <a href="tel:+917810001288">+91 78100 01288</a>.
-          </p>
-
-          <form class="contact-form" data-form="contact" novalidate>
+          <form class="contact-form" data-form="contact" data-float-avoid=".form-field__label, .form-field__control, .form-checkbox, .form-field__error-msg, .form-submit-error, button[type=submit]" novalidate>
             <div class="form-row">
               <div class="form-field">
                 <label class="form-field__label" for="contact-name">Your Name <span class="required">*</span></label>
@@ -1592,10 +2172,17 @@ def build_contact_main():
               <span class="form-field__error-msg">Please enter your message.</span>
             </div>
 
-            <label class="form-checkbox">
-              <input type="checkbox" name="privacy" data-required />
-              <span>I agree to the <a aria-disabled="true">privacy policy</a>.</span>
-            </label>
+            <div class="form-field">
+              <label class="form-checkbox">
+                <input type="checkbox" id="contact-privacy" name="privacy" data-required />
+                <span>I agree to the <a aria-disabled="true">privacy policy</a>.</span>
+              </label>
+              <span class="form-field__error-msg">Please agree to the privacy policy to continue.</span>
+            </div>
+
+            <p class="form-submit-error" data-form-error hidden role="alert">
+              Something went wrong sending your message. Please try again, or call us directly at <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>.
+            </p>
 
             <button type="submit" class="btn btn--primary btn--block mt-4">
               Send Message
@@ -1609,9 +2196,9 @@ def build_contact_main():
             <h3 class="info-card__title">Contact Information</h3>
             <ul class="info-card__list">
               <li>{ICONS['map-pin']}<span>{ADDRESS_LINE1}<br />{ADDRESS_LINE2}<br />{ADDRESS_LINE3}</span></li>
-              <li>{ICONS['phone']}<span>{PHONE_DISPLAY}</span></li>
-              <li>{ICONS['mail']}<span>{EMAIL_PRIMARY}<br />{EMAIL_SECONDARY}</span></li>
-              <li>{ICONS['clock']}<span>Monday &ndash; Saturday: 9:00 AM &ndash; 6:00 PM<br />Sunday: Closed</span></li>
+              <li>{ICONS['phone']}<span><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a><br /><a href="tel:{PHONE2_TEL}">{PHONE2_DISPLAY}</a></span></li>
+              <li>{ICONS['mail']}<span><a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a><br /><a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></span></li>
+              <li>{ICONS['clock']}<span>Monday &ndash; Saturday: 9:00 AM &ndash; 9:00 PM<br />Sunday: Closed</span></li>
             </ul>
 
             <div class="whatsapp-cta">
@@ -1671,9 +2258,9 @@ def build_contact_main():
             <h3 class="branch-card__title">HM UNIQUE &ndash; Chennai Branch</h3>
             <ul class="info-card__list">
               <li>{ICONS['map-pin']}<span>{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}</span></li>
-              <li>{ICONS['phone']}<span>{PHONE_DISPLAY}</span></li>
-              <li>{ICONS['mail']}<span>{EMAIL_SECONDARY}</span></li>
-              <li>{ICONS['clock']}<span>Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM</span></li>
+              <li>{ICONS['phone']}<span><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a><br /><a href="tel:{PHONE2_TEL}">{PHONE2_DISPLAY}</a></span></li>
+              <li>{ICONS['mail']}<span><a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></span></li>
+              <li>{ICONS['clock']}<span>Mon &ndash; Sat: 9:00 AM &ndash; 9:00 PM</span></li>
             </ul>
           </div>
         </article>
@@ -1714,9 +2301,9 @@ def build_organization_schema():
         "@type": "LocalBusiness",
         "name": "HM UNIQUE",
         "url": SITE_URL,
-        "logo": f"{SITE_URL}/assets/logo/hm-unique-logo.svg",
-        "description": "Supplier of Electricals, Electronics Components, Hardwares and Industrial & Commercial Equipment.",
-        "telephone": "+91-78100-01288",
+        "logo": f"{SITE_URL}/assets/logo/web/hm-unique-logo-192.png",
+        "description": "Supplier of Electricals, Electronics Components, Hardwares, Industrial & Commercial Equipment and Industrial Safety & Packing Materials.",
+        "telephone": PHONE_SCHEMA,
         "email": "hmunitecenterprises02@gmail.com",
         "address": {
             "@type": "PostalAddress",
@@ -1730,16 +2317,25 @@ def build_organization_schema():
             "@type": "OpeningHoursSpecification",
             "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
             "opens": "09:00",
-            "closes": "18:00",
+            "closes": "21:00",
         },
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+91-78100-01288",
-            "contactType": "customer service",
-            "email": "hmunitecenterprises02@gmail.com",
-            "areaServed": "IN",
-            "availableLanguage": ["en"],
-        },
+        "contactPoint": [
+            {
+                "@type": "ContactPoint",
+                "telephone": PHONE_SCHEMA,
+                "contactType": "customer service",
+                "email": "hmunitecenterprises02@gmail.com",
+                "areaServed": "IN",
+                "availableLanguage": ["en"],
+            },
+            {
+                "@type": "ContactPoint",
+                "telephone": PHONE2_SCHEMA,
+                "contactType": "customer service",
+                "areaServed": "IN",
+                "availableLanguage": ["en"],
+            },
+        ],
     }
     return json.dumps(data, indent=2)
 
@@ -1834,6 +2430,13 @@ def build_schema_scripts(page, depth):
     return scripts
 
 
+# Page-specific stylesheet basenames where they differ from the page key.
+PAGE_CSS_NAMES = {
+    "industrial": "industrial-equipment",
+    "safety-packing": "industrial-safety-packing",
+}
+
+
 def build_head(page, depth):
     # CSS loading order is a client-locked requirement:
     # variables -> utilities -> animations -> header -> footer ->
@@ -1848,7 +2451,7 @@ def build_head(page, depth):
         "css/components.css",
         "css/style.css",
         "css/responsive.css",
-        f"css/pages/{page['key']}.css" if page["key"] != "industrial" else "css/pages/industrial-equipment.css",
+        f"css/pages/{PAGE_CSS_NAMES.get(page['key'], page['key'])}.css",
     ]
     links = "\n  ".join(f'<link rel="stylesheet" href="{rel(f, depth)}" />' for f in css_files)
 
@@ -1925,6 +2528,10 @@ def build_page(page):
         f'<script type="module" src="{rel(f, depth)}" defer></script>' for f in js_files
     )
 
+    if key in DYNAMIC_CATALOG_KEYS:
+        check_dynamic_tabs(key)
+        scripts += f'\n  <script src="{rel("js/pages/" + DYNAMIC_CATALOGS[key]["script"], depth)}" defer></script>'
+
     if key == "home":
         main_content = build_home_main()
     elif key in CATEGORIES:
@@ -1933,6 +2540,8 @@ def build_page(page):
         main_content = build_about_main()
     elif key == "contact":
         main_content = build_contact_main()
+    elif key == "download-centre":
+        main_content = build_download_centre_main()
     else:
         main_content = f"    <!-- {PAGE_MAIN_COMMENTS[key]} -->"
 
@@ -1946,7 +2555,7 @@ def build_page(page):
 
 {build_header(key, depth)}
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
 {breadcrumb_html}{main_content}
   </main>
 

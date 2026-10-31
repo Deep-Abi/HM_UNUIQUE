@@ -67,33 +67,73 @@
   object-position: 68% center;
 }
 
-/* Left-to-right dark gradient so text stays readable over any part of
-   the photo, regardless of viewport width. */
+/* Dark scrim so the hero copy stays readable over any part of the photo.
+   Below 992px the copy spans most of the slide and crosses the brightest
+   parts of the photos (cabinet, instruments), so the scrim is a uniform navy
+   tint plus a heavier band across the top, where the small eyebrow label
+   sits. Measured against every pixel under every text line (cyan
+   accents need ~70% effective cover over the brightest pixels, light-grey
+   body copy ~71%). From 992px the copy sits in the left half, so the scrim
+   is a left-weighted gradient instead -- see responsive.css. */
 .hero__slide-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(
-    90deg,
-    var(--color-navy-900) 0%,
-    var(--overlay-navy-40) 55%,
-    transparent 85%
-  );
+  background:
+    linear-gradient(180deg, rgba(14, 43, 59, 0.9) 0%, rgba(14, 43, 59, 0) 55%),
+    linear-gradient(rgba(14, 43, 59, 0.74), rgba(14, 43, 59, 0.74));
   pointer-events: none;
+}
+
+/* Slide 5 (Industrial Safety & Packing Materials): its photo has bright
+   cardboard and packing film that, on narrow screens, sits directly behind
+   the small cyan eyebrow and the body copy. Measured against the brightest
+   pixels under each text line, the shared scrim left the eyebrow just under
+   4.5:1 (4.47:1 at 414px), so this slide alone gets a slightly stronger
+   uniform tint and top band below 992px. From 992px the shared left-weighted
+   gradient applies unchanged (copy sits over the dark left of the photo). */
+@media (max-width: 991.98px) {
+  .hero .hero__slide--packing .hero__slide-overlay {
+    background:
+      linear-gradient(180deg, rgba(14, 43, 59, 0.94) 0%, rgba(14, 43, 59, 0) 60%),
+      linear-gradient(rgba(14, 43, 59, 0.8), rgba(14, 43, 59, 0.8));
+  }
 }
 
 .hero__inner {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-block: var(--space-8);
+  padding-top: var(--space-8);
+  /* Side room for the prev/next arrows: the copy must never sit under them.
+     --hero-arrow-left/right are the arrow's distance from the hero edge;
+     the arrow, plus a little air, is the space to keep clear. On wide
+     screens the container already sits far enough in (the hero is wider than
+     the container), so only the shortfall -- reserve minus the margin the
+     container already has -- is added, and the gutter is the floor. This
+     replaces the old behaviour below 1440px (arrows in a cluster along the
+     bottom, away from the copy). */
+  padding-left: max(
+    var(--container-gutter),
+    calc(var(--hero-arrow-left) + var(--hero-arrow-size) + var(--hero-arrow-air) - var(--hero-margin) + var(--hero-nudge))
+  );
+  padding-right: max(
+    var(--container-gutter),
+    calc(var(--hero-arrow-right) + var(--hero-arrow-size) + var(--hero-arrow-air) - var(--hero-margin))
+  );
+  /* Bottom room for the pager (pause + dots): 16px inset + 32px control +
+     a little air. */
+  padding-bottom: calc(var(--space-8) + var(--space-3));
 }
 
 .hero__content {
   max-width: 520px;
-  /* Nudges the text left of the standard container gutter, giving it
-     more room before the product photography. */
-  margin-left: calc(var(--space-4) * -1);
+  /* The text used to be pulled 16px LEFT of the container gutter on every
+     screen, which left it 8px from the screen edge on phones and tablets
+     (and misaligned with every section below). Aligned to the gutter by
+     default; the nudge returns from 1440px up, where there is room for it
+     (see responsive.css). */
+  margin-left: 0;
 }
 
 /* Modifier only -- base label styling comes from the shared .eyebrow
@@ -101,6 +141,10 @@
    this class exists purely to widen the bottom margin for this context. */
 .hero__eyebrow {
   margin-bottom: var(--space-3);
+  /* Stage 3: the shared teal-500 eyebrow measured 4.29:1 on the dark hero
+     (below the 4.5:1 AA minimum for 12px text). The on-dark cyan accent
+     already used for the hero title keyword is used here instead. */
+  color: var(--color-cyan-500);
 }
 
 .hero__title {
@@ -114,7 +158,9 @@
 
 .hero__badges {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* minmax(0, 1fr): a long label wraps inside its column instead of widening
+     the track past the (arrow-reserved) content box on small screens. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3) var(--space-5);
   margin-bottom: var(--space-7);
 }
@@ -123,7 +169,16 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-5);
+  gap: var(--space-4) var(--space-5);
+}
+/* "Explore Industrial Equipment" is a nowrap button 349px wide: wider than
+   a 320px screen's content box (and 360px's), so on that slide the button
+   ran off the right edge. It may now wrap onto two lines instead. */
+.hero__actions .btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
 }
 
 /* "About HM Unique" -- a plain icon+text link (not a bordered button),
@@ -161,49 +216,162 @@
   margin-left: 2px;
 }
 
-/* Prev/next moved to the outer top corners of the hero, off the
-   vertical center where they'd otherwise sit over the text/image. */
+/* Slide controls.
+   - Prev / next arrows sit at the LEFT and RIGHT edges of the hero,
+     vertically centred, at every width. The copy reserves matching side room
+     (.hero__inner padding), so an arrow never covers a heading, description,
+     highlight or button; the hero simply grows taller when the copy needs it.
+   - Pause/resume and the pagination dots share one pager, centred along the
+     bottom edge. The fixed WhatsApp / Call / scroll-top buttons are eased out
+     of the way of any hero control they would cover (floating-avoid.js; the
+     hero opts in with data-float-avoid), exactly as for the copy.
+   Sizes grow at 768px and the inset at 1440px (responsive.css). */
+.hero {
+  --hero-arrow-size: 36px;
+  --hero-arrow-inset: 6px;
+  --hero-arrow-air: 10px;
+  --hero-nudge: 0px;
+  --hero-arrow-left: max(var(--hero-arrow-inset), env(safe-area-inset-left));
+  --hero-arrow-right: max(var(--hero-arrow-inset), env(safe-area-inset-right));
+  /* Space between the hero's edge and the centred container (0 when the
+     viewport is narrower than the container). */
+  --hero-margin: max(0px, calc((100vw - var(--container-max)) / 2));
+}
 .hero__nav {
   position: absolute;
   top: 50%;
+  bottom: auto;
+  width: var(--hero-arrow-size);
+  height: var(--hero-arrow-size);
   transform: translateY(-50%);
   z-index: 4;
 }
 .hero__nav--prev {
-  left: var(--space-4);
+  left: var(--hero-arrow-left);
 }
 .hero__nav--next {
-  right: var(--space-4);
+  left: auto;
+  right: var(--hero-arrow-right);
+}
+
+/* Pager: pause/resume (a secondary, lower-weight action, so the shared
+   .btn-icon look at a smaller size) followed by the dots, centred at the
+   bottom of the hero. */
+.hero__pager {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-4);
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.hero__pager .hero__nav--playpause {
+  position: static;
+  transform: none;
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+.hero__nav--playpause i {
+  font-size: 13px;
 }
 
 .hero__dots {
-  position: absolute;
-  left: 50%;
-  bottom: var(--space-5);
-  transform: translateX(-50%);
-  z-index: 4;
   display: flex;
   justify-content: center;
   gap: var(--space-2);
 }
 
+/* Target-size correction: each pagination button is a >=24x24px hit area
+   (30px wide for the current slide, so nothing shifts or overlaps), while
+   the VISIBLE dot is the ::before element at its approved size: an 8px
+   circle, or a 22x8px pill for the current slide. The -8px block margins
+   keep the row's layout height at the old 8px, so the dots stay where they
+   were; the buttons simply extend 8px above and below them. No gap between
+   buttons: the targets abut without overlapping (visible dot spacing is
+   16px; it was 8px). */
+.hero__dots {
+  gap: 0;
+}
 .hero__dots button {
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-block: -8px;
+  padding: 0;
+  border: 0;
+  border-radius: 0; /* square: a rounded box would drop its corners out of the hit area */
+  background: transparent;
+  cursor: pointer;
+}
+.hero__dots button.is-active {
+  width: 30px;
+}
+.hero__dots button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--overlay-white-40);
+  transform: translate(-50%, -50%);
+  background-color: var(--color-white);
   transition: background-color var(--transition-fast), width var(--transition-fast);
 }
-.hero__dots button.is-active {
-  background-color: var(--color-teal-500);
+.hero__dots button.is-active::before {
   width: 22px;
   border-radius: var(--radius-pill);
+  background-color: #f5b400; /* brand yellow; differs from inactive by fill AND width */
 }
+
+/* Stage 7B focus treatment (teal ring + navy halo), drawn on the visible dot
+   exactly as before so the indicator still hugs the dot rather than the
+   larger hit area. */
+.hero__nav:focus-visible {
+  box-shadow: 0 0 0 6px var(--color-navy-900);
+}
+.hero__dots button:focus-visible {
+  outline: none;
+}
+.hero__dots button:focus-visible::before {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--color-navy-900);
+}
+
+/* ---------------------------------------------------------------------
    CATEGORY CARD (Home-only — see Phase 1 §1.8 reusable-component table)
    --------------------------------------------------------------------- */
 .category-card {
   position: relative;
   text-align: left;
+  /* Column flex so the description takes the spare height and the
+     "Explore Category" buttons line up along the bottom of the row,
+     whatever the title/description length. */
+  display: flex;
+  flex-direction: column;
+}
+.category-card .btn {
+  margin-top: auto;
+  align-self: flex-start;
+  max-width: 100%;
+}
+/* The shared placeholder is height:100% of a box whose height comes from a
+   ::before padding hack, so it resolved to its own content height and sat
+   as a thin band UNDER an empty strip: the box was ~40px taller than its
+   intended ratio and the icon was not centred. Pinning it to fill the box
+   restores the exact aspect ratio. Scoped to the homepage's placeholders
+   (this file only loads on the homepage); the same shared defect on other
+   pages is reported for their own stages. */
+.category-card .aspect-box > .img-placeholder,
+.featured-grid .aspect-box > .img-placeholder,
+.cta-band--home .aspect-box > .img-placeholder {
+  position: absolute;
+  inset: 0;
 }
 
 /* Overlapping icon badge — matches the concept reference exactly,
@@ -236,6 +404,7 @@
   font-size: var(--fs-body-sm);
   color: var(--color-text-body);
   margin-bottom: var(--space-4);
+  flex-grow: 1;
 }
 
 /* ---------------------------------------------------------------------
@@ -258,4 +427,64 @@
    is the correct, order-safe way to override it. */
 .section-header-row .section-heading {
   margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------------
+   FEATURED PRODUCTS GRID ("Handpicked Products") — Home only.
+   Root cause of the overflow this replaces: the shared .grid--6 forced
+   repeat(6, 1fr) from 1200px up, but a 1fr track is really
+   minmax(auto, 1fr) and its "auto" minimum is each card's min-content
+   width. That is 224px here (the nowrap "View Details" button is 174px
+   wide, plus the card's 24px padding and 1px border each side), so
+   six columns needed 1464px inside a container that is only
+   1152-1272px wide, and the last cards were pushed out of the page.
+   (Four columns at 992px overflowed the same way by ~23px.)
+
+   Instead of fixing a column COUNT, let usable width decide it: each
+   track must be at least 240px (comfortably above the 224px card
+   floor, so a card can never be squeezed below its content) and
+   otherwise shares the row equally. min(100%, 240px) keeps a single
+   column valid even if the container were ever narrower than 240px.
+   With the 1320px container cap this yields 1 column below ~552px,
+   then 2, 3 and 4 columns as width allows; 5 is never reached
+   (5 x 240 + gaps = 1296px > 1272px). This is the base layout (single
+   column below 552px); from 552px css/responsive.css switches the grid to
+   centred flex rows so the FIVE product cards never leave a lone orphan
+   (2+2+1 centred, 3+2 centred, one row of five from 1400px).
+   Compound .grid.featured-grid out-specifies the shared .grid and
+   .grid--N rules regardless of stylesheet order.
+   --------------------------------------------------------------------- */
+.grid.featured-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+.featured-grid > * {
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------------
+   HERO image-less fallback (NOT used by any slide at the moment).
+   Slide 5 originally used this CSS-only navy background while it had no
+   photo; it now has an approved <picture>, so build_pages.py no longer
+   emits these classes. The rules (and the generator's "no_image" flag) are
+   kept so a future slide without a photo can still render without a
+   broken image reference: a soft navy-900 -> navy-700 gradient plus the
+   same faint diagonal streak texture the full-width CTA bands use
+   (components.css, .cta-band--full::before).
+   --------------------------------------------------------------------- */
+.hero__slide-media--navy {
+  background-color: var(--color-navy-900);
+  background-image: linear-gradient(135deg, var(--color-navy-900) 0%, var(--color-navy-700) 100%);
+}
+.hero__slide-media--navy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    var(--overlay-white-08) 0,
+    var(--overlay-white-08) 1px,
+    transparent 1px,
+    transparent 48px
+  );
+  pointer-events: none;
 }

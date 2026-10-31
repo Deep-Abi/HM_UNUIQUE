@@ -40,13 +40,15 @@
 .block { display: block; }
 .inline-block { display: inline-block; }
 
-/* Visibility helpers — mobile-first: default state is MOBILE, actual
-   flip happens in responsive.css only (no @media queries live here).
-   .hide-on-desktop needs no base rule — the element is visible by
-   default (its natural display) and is hidden only once the Desktop
-   breakpoint is reached, in responsive.css. */
-.hide-on-mobile { display: none; }
-.show-on-mobile { display: inline-flex; }
+/* Visibility helpers (.hide-on-mobile / .show-on-mobile) are defined in
+   responsive.css, NOT here. This file loads BEFORE components.css, so a
+   base rule here lost the cascade to any component that sets its own
+   display at the same specificity — e.g. .btn { display: inline-flex }
+   overrode .hide-on-mobile { display: none }, and the header's
+   "Request a Quote" button never hid on mobile (it pushed the
+   hamburger off-screen at 320-414px). responsive.css loads after
+   components.css, so both the mobile base state and the tablet flip
+   live there, together, where they can't be outranked. */
 
 /* Scroll lock applied to <body> while a modal or mobile nav drawer
    is open (toggled by modal.js / navigation.js) */
@@ -104,8 +106,13 @@
   font-weight: var(--fw-medium);
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
   margin-bottom: var(--space-2);
+}
+/* Stage 7A: on the navy bands the brighter cyan passes (6.30:1 on #0c2836);
+   teal-500 there measured 4.29:1 and brand teal would be 1.99:1. */
+.text-on-dark .eyebrow {
+  color: var(--color-cyan-500);
 }
 
 /* Divider */
@@ -118,3 +125,7 @@
 .divider--dark {
   background-color: var(--overlay-white-12);
 }
+
+/* Stage 7A: the skip link's target (<main tabindex="-1">) takes programmatic
+   focus only; it is not an interactive control, so no focus ring is drawn. */
+#main-content:focus { outline: none; }

@@ -6,8 +6,99 @@
  * behavior is duplicated between the two.
  */
 
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+// Broad tag/attribute match only — every exclusion (disabled,
+// negative tabindex, hidden input, invisible, inert) is applied as a
+// separate, explicit check in getVisibleFocusables() below, rather
+// than folded into this selector string, so each rule stays testable
+// and correct on its own (in particular, `:not([disabled])` alone
+// would miss a control that's disabled only because it sits inside a
+// disabled <fieldset>, and `:not([tabindex="-1"])` alone would miss
+// tabindex="-2" or a tabindex set via the JS property rather than the
+// attribute).
+const FOCUSABLE_SELECTOR = "a[href], button, textarea, input, select, [tabindex]";
+
+/**
+ * Elements matching FOCUSABLE_SELECTOR that are actually focusable
+ * and reachable right now. Excludes, in order:
+ * - Negative tabindex (`el.tabIndex < 0`) — covers tabindex="-1",
+ *   tabindex="-2", and a tabindex set via the `.tabIndex` JS property
+ *   rather than the HTML attribute, none of which a plain attribute
+ *   selector like `:not([tabindex="-1"])` would catch.
+ * - Disabled controls (`el.matches(":disabled")`) — the `:disabled`
+ *   pseudo-class is true for a control with its own `disabled`
+ *   attribute AND for one that's merely a descendant of a disabled
+ *   `<fieldset>` (per the HTML "disabled state" algorithm), so this
+ *   one check covers both without walking up for `<fieldset>`s by hand.
+ * - `<input type="hidden">` — never meant to be focusable; checked
+ *   explicitly rather than relying only on layout, since a hidden
+ *   input could in principle still report a client rect in some
+ *   browser quirk.
+ * - Anything inside an `inert` ancestor — `inert` elements can still
+ *   have non-zero client rects and non-"hidden" computed visibility
+ *   (inert only removes interactivity, not layout), so neither of the
+ *   other checks would catch it on their own.
+ * - Computed `visibility: hidden` or `visibility: collapse` — unlike
+ *   `display: none`, an invisible element of this kind still has
+ *   non-zero client rects, so getClientRects() alone would wrongly
+ *   keep it in the trap.
+ * - Anything without a rendered client rect at all (getClientRects()
+ *   — reliable regardless of position, unlike offsetParent, which
+ *   browsers can report as null for position:fixed elements like this
+ *   modal box itself) — catches `display: none`, a `hidden` ancestor,
+ *   zero-size layout, and anything else not actually laid out.
+ *
+ * Called fresh on every Tab keypress (see trapFocus) rather than
+ * cached once at open(), so a control that becomes focusable after
+ * open (e.g. the submission-error message's "call us" link, hidden
+ * until a failed submit reveals it) is included immediately instead
+ * of only after the modal is reopened.
+ */
+function getVisibleFocusables(root) {
+  return Array.from(root.querySelectorAll(FOCUSABLE_SELECTOR)).filter((el) => {
+    if (el.tabIndex < 0) return false;
+    if (el.matches(":disabled")) return false;
+    if (el.tagName === "INPUT" && el.type === "hidden") return false;
+    if (el.closest("[inert]")) return false;
+    const visibility = getComputedStyle(el).visibility;
+    if (visibility === "hidden" || visibility === "collapse") return false;
+    if (el.getClientRects().length === 0) return false;
+    return true;
+  });
+}
+
+// Counts how many modals are currently open, so the background can be
+// made inert as soon as the first one opens and restored only once
+// the last one closes (covers the quote -> thank-you handoff, where
+// one briefly opens right after the other closes).
+let openModalCount = 0;
+
+// Elements that setBackgroundInert(true) itself switched to inert,
+// recorded so the matching setBackgroundInert(false) only reverts
+// those — never an element that was already inert for a reason the
+// modal system doesn't own, such as the mobile nav drawer and its
+// overlay while the drawer is closed (navigation.js sets inert=true
+// on them permanently whenever the drawer isn't open). Without this,
+// restoring every background child to inert=false unconditionally
+// would wrongly reopen the closed drawer to keyboard focus/AT once a
+// modal closes.
+const backgroundInertOwned = new Set();
+
+function setBackgroundInert(isInert) {
+  if (isInert) {
+    Array.from(document.body.children).forEach((el) => {
+      if (el.classList.contains("modal-overlay") || el.tagName === "SCRIPT") return;
+      if (!el.inert) {
+        el.inert = true;
+        backgroundInertOwned.add(el);
+      }
+    });
+  } else {
+    backgroundInertOwned.forEach((el) => {
+      el.inert = false;
+    });
+    backgroundInertOwned.clear();
+  }
+}
 
 class Modal {
   /**
@@ -17,7 +108,6 @@ class Modal {
     this.overlay = overlayEl;
     this.modal = overlayEl.querySelector(".modal");
     this.lastFocusedElement = null;
-    this.focusables = null;
 
     this.handleKeydown = this.handleKeydown.bind(this);
     this.close = this.close.bind(this);
@@ -39,10 +129,10 @@ class Modal {
     document.body.classList.add("scroll-locked");
     document.addEventListener("keydown", this.handleKeydown);
 
-    // Cache the focusable list once per open, rather than re-querying
-    // the DOM on every Tab keypress in trapFocus() below.
-    this.focusables = Array.from(this.modal.querySelectorAll(FOCUSABLE_SELECTOR));
-    this.focusables[0]?.focus();
+    openModalCount += 1;
+    setBackgroundInert(true);
+
+    getVisibleFocusables(this.modal)[0]?.focus();
   }
 
   close() {
@@ -50,8 +140,18 @@ class Modal {
     this.overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("scroll-locked");
     document.removeEventListener("keydown", this.handleKeydown);
-    this.focusables = null;
-    this.lastFocusedElement?.focus();
+
+    openModalCount = Math.max(0, openModalCount - 1);
+    if (openModalCount === 0) setBackgroundInert(false);
+
+    // Only restore focus to a target that's still actually there and
+    // visible (e.g. not a control that was hidden/removed meanwhile).
+    const canRestore =
+      this.lastFocusedElement &&
+      document.contains(this.lastFocusedElement) &&
+      this.lastFocusedElement.getClientRects().length > 0;
+    if (canRestore) this.lastFocusedElement.focus();
+    this.lastFocusedElement = null;
   }
 
   handleKeydown(event) {
@@ -65,10 +165,16 @@ class Modal {
   }
 
   trapFocus(event) {
-    if (!this.focusables || this.focusables.length === 0) return;
+    // Recalculated on every Tab press rather than cached at open(),
+    // so a control that becomes visible/hidden/disabled while the
+    // modal is open (e.g. the unavailable-submission message's phone
+    // and email links, hidden until a submit attempt reveals them)
+    // is reflected in the trap boundary immediately.
+    const focusables = getVisibleFocusables(this.modal);
+    if (focusables.length === 0) return;
 
-    const first = this.focusables[0];
-    const last = this.focusables[this.focusables.length - 1];
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
 
     if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();

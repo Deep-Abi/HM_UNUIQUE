@@ -3,5 +3,124 @@
    Page-specific overrides only. This file must never redefine a
    component's core look (that belongs in components.css) — it may
    only add layout-specific spacing/positioning unique to this page.
-   Populated in Phase 3 once this page's sections are built.
+
+   Stage 5 responsive corrections (Industrial & Commercial Equipment only). Same verified approach as
+   pages/electricals.css (Stage 4): every rule is scoped to this page's own
+   hooks (data-catalog-*, category-hero, product-card, catalogue-band) so no
+   other page is affected. Each category page loads only its own page CSS,
+   so the rules are kept per-page rather than moved into shared files.
    ========================================================================== */
+
+/* 1. Placeholder positioning defect.
+   .aspect-box reserves its ratio with a ::before padding-top spacer, but
+   .img-placeholder was `height:100%` of an auto-height box, so it collapsed
+   to its icon height and rendered as a thin band at the bottom of an empty
+   area (hero, every product card, catalogue cover). Pinning it to the box
+   makes it fill the reserved ratio exactly. No image is added. */
+.category-hero__media .img-placeholder,
+.product-card__media .img-placeholder,
+.catalogue-band__media .img-placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+/* 2. Product grid columns.
+   Previously 1 column up to 767px (a single 500-700px card with a square
+   image), 2 columns at 768-991px, 3 from 992px. Two columns now start at
+   552px, where a card is still wide enough for its specs. Higher
+   specificity (.grid + attribute) so it wins over responsive.css's .grid--3
+   rules regardless of load order. */
+.grid[data-catalog-grid] {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+@media (min-width: 552px) {
+  .grid[data-catalog-grid] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 992px) {
+  .grid[data-catalog-grid] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 3. Equal-height cards, bottom-aligned actions, safe text wrapping.
+   .product-card is already a column flex box at height:100%; the action row
+   now takes the leftover space above it so Download/Quote line up across a
+   row without any fixed height that could clip longer content. */
+[data-catalog-grid] .product-card {
+  min-width: 0;
+}
+[data-catalog-grid] .product-card__title {
+  overflow-wrap: break-word;
+}
+[data-catalog-grid] .card__specs {
+  min-width: 0;
+}
+[data-catalog-grid] .card__specs li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+[data-catalog-grid] .card__actions {
+  margin-top: auto;
+}
+
+/* 4. Category tab strip: scroll affordance.
+   The strip scrolls horizontally below ~820px with a hidden scrollbar, so
+   nothing signalled that more categories existed. Edge shadows that appear
+   only on the side that still has hidden tabs (background-attachment trick),
+   plus scroll snapping so a tab never rests half-hidden after a swipe. */
+.category-tabs[data-catalog-tabs] {
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--space-2);
+  background:
+    linear-gradient(to right, var(--color-white) 30%, rgba(255, 255, 255, 0)) left center / 40px 100% no-repeat local,
+    linear-gradient(to left, var(--color-white) 30%, rgba(255, 255, 255, 0)) right center / 40px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(11, 35, 56, 0.22), rgba(11, 35, 56, 0)) left center / 12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(11, 35, 56, 0.22), rgba(11, 35, 56, 0)) right center / 12px 100% no-repeat scroll;
+}
+.category-tabs[data-catalog-tabs] .category-tabs__item {
+  scroll-snap-align: start;
+}
+.category-tabs[data-catalog-tabs] .category-tabs__item:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: -2px;
+}
+
+/* 5. Catalogue band: heading and download button were clipped at 320-360px.
+   The nowrap button set the text column's min-content width wider than the
+   band, so the column overflowed on the right. The text column may now
+   shrink and the button may wrap onto two centred lines. */
+.catalogue-band__text {
+  min-width: 0;
+  max-width: 100%;
+}
+.catalogue-band__text .btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+}
+.catalogue-band__title {
+  overflow-wrap: break-word;
+}
+
+/* 6. Inline CTA button: allow it to wrap rather than overflow on very
+   narrow screens. */
+.inline-cta .btn {
+  max-width: 100%;
+  white-space: normal;
+}
+
+/* Narrow phones: slightly tighter band padding so the download button
+   sits on two lines at most instead of three. */
+@media (max-width: 479px) {
+  .catalogue-band__inner {
+    padding: var(--space-5);
+    gap: var(--space-4);
+  }
+  .catalogue-band__text .btn {
+    width: 100%;
+  }
+}

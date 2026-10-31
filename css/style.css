@@ -17,12 +17,19 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* The header is sticky, so without this an in-page link (e.g. "View
+     All Products" -> #product-categories) scrolls its target underneath
+     the header, and a keyboard-focused control can end up hidden behind
+     it too. */
+  scroll-padding-top: var(--header-offset);
+  /* Fixed floating controls sit at the bottom corners; keep a focused
+     field or an anchored target from being scrolled underneath them. */
+  scroll-padding-bottom: var(--floating-clearance);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  overflow-x: hidden;
   font-family: var(--font-body);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
@@ -106,7 +113,7 @@ textarea:focus-visible,
 
 .skip-link {
   position: absolute;
-  top: -48px;
+  top: -80px; /* Stage 7A: was -48px, which left a 1-2px navy sliver visible above the open drawer */
   left: var(--space-4);
   z-index: 999;
   background: var(--color-navy-900);
@@ -226,7 +233,7 @@ p:last-child {
 .grid {
   display: grid;
   gap: var(--grid-gap);
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .grid--2,
@@ -234,7 +241,25 @@ p:last-child {
 .grid--4,
 .grid--5,
 .grid--6 {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Direct children of the shared grids must be allowed to shrink below
+   their content's min-content width, otherwise a wide child (an input, a
+   row of buttons, an email address) holds its track open and pushes the
+   whole page wider than the viewport. Pairs with the minmax(0, 1fr) tracks
+   used throughout. */
+.grid > *,
+.form-row > *,
+.site-footer__grid > *,
+.contact-grid > *,
+.who-we-are > *,
+.category-hero__inner > *,
+.branch-card > *,
+.modal--quote > *,
+.stats-strip > *,
+.industries-grid > * {
+  min-width: 0;
 }
 
 .grid--auto {

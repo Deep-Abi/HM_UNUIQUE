@@ -26,6 +26,21 @@
   padding-block: var(--space-2);
 }
 
+/* Two approved phone numbers sit side by side where there is room and
+   wrap/stack (never clip) on very narrow screens; each link keeps its
+   own 24px+ line box so both stay tappable. */
+.utility-bar__phones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-4);
+  row-gap: 0;
+  min-width: 0;
+}
+.utility-bar__phones .utility-bar__phone {
+  min-height: 24px;
+}
+
 .utility-bar__phone,
 .utility-bar__email {
   display: inline-flex;
@@ -85,22 +100,54 @@
   padding-block: var(--space-3);
 }
 
-/* Logo */
+/* Logo
+   The logo is the one flexible item in the header row, so it must be
+   able to give up width (min-width: 0) while the mark itself never
+   shrinks — a flex item with width: auto + max-width: 100% (from the
+   global img rule) otherwise collapses to nothing before the text does,
+   which is how the mark vanished at 320-414px. */
 .site-logo {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
 }
 
+.site-logo__mark {
+  flex: 0 0 auto;
+}
+
+.site-logo__mark picture {
+  display: block;
+}
+
+/* Supplied icon is a wide (~2.3:1) transparent mark: fix the height, let the
+   width follow the intrinsic ratio so it is never stretched. */
 .site-logo__mark img {
-  height: 44px;
+  display: block;
+  height: 36px;
   width: auto;
+  max-width: none;
+  aspect-ratio: 112 / 48;
+}
+
+/* Navy artwork disappears on the dark footer, so it sits on a clean white
+   backing (artwork itself is not recoloured). */
+.site-logo__mark--backed {
+  background-color: var(--color-white);
+  border-radius: var(--radius-md, 8px);
+  padding: 6px 8px;
+}
+
+.mobile-nav__brand {
+  gap: var(--space-2);
 }
 
 .site-logo__text {
   display: flex;
   flex-direction: column;
   line-height: 1.15;
+  min-width: 0;
 }
 
 .site-logo__name {
@@ -110,7 +157,10 @@
   color: var(--color-navy-900);
 }
 
+/* Mobile-first: hidden below 480px (responsive.css reveals it) — see
+   the note there. */
 .site-logo__tagline {
+  display: none;
   font-size: 0.6875rem;
   font-weight: var(--fw-medium);
   letter-spacing: 0.03em;
@@ -126,6 +176,9 @@
 .primary-nav {
   display: none;
   align-items: center;
+  /* The links keep their natural width; if the row is ever too tight it
+     is the logo's tagline that wraps, never the navigation. */
+  flex-shrink: 0;
 }
 
 .primary-nav__list {
@@ -142,6 +195,7 @@
   color: var(--color-text-heading);
   padding-block: var(--space-2);
   position: relative;
+  white-space: nowrap;
   transition: color var(--transition-fast);
 }
 
@@ -160,7 +214,7 @@
 
 .primary-nav__link:hover,
 .primary-nav__link[aria-current="page"] {
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
 }
 .primary-nav__link:hover::after,
 .primary-nav__link[aria-current="page"]::after {
@@ -210,7 +264,13 @@
   z-index: var(--z-dropdown);
 }
 
-.primary-nav__item--dropdown:hover .products-dropdown,
+/* Visibility is driven only by the JS-managed .is-open class, not by
+   a CSS :hover rule — navigation.js already opens the dropdown on
+   mouseenter for hover-capable pointers (and on click/keyboard/touch
+   otherwise), so a separate :hover selector here would let the
+   dropdown stay visibly open from pure CSS even after JS has closed
+   it (e.g. Escape while the pointer is still resting over the menu),
+   leaving computed visibility and aria-expanded out of sync. */
 .primary-nav__item--dropdown.is-open .products-dropdown {
   opacity: 1;
   visibility: visible;
@@ -231,7 +291,7 @@
 .products-dropdown__link:hover,
 .products-dropdown__link[aria-current="page"] {
   background-color: var(--color-teal-100);
-  color: var(--color-teal-600);
+  color: var(--color-teal-brand);
 }
 
 .products-dropdown__icon {
@@ -256,6 +316,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  /* The quote button / hamburger are essential controls: they keep
+     their size and the logo is what yields space. */
+  flex-shrink: 0;
 }
 
 /* Uppercase text is now part of the shared .btn base class (see
@@ -301,17 +364,37 @@
   inset: 0 0 0 auto;
   width: min(340px, 86vw);
   height: 100vh;
+  /* 100vh on mobile browsers includes the area behind the collapsing
+     URL bar, which pushes the drawer's last links/CTA below the visible
+     screen; dvh tracks what is actually visible. Browsers without dvh
+     keep the 100vh line above. */
+  height: 100dvh;
   background-color: var(--color-white);
-  box-shadow: var(--shadow-modal);
+  /* The closed drawer is parked just off the right edge with
+     translateX(100%). Its 60px-blur modal shadow used to stay on in that
+     state, so a band of it spilled back INTO the viewport as a soft dark
+     fade down the whole right edge of every page (header included), at
+     every width. The shadow now exists only while the drawer is open. */
+  box-shadow: none;
   z-index: var(--z-mobile-nav);
   transform: translateX(100%);
-  transition: transform var(--transition-base);
+  /* Stage 7A: the closed drawer is also visibility:hidden (applied after the
+     slide-out finishes), so it is not rendered, not focusable and not hit-
+     testable even if `inert` were unsupported. It is position:fixed, so it
+     never added scrollable width; this just makes the closed state explicit
+     now that body no longer clips the page sideways. */
+  visibility: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base),
+    visibility 0s linear var(--transition-base);
   overflow-y: auto;
   padding: var(--space-5);
 }
 
 .mobile-nav.is-open {
+  box-shadow: var(--shadow-modal);
   transform: translateX(0);
+  visibility: visible;
+  transition-delay: 0s;
 }
 
 .mobile-nav__header {
@@ -348,18 +431,29 @@
 }
 
 .mobile-nav__link[aria-current="page"] {
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
 }
 
 /* Accordion submenu for Products inside the mobile drawer */
+/* Collapsed state is also visibility:hidden, so the four category links
+   are out of the tab order and the accessibility tree until the
+   accordion is opened (max-height:0 + overflow:hidden alone left them
+   keyboard-focusable while invisible). Visibility flips immediately on
+   open and only after the collapse transition on close. The expanded
+   cap is in rem (it scales with text size) and generous, rather than a
+   fixed 320px that clipped the last item once labels wrapped to more
+   lines at narrow widths or larger text sizes. */
 .mobile-nav__submenu {
   max-height: 0;
   overflow: hidden;
-  transition: max-height var(--transition-base);
+  visibility: hidden;
+  transition: max-height var(--transition-base), visibility 0s linear var(--transition-base);
 }
 
 .mobile-nav__item--expanded .mobile-nav__submenu {
-  max-height: 320px;
+  max-height: 40rem;
+  visibility: visible;
+  transition: max-height var(--transition-base), visibility 0s;
 }
 
 .mobile-nav__submenu-link {
@@ -373,7 +467,7 @@
 }
 .mobile-nav__submenu-link:hover,
 .mobile-nav__submenu-link[aria-current="page"] {
-  color: var(--color-teal-500);
+  color: var(--color-teal-brand);
 }
 
 .mobile-nav__submenu-icon {

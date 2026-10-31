@@ -3,5 +3,77 @@
    Page-specific overrides only. This file must never redefine a
    component's core look (that belongs in components.css) — it may
    only add layout-specific spacing/positioning unique to this page.
-   Populated in Phase 3 once this page's sections are built.
+
+   Stage 6 responsive corrections (Contact Us only). Every rule is scoped to
+   this page's own sections so no other page is affected.
    ========================================================================== */
+
+/* 1. Placeholder positioning defect (branch card cover and CTA band media):
+   .img-placeholder collapsed to its icon height instead of filling the
+   aspect-box's reserved ratio. Pin it to the box. No image is added. */
+.branch-card__media .img-placeholder,
+.cta-band__media .img-placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+/* 2. Form / contact-information columns.
+   At 768-991px the two-column layout (1.3fr / 1fr) made the form column
+   about 430px: the two-up field rows were ~200px wide (placeholders such as
+   "Enter company name (optional)" were cut off) and the information card was
+   so narrow that the e-mail address broke one character from its end. The
+   columns now stack below 992px, where both have room. */
+@media (max-width: 991px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 2b. 992-1199px: the two-up "Company Name" field was ~200px wide and its
+   placeholder "Enter company name (optional)" was cut off. Give the form
+   column a little more of the row in this range. */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+}
+
+/* 3. Contact details are links (tel:, mailto:, WhatsApp). They keep the
+   surrounding text colour; underline on hover/focus shows they are
+   interactive, and long addresses may still break rather than overflow. */
+.page-banner__quicklink[href]:hover,
+.info-card__list a:hover {
+  text-decoration: underline;
+}
+.info-card__list a {
+  overflow-wrap: anywhere;
+}
+
+/* 4. CTA band squeeze at 768-991px (same fix as the About page): the text
+   column was only 134-172px wide beside the fixed 320px media box. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .cta-band--full .cta-band__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+    grid-template-areas:
+      "text media"
+      "action media";
+    column-gap: var(--space-6);
+    row-gap: var(--space-4);
+    align-items: center;
+    justify-content: stretch;
+  }
+  .cta-band--full .cta-band__text {
+    grid-area: text;
+    max-width: none;
+  }
+  .cta-band--full .cta-band__action {
+    grid-area: action;
+    justify-self: start;
+  }
+  .cta-band--full .cta-band__media {
+    grid-area: media;
+    width: 100%;
+    max-width: none;
+  }
+}

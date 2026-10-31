@@ -40,6 +40,13 @@
   --color-teal-500: #0f96a0;   /* primary accent — buttons, icons, links */
   --color-teal-600: #0c7d87;   /* hover/active state of teal accent      */
   --color-teal-100: #e3f5f6;   /* tinted teal background (success box)   */
+  /* Stage 7A: the approved brand teal. teal-500 is only 3.57:1 on white
+     (3.35:1 on the light surface), so it is kept for icons, borders and
+     other non-text graphics (3:1) and brand teal is used wherever teal is
+     NORMAL TEXT on a light surface or the BACKGROUND of a white label.
+     White on #0d5c63 is 7.70:1; #0d5c63 on white is 7.70:1. */
+  --color-teal-brand: #0d5c63;
+  --color-teal-brand-hover: #094a50;   /* pressed/hover shade of brand teal (white on it 9.97:1) */
   --color-cyan-500: #06b6d4;   /* accent cyan — dark-background heading keyword highlights only */
 
   /* COLOR — CTA GOLD (secondary accent, used sparingly) */
@@ -51,15 +58,16 @@
   --color-surface-light: #f6f8f9;
   --color-surface-alt: #eef2f3;
   --color-border: #e3e7ea;
+  --color-border-control: #7b868e;   /* Stage 7A: form-control boundary; 3.72:1 on white, 3.49:1 on the light surface (WCAG 1.4.11 needs 3:1). --color-border (1.24:1) stays for decorative dividers/cards. */
   --color-text-heading: #10181f;
   --color-text-body: #5b6670;
-  --color-text-muted: #8a939a;
+  --color-text-muted: #646f77;   /* Stage 7A: was #8a939a (3.12:1 on white); now 5.14:1 white / 4.83:1 light surface / 4.56:1 alt surface */
   --color-text-on-dark: #ffffff;
   --color-text-on-dark-muted: #c3d3d8;
 
   /* COLOR — SEMANTIC */
   --color-success: #2fae4e;
-  --color-error: #e0453a;
+  --color-error: #b8322a;   /* Stage 7A: was #e0453a (4.13:1 on white, ~3.7:1 on the error tint); now 5.95:1 white / 5.08:1 on --color-error-tint */
   --color-error-tint: #fbe9e8;
 
   /* COLOR — OVERLAYS (all rgba() values used anywhere in the project
@@ -145,6 +153,17 @@
   --container-gutter-sm: 1rem;
   --grid-gap: var(--space-5);
 
+  /* Height of the sticky header (utility bar + main row, ~110px) plus a
+     little slack. Used as scroll-padding-top in style.css so anchor
+     jumps and keyboard focus scrolling never land underneath it;
+     responsive.css zeroes it on short viewports where the header
+     stops being sticky. */
+  --header-offset: 7.5rem;
+
+  /* Space reserved at the bottom of the page / scroll area so the fixed
+     floating controls never sit on top of the last line of content. */
+  --floating-clearance: 4.5rem;
+
   /* ---------------------------------------------------------------------
      RADIUS
      --------------------------------------------------------------------- */
@@ -174,8 +193,12 @@
   --z-header: 500;
   --z-dropdown: 520;
   --z-mobile-nav: 600;
-  --z-floating-buttons: 650;
-  --z-scroll-top: 650;
+  /* Floating call/WhatsApp and scroll-to-top controls sit BELOW the
+     mobile drawer and its overlay (they used to be 650, above both, so
+     they stayed bright and tappable on top of an open drawer and
+     covered its links). They remain above ordinary page content. */
+  --z-floating-buttons: 450;
+  --z-scroll-top: 450;
   --z-modal-overlay: 900;
   --z-modal: 910;
 

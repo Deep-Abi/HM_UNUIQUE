@@ -64,10 +64,9 @@ const CATALOG = {
   "safety-security-equipment": {
     label: "Safety &amp; Security Equipment",
     heading: "Popular Safety &amp; Security Equipment",
-    description: "Fire safety, surveillance and access equipment for secure, compliant industrial and commercial facilities.",
+    description: "Fire safety, alarm and access equipment for secure, compliant industrial and commercial facilities.",
     products: [
       { name: "Fire Extinguisher (ABC, 4kg)", specs: [["Type", "ABC Dry Powder"], ["Capacity", "4kg"], ["Standard", "IS 15683 Compliant"], ["Application", "Fire Emergency Response"]] },
-      { name: "CCTV Camera (Dome, 2MP)", specs: [["Resolution", "2MP Full HD"], ["Type", "Dome, Night Vision"], ["Connectivity", "Analog / IP"], ["Application", "Surveillance &amp; Security"]] },
       { name: "Smoke Detector (Photoelectric)", specs: [["Type", "Photoelectric"], ["Power", "9V Battery / Wired"], ["Coverage", "Up to 40m&sup2;"], ["Application", "Fire Detection"]] },
       { name: "Access Control Reader (RFID)", specs: [["Type", "RFID Card Reader"], ["Read Range", "Up to 5cm"], ["Output", "Wiegand 26/34"], ["Application", "Door Access Control"]] },
       { name: "Emergency Alarm Siren", specs: [["Sound Output", "Up to 120dB"], ["Power", "12V / 230V AC"], ["Type", "Electronic Siren"], ["Application", "Emergency Notification"]] },

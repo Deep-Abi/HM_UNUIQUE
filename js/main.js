@@ -13,6 +13,7 @@ import { initScrollAnimations } from "./animations.js";
 import { initLazyLoad } from "./lazyload.js";
 import { initSlider } from "./slider.js";
 import { initTabs } from "./tabs.js";
+import { initFloatingAvoid } from "./floating-avoid.js";
 
 /**
  * Sets the current year in any element with [data-current-year],
@@ -66,6 +67,7 @@ function init() {
   initLazyLoad();
   initSlider(); // no-op until a [data-slider] element exists (Phase 3 hero)
   initTabs(); // no-op until a [data-tabs] element exists (Phase 4 category pages)
+  initFloatingAvoid(); // no-op until an element has [data-float-avoid] (homepage hero)
 }
 
 document.addEventListener("DOMContentLoaded", init);

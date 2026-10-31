@@ -3,5 +3,88 @@
    Page-specific overrides only. This file must never redefine a
    component's core look (that belongs in components.css) — it may
    only add layout-specific spacing/positioning unique to this page.
-   Populated in Phase 3 once this page's sections are built.
+
+   Stage 6 responsive corrections (About Us only). Every rule is scoped to
+   this page's own sections so no other page is affected.
    ========================================================================== */
+
+/* 1. Placeholder positioning defect.
+   .aspect-box reserves its ratio with a ::before padding-top spacer, but
+   .img-placeholder was `height:100%` of an auto-height box, so it collapsed
+   to its icon height and rendered as a thin band at the bottom of an empty
+   area (CTA band media). Pinning it to the box makes it fill the reserved
+   ratio exactly. No image is added. */
+.who-we-are__media .img-placeholder,
+.cta-band__media .img-placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+/* 2. Who We Are media: four square placeholders.
+   The shared .grid--2 collapses to ONE column below 480px, which stacked
+   four 270px squares (over 1,100px of empty grey) under the text on a phone.
+   Keep the 2x2 arrangement at every width. */
+.who-we-are__media.grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+/* 3. CTA band squeeze at 768-991px.
+   The shared band lays text, button and a fixed 320px media box in one row;
+   in the 720-944px container that left the text column 134-172px wide
+   (heading on 4+ lines) and, on this page, pushed the media past the band's
+   right edge at 768-769px. In this range the text and button now share the
+   left column (button under the text) with the media on the right. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .cta-band--full .cta-band__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+    grid-template-areas:
+      "text media"
+      "action media";
+    column-gap: var(--space-6);
+    row-gap: var(--space-4);
+    align-items: center;
+    justify-content: stretch;
+  }
+  .cta-band--full .cta-band__text {
+    grid-area: text;
+    max-width: none;
+  }
+  .cta-band--full .cta-band__action {
+    grid-area: action;
+    justify-self: start;
+  }
+  .cta-band--full .cta-band__media {
+    grid-area: media;
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* 4. "What Drives Us Forward": five centred value items.
+   In a 2-column or 4-column grid the fifth item sat alone, left-aligned,
+   under centred columns. It is now centred in its own row (2 columns), and
+   from 992px the five items use a 3 + 2 arrangement with the second row
+   centred. From 1200px the shared 5-column layout is unchanged. */
+@media (min-width: 768px) and (max-width: 991px) {
+  section[aria-labelledby="values-heading"] .grid--5 > :nth-child(5):last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - var(--grid-gap)) / 2);
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  section[aria-labelledby="values-heading"] .grid--5 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  section[aria-labelledby="values-heading"] .grid--5 > * {
+    grid-column: span 2;
+  }
+  section[aria-labelledby="values-heading"] .grid--5 > :nth-child(4) {
+    grid-column: 2 / span 2;
+  }
+  section[aria-labelledby="values-heading"] .grid--5 > :nth-child(5) {
+    grid-column: 4 / span 2;
+  }
+}
