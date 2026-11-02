@@ -1501,6 +1501,30 @@ def check_dynamic_tabs(cat_key):
         raise SystemExit(f"{cat_key} tab drift!\n  generator: {gen}\n  script:    {pairs}")
 
 
+PRODUCT_CARDS_PER_GROUP = 9
+
+
+def pending_product_card_html(page_key, group_key, group_label, index):
+    """One 'Product details pending' placeholder card (mirror of renderPendingCard in the
+    category catalogue scripts). No product name/spec/brand/stock claim/document link; the
+    Request Quote button has no data-product-name so only category + sub-category prefill."""
+    plain = group_label.replace("&amp;", "&")
+    return f"""          <article class="card card--hover product-card product-card--pending" data-slot-id="{page_key}-{group_key}-{index + 1:02d}">
+            <div class="product-card__media">
+              <div class="aspect-box aspect-box--square" role="img" aria-label="{plain} product image &mdash; placeholder, pending approved photography">
+                <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
+              </div>
+            </div>
+            <h3 class="product-card__title">Product details pending</h3>
+            <p class="product-card__desc">Contact us for product details.</p>
+            <div class="card__actions">
+              <a class="btn btn--outline btn--sm" href="contact.html" aria-label="Contact us for {plain} product details">Contact Us</a>
+              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote" data-catalog-quote-trigger aria-label="Request a quote for {plain}">Request Quote</button>
+            </div>
+          </article>"""
+
+
+
 def build_category_main(cat_key):
     """Builds the shared category-page template, populated with one
     category's data. Every category page (Electricals, Electronics,
@@ -1609,21 +1633,15 @@ def build_category_main(cat_key):
         else f'<div class="grid grid--3">\n{product_cards_html}\n        </div>'
     )
     if empty_state:
-        first_label = DYNAMIC_CATALOGS[cat_key]["tabs"][0][2]
+        # Server-side copy of the first sub-category's nine placeholder cards
+        # (js/pages/industrial-safety-packing-catalog.js re-renders the same
+        # markup for whichever sub-category is active). Keep both in step.
+        first_key, _first_icon, first_label = DYNAMIC_CATALOGS[cat_key]["tabs"][0]
+        pending_cards = "\n".join(
+            pending_product_card_html(DYNAMIC_CATALOGS[cat_key]["script"].replace("-catalog.js", ""), first_key, first_label, n) for n in range(PRODUCT_CARDS_PER_GROUP)
+        )
         grid_open = f'''<div class="grid grid--3" data-catalog-grid>
-          <div class="catalog-empty" data-catalog-empty>
-            <div class="catalog-empty__media">
-              {img_placeholder(first_label + ' image', 'aspect-box--wide')}
-            </div>
-            <div class="catalog-empty__body">
-              <h3 class="catalog-empty__title">Products coming soon</h3>
-              <p>We have not published products for {first_label} yet. Contact us to discuss your requirements.</p>
-              <div class="catalog-empty__actions">
-                <button type="button" class="btn btn--primary" data-modal-open="quote" data-catalog-quote-trigger data-product-name="{first_label}">Request a Quote</button>
-                <a class="btn btn--outline" href="contact.html">Contact Us</a>
-              </div>
-            </div>
-          </div>
+{pending_cards}
         </div>'''
     products_section = f"""    <section class="section section--surface" aria-labelledby="popular-heading">
       <div class="container">

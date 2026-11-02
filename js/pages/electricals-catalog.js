@@ -644,6 +644,56 @@ ${renderSpecs(product.specs)}
           </article>`;
 }
 
+/* ---------------------------------------------------------------------
+   Nine cards per sub-category (fixed layout: 3 x 3 on desktop).
+   Existing sample records come first; every remaining position is a
+   clearly labelled placeholder with a stable, position-based internal id
+   (data-slot-id, never shown to visitors). Placeholders carry no product
+   name, spec, brand, rating, certification, stock claim or document link;
+   their Request Quote button deliberately has no data-product-name, so the
+   quote form is pre-filled with only the main category and the sub-category
+   (see initQuotePrefill) and never submits a placeholder title as a product.
+   --------------------------------------------------------------------- */
+const CARDS_PER_GROUP = 9;
+const SLOT_PAGE = "electricals";
+
+function slotId(categoryKey, index) {
+  return `${SLOT_PAGE}-${categoryKey}-${String(index + 1).padStart(2, "0")}`;
+}
+
+function renderPendingCard(categoryKey, category, index) {
+  const plainLabel = category.label.replace(/&amp;/g, "&");
+  return `<article class="card card--hover product-card product-card--pending" data-slot-id="${slotId(categoryKey, index)}">
+            <div class="product-card__media">
+              <div class="aspect-box aspect-box--square" role="img" aria-label="${plainLabel} product image &mdash; placeholder, pending approved photography">
+                <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
+              </div>
+            </div>
+            <h3 class="product-card__title">Product details pending</h3>
+            <p class="product-card__desc">Contact us for product details.</p>
+            <div class="card__actions">
+              <a class="btn btn--outline btn--sm" href="contact.html" aria-label="Contact us for ${plainLabel} product details">Contact Us</a>
+              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote" data-catalog-quote-trigger aria-label="Request a quote for ${plainLabel}">Request Quote</button>
+            </div>
+          </article>`;
+}
+
+function renderCardSlot(categoryKey, category, index) {
+  const product = category.products[index];
+  if (!product) return renderPendingCard(categoryKey, category, index);
+  return renderProductCard(product, categoryKey).replace(
+    '<article class="card card--hover product-card"',
+    `<article class="card card--hover product-card" data-slot-id="${slotId(categoryKey, index)}"`
+  );
+}
+
+function renderCardGrid(categoryKey, category) {
+  const cards = [];
+  for (let i = 0; i < CARDS_PER_GROUP; i += 1) cards.push(renderCardSlot(categoryKey, category, i));
+  return cards.join("\n");
+}
+
+
 /**
  * Renders one category into the page — heading, description, product
  * grid, AND the two section-level blocks that must stay in sync with
@@ -663,7 +713,7 @@ function renderCategory(categoryKey, els) {
 
   els.heading.innerHTML = category.heading;
   els.description.innerHTML = category.description;
-  els.grid.innerHTML = category.products.map((p) => renderProductCard(p, categoryKey)).join("\n");
+  els.grid.innerHTML = renderCardGrid(categoryKey, category);
 
   if (els.inlineTitle) {
     els.inlineTitle.textContent = `Looking for more ${plainLabel} products?`;

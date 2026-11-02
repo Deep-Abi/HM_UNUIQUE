@@ -592,3 +592,35 @@
   .site-header .site-logo__name { font-size: 1.0625rem; white-space: nowrap; }
   .site-header .site-logo { gap: var(--space-2); }
 }
+
+/* Category catalogue grids (all five category pages): nine cards per sub-category.
+   Phones: one column. From 552px: two columns, with the odd last card centred
+   (flex-wrap + justify-content: center, same pattern as the homepage featured grid).
+   From 992px: three columns = three rows of three. Rows stretch to equal height;
+   the actions row sits at the bottom of every card. */
+.grid[data-catalog-grid] .product-card .card__specs,
+.grid[data-catalog-grid] .product-card .product-card__desc {
+  flex-grow: 1;
+}
+.grid[data-catalog-grid] .product-card .card__actions {
+  margin-top: auto;
+}
+@media (min-width: 552px) {
+  .grid[data-catalog-grid] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .grid[data-catalog-grid] > * {
+    flex: 0 0 calc((100% - var(--grid-gap)) / 2);
+    min-width: 0;
+  }
+  .grid[data-catalog-grid] > .product-card {
+    height: auto;
+  }
+}
+@media (min-width: 992px) {
+  .grid[data-catalog-grid] > * {
+    flex-basis: calc((100% - 2 * var(--grid-gap)) / 3);
+  }
+}
