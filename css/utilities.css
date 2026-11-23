@@ -77,6 +77,12 @@
   height: 100%;
   object-fit: cover;
 }
+.aspect-box > picture > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .aspect-box > iframe {
   position: absolute;
   inset: 0;

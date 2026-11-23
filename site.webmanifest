@@ -1,12 +1,12 @@
 {
   "name": "HM UNIQUE",
   "short_name": "HM UNIQUE",
-  "description": "Electricals, Electronics Components, Hardwares and Industrial & Commercial Equipment.",
+  "description": "Electricals, Electronics Components, Hardware, Industrial & Commercial Equipments and Industrial Safety & Packing Materials.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0e2b3b",
+  "theme_color": "#0c2836",
   "icons": [
     {
       "src": "assets/favicon/android-chrome-192x192.png",

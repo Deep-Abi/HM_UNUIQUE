@@ -149,6 +149,10 @@
 
 .hero__title {
   margin-bottom: var(--space-4);
+  /* The slide titles are <h2> (the single page <h1> is slide 1's title, which uses the same class); these two
+     lines keep them looking exactly as the former <h1> did. */
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-extrabold);
 }
 
 .hero__desc {
@@ -396,8 +400,34 @@
   background-color: var(--color-surface-light);
 }
 
+/* Approved card photo: fills the 3:2 media area without stretching (the file is
+   exactly 3:2; object-fit keeps any future non-3:2 image cropped, not distorted). */
+.category-card__media picture {
+  display: block;
+}
+.category-card__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
 .category-card__title {
   margin-bottom: var(--space-2);
+}
+
+/* Handpicked Products: approved square (1:1) assortment photos. The files are exactly
+   square so object-fit never crops them; it only guards against a future non-square file. */
+.product-card__media picture {
+  display: block;
+}
+.product-card__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 
 .category-card__desc {

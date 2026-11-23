@@ -1,0 +1,16 @@
+# Copy to wrangler.toml, then deploy with:  npx wrangler deploy
+# Do NOT put secrets in this file. Set them with `npx wrangler secret put NAME` (see README.md).
+name = "hmunique-enquiry"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+# Exact origins allowed to call the endpoint (comma-separated, no trailing slash). Set to the real site origin(s).
+ALLOWED_ORIGINS = "https://www.hmunique.com"
+# Verified company sender (must be on a domain verified with the email provider). Example only:
+# ENQUIRY_FROM = "HM UNIQUE <enquiries@hmunique.com>"
+
+# Optional but recommended: a KV namespace for rate limiting and duplicate protection that survives across isolates.
+# [[kv_namespaces]]
+# binding = "ENQUIRY_KV"
+# id = "<create with: npx wrangler kv namespace create ENQUIRY_KV>"

@@ -1,5 +1,9 @@
 import os
+import re
 import json
+import html as _htmlmod
+from urllib.parse import quote as _urlquote
+import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -10,6 +14,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # once the real domain is live — search for SITE_URL usage.
 # ---------------------------------------------------------------------
 SITE_URL = "https://www.hmunique.com"
+OG_IMAGE_ALT = "HM UNIQUE Technology Enterprises, George Town, Chennai: electricals, electronics components, hardware, industrial and commercial equipment, and industrial safety and packing materials."
 
 # ---------------------------------------------------------------------
 # Global contact details — the single source of truth for every phone/
@@ -18,22 +23,36 @@ SITE_URL = "https://www.hmunique.com"
 # ---------------------------------------------------------------------
 # Approved contact numbers (user-approved 2026-10-30). Kept as strings.
 # Which person/department answers each number is deliberately NOT stated
-# anywhere on the site. PHONE_* = primary; PHONE2_* = secondary;
-# WA_* = the WhatsApp number (currently the same as the secondary).
+# anywhere on the site. PHONE_* = the one active phone number.
+# A secondary phone number and its WhatsApp account are TEMPORARILY NOT IN USE (owner
+# instruction 2026-11-22), so no constants for them exist and nothing renders them. WhatsApp must
+# not be pointed at the primary number unless the owner confirms it supports WhatsApp. To
+# re-enable, restore the secondary-phone and WhatsApp constants and their markup from
+# backup_pre_unused_number_batch/build_pages.py (a sibling of the project folder).
+# EMAIL_PRIMARY / EMAIL_SECONDARY confirmed by the owner 2026-11-21; wherever both
+# addresses appear, the primary is listed first.
 PHONE_DISPLAY = "+91 97101 81944"
 PHONE_TEL = "+919710181944"
 PHONE_SCHEMA = "+91-97101-81944"
-PHONE2_DISPLAY = "+91 63796 20433"
-PHONE2_TEL = "+916379620433"
-PHONE2_SCHEMA = "+91-63796-20433"
-WA_DISPLAY = "+91 63796 20433"
-PHONE_WA = "916379620433"
-EMAIL_PRIMARY = "hmunitecenterprises02@gmail.com"
-EMAIL_SECONDARY = "business@hmunique.com"
+EMAIL_PRIMARY = "business@hmunique.com"
+EMAIL_SECONDARY = "hmunitecenterprises02@gmail.com"
+
+
+def email_html(address):
+    """Visible text of an e-mail address with a preferred line-break point just
+    before the "@" (<wbr> adds no character, so copied text and the mailto: href
+    stay exactly the address). On a narrow screen the address then wraps as
+    "name" / "@domain" instead of splitting inside a word; the CSS keeps
+    overflow-wrap as the safety net so nothing can overflow."""
+    return address.replace("@", "<wbr>@")
 ADDRESS_LINE1 = "No.271, Linghi Chetty Street"
 ADDRESS_LINE2 = "George Town, Chennai &ndash; 600001"
 ADDRESS_LINE3 = "Tamil Nadu, India"
 ADDRESS_FULL_PLAIN = "No.271, Linghi Chetty Street, George Town, Chennai - 600001, Tamil Nadu, India"
+# One category list used in every description, tagline and structured-data string so
+# the five approved category names (visible label "Hardware") cannot drift apart.
+CATEGORY_LIST_HTML = "Electricals, Electronics Components, Hardware, Industrial &amp; Commercial Equipments and Industrial Safety &amp; Packing Materials"
+CATEGORY_LIST_PLAIN = "Electricals, Electronics Components, Hardware, Industrial & Commercial Equipments and Industrial Safety & Packing Materials"
 MAPS_QUERY = "No.271, Linghi Chetty Street, George Town, Chennai, Tamil Nadu 600001"
 MAPS_QUERY_ENCODED = "No.271%2C%20Linghi%20Chetty%20Street%2C%20George%20Town%2C%20Chennai%2C%20Tamil%20Nadu%20600001"
 
@@ -44,74 +63,74 @@ MAPS_QUERY_ENCODED = "No.271%2C%20Linghi%20Chetty%20Street%2C%20George%20Town%2C
 PAGES = [
     {
         "key": "home",
-        "title": "HM UNIQUE | Electricals, Electronics, Hardwares &amp; Industrial Equipment",
+        "title": "HM UNIQUE Technology Enterprises | Industrial Supplies in Chennai",
         "path": "index.html",
         "depth": 0,
         "breadcrumb": None,  # no breadcrumb on Home
-        "description": "HM UNIQUE supplies quality Electricals, Electronics Components, Hardwares, Industrial &amp; Commercial Equipment and Industrial Safety &amp; Packing Materials. Trusted brands, wide product range and pan-India delivery.",
+        "description": "HM UNIQUE Technology Enterprises, George Town, Chennai: electricals, electronic components, hardware, industrial equipment and safety &amp; packing materials.",
         "canonical": "/",
     },
     {
         "key": "electricals",
-        "title": "Electricals | HM UNIQUE",
+        "title": "Electrical Supplies in Chennai | HM UNIQUE",
         "path": "pages/electricals.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("Electricals", None)],
-        "description": "Explore HM UNIQUE&rsquo;s Electricals range &mdash; wires &amp; cables, MCBs, switches, distribution boards, lighting and more. Request a quote or download our catalogue.",
+        "description": "Browse electrical product groups from HM UNIQUE in Chennai: wires &amp; cables, circuit protection, switches, distribution boards and lighting. Request a quote.",
         "canonical": "/pages/electricals.html",
     },
     {
         "key": "electronics",
-        "title": "Electronics Components | HM UNIQUE",
+        "title": "Electronic Components in Chennai | HM UNIQUE",
         "path": "pages/electronics.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("Electronics Components", None)],
-        "description": "Browse HM UNIQUE&rsquo;s Electronics Components &mdash; resistors, capacitors, transistors, LEDs, ICs and connectors for design, prototyping and production.",
+        "description": "Browse electronic component groups from HM UNIQUE in Chennai: resistors, capacitors, semiconductors, connectors, sensors and power supplies. Request a quote.",
         "canonical": "/pages/electronics.html",
     },
     {
         "key": "hardwares",
-        "title": "Hardwares | HM UNIQUE",
+        "title": "Hardware Supplies in Chennai | HM UNIQUE",
         "path": "pages/hardwares.html",
         "depth": 1,
-        "breadcrumb": [("Home", "../index.html"), ("Hardwares", None)],
-        "description": "Shop HM UNIQUE&rsquo;s Hardware range &mdash; fasteners, hand tools, power tools and hardware accessories built for strength and reliability.",
+        "breadcrumb": [("Home", "../index.html"), ("Hardware", None)],
+        "description": "Browse hardware groups from HM UNIQUE in Chennai: fasteners, hand and power tools, cutting tools, plumbing fittings and measuring tools. Request a quote.",
         "canonical": "/pages/hardwares.html",
     },
     {
         "key": "industrial",
-        "title": "Industrial &amp; Commercial Equipment | HM UNIQUE",
+        "title": "Industrial &amp; Commercial Equipments in Chennai | HM UNIQUE",
         "path": "pages/industrial-equipment.html",
         "depth": 1,
-        "breadcrumb": [("Home", "../index.html"), ("Industrial &amp; Commercial Equipment", None)],
-        "description": "Discover HM UNIQUE&rsquo;s Industrial &amp; Commercial Equipment &mdash; material handling, pumps &amp; motors, ventilation and power backup solutions.",
+        "breadcrumb": [("Home", "../index.html"), ("Industrial &amp; Commercial Equipments", None)],
+        "description": "Browse industrial and commercial equipment from HM UNIQUE in Chennai: pumps and motors, bearings, welding equipment, material handling and power backup.",
         "canonical": "/pages/industrial-equipment.html",
     },
     {
         "key": "safety-packing",
-        "title": "Industrial Safety &amp; Packing Materials | HM UNIQUE",
+        "title": "Industrial Safety &amp; Packing Materials in Chennai | HM UNIQUE",
         "path": "pages/industrial-safety-packing.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("Industrial Safety &amp; Packing Materials", None)],
-        "description": "Industrial safety and packing materials from HM UNIQUE. Product details are being prepared &mdash; contact us to discuss your requirements.",
+        "description": "Browse industrial safety and packing materials from HM UNIQUE in Chennai: protective equipment, signage, tapes, stretch film and cartons. Request a quote.",
         "canonical": "/pages/industrial-safety-packing.html",
     },
     {
         "key": "about",
-        "title": "About Us | HM UNIQUE",
+        "title": "About HM UNIQUE Technology Enterprises | George Town, Chennai",
         "path": "pages/about.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("About Us", None)],
-        "description": "Learn about HM UNIQUE &mdash; 7+ years supplying Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials with a commitment to quality and customer satisfaction.",
+        "description": "About HM UNIQUE Technology Enterprises: established in 2019, located in George Town, Chennai, with five product categories for commercial and industrial buyers.",
         "canonical": "/pages/about.html",
     },
     {
         "key": "contact",
-        "title": "Contact Us | HM UNIQUE",
+        "title": "Contact HM UNIQUE | Linghi Chetty Street, George Town, Chennai",
         "path": "pages/contact.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("Contact Us", None)],
-        "description": "Get in touch with HM UNIQUE. Call, email or WhatsApp our team, or visit our Chennai office.",
+        "description": "Contact HM UNIQUE Technology Enterprises at No.271, Linghi Chetty Street, George Town, Chennai. Call, email or send an enquiry.",
         "canonical": "/pages/contact.html",
     },
     {
@@ -120,7 +139,7 @@ PAGES = [
         "path": "pages/download-centre.html",
         "depth": 1,
         "breadcrumb": [("Home", "../index.html"), ("Download Centre", None)],
-        "description": "Download HM UNIQUE&rsquo;s product catalogues, company profile and datasheets for Electricals, Electronics, Hardwares and Industrial Equipment.",
+        "description": "HM UNIQUE Download Centre: catalogue, company profile and datasheet documents. The files currently listed are drafts pending approval.",
         "canonical": "/pages/download-centre.html",
     },
 ]
@@ -135,8 +154,8 @@ NAV_ITEMS = [
 PRODUCT_ITEMS = [
     ("electricals", "Electricals", "pages/electricals.html", "bolt"),
     ("electronics", "Electronics Components", "pages/electronics.html", "chip"),
-    ("hardwares", "Hardwares", "pages/hardwares.html", "wrench"),
-    ("industrial", "Industrial &amp; Commercial Equipment", "pages/industrial-equipment.html", "factory"),
+    ("hardwares", "Hardware", "pages/hardwares.html", "wrench"),
+    ("industrial", "Industrial &amp; Commercial Equipments", "pages/industrial-equipment.html", "factory"),
     ("safety-packing", "Industrial Safety &amp; Packing Materials", "pages/industrial-safety-packing.html", "helmet-safety"),
 ]
 
@@ -172,19 +191,15 @@ def build_utility_bar(current_key, depth):
           <i class="fa-solid fa-phone" aria-hidden="true"></i>
           <span>{PHONE_DISPLAY}</span>
         </a>
-        <a class="utility-bar__phone" href="tel:{PHONE2_TEL}">
-          <i class="fa-solid fa-phone" aria-hidden="true"></i>
-          <span>{PHONE2_DISPLAY}</span>
-        </a>
       </div>
       <div class="utility-bar__emails">
         <a class="utility-bar__email" href="mailto:{EMAIL_PRIMARY}">
           <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-          <span>{EMAIL_PRIMARY}</span>
+          <span>{email_html(EMAIL_PRIMARY)}</span>
         </a>
         <a class="utility-bar__email" href="mailto:{EMAIL_SECONDARY}">
           <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-          <span>{EMAIL_SECONDARY}</span>
+          <span>{email_html(EMAIL_SECONDARY)}</span>
         </a>
       </div>
     </div>
@@ -312,7 +327,7 @@ def build_header(current_key, depth):
       </span>
       <span class="site-logo__text">
         <span class="site-logo__name">HM UNIQUE</span>
-        <span class="site-logo__tagline">Electricals &middot; Electronics &middot; Hardwares &middot; Industrial Tools</span>
+        <span class="site-logo__tagline">Electricals&nbsp;&middot; Electronics&nbsp;&middot; Hardware&nbsp;&middot; Industrial&nbsp;&middot; Safety&nbsp;&amp;&nbsp;Packing</span>
       </span>
     </a>
 
@@ -357,27 +372,49 @@ def build_breadcrumb(breadcrumb, depth):
 """
 
 
+# Social profiles. A profile is shown ONLY when it has a real URL here. No profile URL has
+# been supplied yet, so none of these three icons is rendered (they used to be inert
+# placeholders with no destination). Add the real URL to switch an icon on; do not use a
+# generic platform home page.
+SOCIAL_PROFILES = (
+    ("Facebook", "fa-facebook-f", None),
+    ("LinkedIn", "fa-linkedin-in", None),
+    ("Instagram", "fa-instagram", None),
+)
+
+
+# Google Search Console HTML-tag verification token. Deliberately EMPTY: the token is issued by Search
+# Console after the owner adds the property, and must never be invented. While empty, no meta tag is
+# emitted. To use it, paste only the token (the content="..." value Search Console shows) here and
+# regenerate.
+SEARCH_CONSOLE_VERIFICATION = ""
+
+
+def build_social_links():
+    return "\n          ".join(
+        f'<a href="{url}" target="_blank" rel="noopener noreferrer" aria-label="{name}"><i class="fa-brands {icon}" aria-hidden="true"></i></a>'
+        for name, icon, url in SOCIAL_PROFILES
+        if url
+    )
+
+
 def build_footer(depth):
+    social_links_html = build_social_links()
+    # No empty container (and no gap) while no social profile URL has been confirmed.
+    socials_block = (f'''<div class="site-footer__socials">
+          {social_links_html}
+        </div>''' if social_links_html.strip() else "")
     return f"""<footer class="site-footer">
   <div class="site-footer__top">
     <div class="container site-footer__grid">
       <div class="site-footer__brand">
-        <a class="site-logo" href="{rel('index.html', depth)}" aria-label="HM UNIQUE home">
+        <a class="site-logo site-footer__logo" href="{rel('index.html', depth)}" aria-label="HM UNIQUE home">
           <span class="site-logo__mark site-logo__mark--backed">
             {brand_icon_picture(depth, "lazy")}
           </span>
-          <span class="site-logo__text">
-            <span class="site-logo__name site-footer__name"><span class="site-footer__name-main">HM UNIQUE</span> <span class="site-footer__name-sub">Technology Enterprises</span></span>
-            <span class="site-logo__tagline">Electricals &middot; Electronics &middot; Hardwares &middot; Industrial Tools</span>
-          </span>
         </a>
-        <p class="site-footer__about">HM UNIQUE is a trusted supplier of Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials committed to quality, reliability and customer satisfaction.</p>
-        <div class="site-footer__socials">
-          <a aria-label="Facebook" aria-disabled="true"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
-          <a aria-label="LinkedIn" aria-disabled="true"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
-          <a aria-label="Instagram" aria-disabled="true"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-          <a href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
-        </div>
+        <p class="site-footer__about">HM UNIQUE Technology Enterprises supplies {CATEGORY_LIST_HTML} for commercial and industrial customers. Established in 2019.</p>
+        {socials_block}
       </div>
 
       <div class="site-footer__col">
@@ -395,8 +432,8 @@ def build_footer(depth):
         <ul class="site-footer__links">
           <li><a href="{rel('pages/electricals.html', depth)}">Electricals</a></li>
           <li><a href="{rel('pages/electronics.html', depth)}">Electronics Components</a></li>
-          <li><a href="{rel('pages/hardwares.html', depth)}">Hardwares</a></li>
-          <li><a href="{rel('pages/industrial-equipment.html', depth)}">Industrial &amp; Commercial Equipment</a></li>
+          <li><a href="{rel('pages/hardwares.html', depth)}">Hardware</a></li>
+          <li><a href="{rel('pages/industrial-equipment.html', depth)}">Industrial &amp; Commercial Equipments</a></li>
           <li><a href="{rel('pages/industrial-safety-packing.html', depth)}">Industrial Safety &amp; Packing Materials</a></li>
         </ul>
       </div>
@@ -406,8 +443,7 @@ def build_footer(depth):
         <ul class="site-footer__contact">
           <li><span>{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}</span></li>
           <li><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></li>
-          <li><a href="tel:{PHONE2_TEL}">{PHONE2_DISPLAY}</a></li>
-          <li><a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a></li>
+          <li><a href="mailto:{EMAIL_PRIMARY}">{email_html(EMAIL_PRIMARY)}</a></li>
           <li><span>Mon &ndash; Sat: 9:00 AM &ndash; 9:00 PM</span></li>
         </ul>
       </div>
@@ -431,19 +467,16 @@ def fill_phones(html):
     that are plain (non-f) strings, from the single set of constants
     at the top of this file."""
     return (html.replace("{PHONE_TEL}", PHONE_TEL)
-                .replace("{PHONE_DISPLAY}", PHONE_DISPLAY)
-                .replace("{PHONE_WA}", PHONE_WA))
+                .replace("{PHONE_DISPLAY}", PHONE_DISPLAY))
 
 
+# The floating Call button uses an INLINE SVG (Font Awesome Free 6.5.1 "phone", CC BY 4.0), not the
+# icon-font <i>, so it can never render as a blank circle when the external icon font is slow,
+# blocked or unavailable, and it needs no asset path (works at any URL depth, incl. 404.html).
 def build_floating_actions():
-    return fill_phones("""<div class="floating-actions floating-actions--left">
-  <a class="floating-btn floating-btn--whatsapp" href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-  </a>
-</div>
-<div class="floating-actions floating-actions--right">
+    return fill_phones("""<div class="floating-actions floating-actions--right">
   <a class="floating-btn floating-btn--call" href="tel:{PHONE_TEL}" aria-label="Call HM UNIQUE">
-    <i class="fa-solid fa-phone" aria-hidden="true"></i>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
   </a>
 </div>
 <button type="button" class="scroll-top-btn" data-scroll-top aria-label="Scroll to top">
@@ -457,11 +490,11 @@ def build_quote_modal():
     <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
     <div class="modal__form-col">
-      <div class="modal__header">
+      <div class="modal__header" data-quote-header>
         <span class="modal__header-icon" aria-hidden="true"></span>
         <div>
           <h2 class="modal__title" id="quote-modal-title">Request a Quote</h2>
-          <p class="modal__subtitle">Share your requirements and our team will get back to you with the best solution.</p>
+          <p class="modal__subtitle">Share your requirements and our team will get back to you.</p>
         </div>
       </div>
 
@@ -512,8 +545,8 @@ def build_quote_modal():
               <option value="">Select a category</option>
               <option value="electricals">Electricals</option>
               <option value="electronics">Electronics Components</option>
-              <option value="hardwares">Hardwares</option>
-              <option value="industrial">Industrial &amp; Commercial Equipment</option>
+              <option value="hardwares">Hardware</option>
+              <option value="industrial">Industrial &amp; Commercial Equipments</option>
               <option value="safety-packing">Industrial Safety &amp; Packing Materials</option>
             </select>
             <span class="form-field__error-msg">Please select a category.</span>
@@ -543,29 +576,38 @@ def build_quote_modal():
           <span class="form-field__error-msg">Please agree to the privacy policy to continue.</span>
         </div>
 
+        <div class="form-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="hp_url" tabindex="-1" autocomplete="off" /></label></div>
+
         <p class="form-submit-error" data-form-error hidden role="alert">
           Something went wrong sending your request. Please try again, or call us directly at <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>.
         </p>
 
         <button type="submit" class="btn btn--primary btn--block mt-4">
-          Submit Request
+          <span data-submit-label>Submit Request</span>
           <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </button>
 
         <p class="modal__note">
           <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-          Your information is safe with us. We never share your data.
+          For product enquiries, contact our team.
         </p>
       </form>
+
+      <div class="modal__success" data-quote-success hidden>
+        <svg class="modal__success-icon" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="38" fill="none" stroke="currentColor" stroke-width="5" /><path d="M24 43l12 12 24-24" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        <h2 class="modal__success-title" id="quote-success-title" data-quote-success-title tabindex="-1"></h2>
+        <p class="modal__success-body" data-quote-success-body></p>
+        <p class="modal__success-note" data-quote-success-note hidden>We couldn’t send a confirmation email, but your enquiry was received.</p>
+        <button type="button" class="btn btn--primary" data-modal-close>Close</button>
+      </div>
     </div>
 
     <aside class="modal__aside-col">
       <h3 class="mb-3">Why Choose HM UNIQUE?</h3>
       <ul class="modal__why-list">
-        <li><span aria-hidden="true">&#10003;</span><span><strong>Quality Products</strong><br />We provide only high-quality products from trusted manufacturers.</span></li>
-        <li><span aria-hidden="true">&#10003;</span><span><strong>Timely Delivery</strong><br />On-time delivery with safe and efficient logistics.</span></li>
-        <li><span aria-hidden="true">&#10003;</span><span><strong>Expert Support</strong><br />Our experienced team is always ready to assist you.</span></li>
-        <li><span aria-hidden="true">&#10003;</span><span><strong>Customer Satisfaction</strong><br />Your satisfaction is our top priority in every collaboration.</span></li>
+        <li><span aria-hidden="true">&#10003;</span><span><strong>Commercial &amp; Industrial Supplies</strong><br />Products for commercial and industrial requirements.</span></li>
+        <li><span aria-hidden="true">&#10003;</span><span><strong>Delivery Enquiries</strong><br />Ask our team about delivery for your requirement.</span></li>
+                <li><span aria-hidden="true">&#10003;</span><span><strong>Product Enquiry Support</strong><br />Send your requirement and our team will respond.</span></li>
       </ul>
       <div class="modal__help-box">
         <p><strong>Need Help?</strong><br />Call us at <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></p>
@@ -575,29 +617,23 @@ def build_quote_modal():
 </div>""")
 
 
-def build_thank_you_modal():
-    return """<div class="modal-overlay" data-modal="thank-you" aria-hidden="true">
-  <div class="modal modal--thank-you" role="dialog" aria-modal="true" aria-labelledby="thank-you-modal-title">
-    <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+def build_enquiry_popup():
+    """The post-submission confirmation popup (js/enquiry-popup.js). Hidden and empty until the
+    server confirms an enquiry; it replaces the old 'Quote Request Submitted' dialog."""
+    return """<div class="enquiry-popup" data-enquiry-popup role="status" aria-live="polite" aria-atomic="true" hidden>
+  <svg class="enquiry-popup__icon" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="38" fill="none" stroke="currentColor" stroke-width="5" /><path d="M24 43l12 12 24-24" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  <div class="enquiry-popup__text" data-enquiry-popup-text></div>
+  <button type="button" class="enquiry-popup__close" data-enquiry-popup-close aria-label="Close confirmation"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+</div>"""
 
-    <svg class="success-check" viewBox="0 0 84 84" aria-hidden="true">
-      <circle class="success-check__circle" cx="42" cy="42" r="40" fill="none" stroke="currentColor" stroke-width="3" />
-      <path class="success-check__mark" d="M24 43l12 12 24-24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
 
-    <h2 id="thank-you-modal-title">Quote Request Submitted</h2>
-    <p class="mt-2">Thank you for reaching out to HM UNIQUE.</p>
-    <p class="mt-3">Your request has been received. Our team will review your requirement and contact you shortly.</p>
-
-    <div class="modal__note-box">
-      <span aria-hidden="true">&#9993;</span>
-      <span>We appreciate your interest in HM UNIQUE. We look forward to connecting with you!</span>
-    </div>
-
-    <button type="button" class="btn btn--primary" data-modal-close>
-      Close
-    </button>
-  </div>
+def build_enquiry_confirmation():
+    """Persistent, dismissible confirmation kept on the page after a Request a Quote success closes its
+    dialog (js/quote-success.js). Hidden and empty until the server has confirmed an enquiry."""
+    return """<div class="enquiry-confirmation" data-enquiry-confirmation role="status" aria-live="polite" aria-atomic="true" hidden>
+  <i class="fa-solid fa-circle-check enquiry-confirmation__icon" aria-hidden="true"></i>
+  <div class="enquiry-confirmation__text" data-enquiry-confirmation-text></div>
+  <button type="button" class="enquiry-confirmation__close" data-enquiry-confirmation-close aria-label="Dismiss confirmation"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 </div>"""
 
 
@@ -605,8 +641,8 @@ PAGE_MAIN_COMMENTS = {
     "home": "Home page sections (Hero, Category Grid, Featured Products, Why Choose Us, Industries Served, CTA) are built in Phase 3.",
     "electricals": "Electricals category page sections (banner, trust badges, sub-category tabs, product grid, catalogue CTA, stats) are built in Phase 3.",
     "electronics": "Electronics Components category page sections are built in Phase 3.",
-    "hardwares": "Hardwares category page sections are built in Phase 3.",
-    "industrial": "Industrial &amp; Commercial Equipment category page sections are built in Phase 3.",
+    "hardwares": "Hardware category page sections are built in Phase 3.",
+    "industrial": "Industrial &amp; Commercial Equipments category page sections are built in Phase 3.",
 }
 
 # ---------------------------------------------------------------------
@@ -661,7 +697,6 @@ ICONS = {
     "compass": '<i class="fa-solid fa-compass" aria-hidden="true"></i>',
     "handshake": '<i class="fa-solid fa-handshake" aria-hidden="true"></i>',
     "milestone": '<i class="fa-solid fa-timeline" aria-hidden="true"></i>',
-    "whatsapp": '<i class="fa-brands fa-whatsapp" aria-hidden="true"></i>',
 }
 
 
@@ -676,6 +711,134 @@ def img_placeholder(label, ratio_class=""):
     return f"""<div class="{box_class}" role="img" aria-label="{label} — placeholder, pending final product photography">
               <div class="img-placeholder">{ICONS['placeholder-image']}</div>
             </div>"""
+
+
+# One approved photo shared by every CTA band above the footer (Home, About, Contact and
+# Download Centre), so the closing band looks the same on each page. The file stays in
+# assets/images/common/footer/ and is 1672 x 941 (16:9). The Home/About/Contact slots are 16:9;
+# the Download Centre slot is square, so the same photo is centre-cropped there (object-fit: cover).
+# `depth` goes through rel() so the URLs resolve from index.html and from pages/. Alt text
+# describes only what is visible and does not claim the products belong to HM UNIQUE.
+CTA_IMAGE = {
+    "dir": "assets/images/common/footer",
+    "stem": "hm-unique-quote-banner-product-assortment",
+    "width": 1672,
+    "height": 941,
+    "alt": "Circuit breaker, proximity sensor, brass fittings, safety helmet, cardboard carton and ball bearing arranged on a dark teal surface.",
+}
+
+
+def cta_band_picture(depth, ratio_class="aspect-box--wide"):
+    """<picture> (AVIF, WebP, JPG fallback) filling the aspect-box of a CTA band."""
+    img = CTA_IMAGE
+    path = lambda ext: rel(f"{img['dir']}/{ext}/{img['stem']}.{ext}", depth)
+    return f"""<div class="aspect-box {ratio_class}">
+            <picture>
+              <source srcset="{path('avif')}" type="image/avif">
+              <source srcset="{path('webp')}" type="image/webp">
+              <img
+                src="{path('jpg')}"
+                width="{img['width']}"
+                height="{img['height']}"
+                alt="{img['alt']}"
+                loading="lazy"
+                decoding="async">
+            </picture>
+          </div>"""
+
+
+# Contact > Chennai Branch card. The supplied image is an AI-generated conceptual
+# storefront illustration (not a photograph of the actual branch), so the alt text says
+# so and a small visible caption repeats it. The file stays in assets/images/contact/chennai_branch/
+# (1672 x 941, 16:9) in AVIF, WebP and JPG. `depth` goes through rel() like every other image.
+CHENNAI_BRANCH_IMAGE = {
+    "dir": "assets/images/contact/chennai_branch",
+    "stem": "chennai_branch",
+    "width": 1672,
+    "height": 941,
+    "alt": "Conceptual storefront illustration of the HM UNIQUE Chennai branch.",
+    "caption": "Illustrative representation",
+}
+
+
+def chennai_branch_figure(depth):
+    """<figure> with a <picture> (AVIF, WebP, JPG fallback) and a short caption.
+    The 16:9 box matches the file's ratio and the image is contained, so the
+    whole illustration is always visible at any width."""
+    img = CHENNAI_BRANCH_IMAGE
+    path = lambda ext: rel(f"{img['dir']}/{ext}/{img['stem']}.{ext}", depth)
+    return f"""<figure class="branch-card__figure">
+              <div class="aspect-box aspect-box--wide">
+                <picture>
+                  <source srcset="{path('avif')}" type="image/avif">
+                  <source srcset="{path('webp')}" type="image/webp">
+                  <img
+                    src="{path('jpg')}"
+                    width="{img['width']}"
+                    height="{img['height']}"
+                    alt="{img['alt']}"
+                    loading="lazy"
+                    decoding="async">
+                </picture>
+              </div>
+              <figcaption class="branch-card__caption">{img['caption']}</figcaption>
+            </figure>"""
+
+
+# About > Who We Are: four square photos (1254 x 1254), files kept in assets/images/about_us/.
+# Alt text describes only what is visible; nothing says the parts or people belong to HM UNIQUE.
+WHO_WE_ARE_IMAGES = [
+    ("01-project-requirements", "Hands holding a stainless steel threaded fitting beside a technical drawing of the same part."),
+    ("02-product-range", "Metal shelving unit holding a coil of blue cable, terminal blocks, a circuit breaker, brass fittings and a ball bearing."),
+    ("03-product-inspection", "Gloved hands measuring a round metal flange with a vernier caliper."),
+    ("04-order-preparation", "Hands sealing a cardboard carton with a tape dispenser."),
+]
+WHO_WE_ARE_IMAGE_SIZE = 1254
+
+
+# About > Our Vision / Our Mission: one 16:9 photo (1672 x 941) at the top of each card, files kept
+# in assets/images/about_us/. Alt text describes only what is visible.
+VISION_MISSION_IMAGES = {
+    "vision": ("industrial-logistics-park", "Aerial view of large modern warehouse buildings with loading bays, trucks and landscaped roads at sunset."),
+    "mission": ("industrial-parts-packing", "Worker in a dark blue uniform handling a clear bag containing a metal component, with more bagged parts in storage bins."),
+}
+
+
+def vision_mission_picture(key, depth):
+    stem, alt = VISION_MISSION_IMAGES[key]
+    path = lambda ext: rel(f"assets/images/about_us/{ext}/{stem}.{ext}", depth)
+    return f"""<div class="aspect-box aspect-box--wide vision-mission__media">
+              <picture>
+                <source srcset="{path('avif')}" type="image/avif">
+                <source srcset="{path('webp')}" type="image/webp">
+                <img
+                  src="{path('jpg')}"
+                  width="1672"
+                  height="941"
+                  alt="{alt}"
+                  loading="lazy"
+                  decoding="async">
+              </picture>
+            </div>"""
+
+
+def who_we_are_picture(index, depth):
+    """<picture> for Who We Are slot `index` (0-3) inside a square .aspect-box."""
+    stem, alt = WHO_WE_ARE_IMAGES[index]
+    path = lambda ext: rel(f"assets/images/about_us/{ext}/{stem}.{ext}", depth)
+    return f"""<div class="aspect-box aspect-box--square">
+            <picture>
+              <source srcset="{path('avif')}" type="image/avif">
+              <source srcset="{path('webp')}" type="image/webp">
+              <img
+                src="{path('jpg')}"
+                width="{WHO_WE_ARE_IMAGE_SIZE}"
+                height="{WHO_WE_ARE_IMAGE_SIZE}"
+                alt="{alt}"
+                loading="lazy"
+                decoding="async">
+            </picture>
+          </div>"""
 
 
 def build_home_main():
@@ -702,14 +865,15 @@ def build_home_main():
             "loading": "eager",
             "fetchpriority": ' fetchpriority="high"',
             "alt": "Collection of HM UNIQUE electrical products including a distribution panel, MCBs, cable reels, switches, sockets and an LED flood light",
-            "eyebrow": "One Source. Complete Solution.",
-            "title_html": 'Your Trusted Partner in <span class="text-accent">Electricals</span>',
-            "desc": "Supplying quality electrical products and solutions for residential, commercial and industrial applications.",
+            "eyebrow": "HM UNIQUE Technology Enterprises",
+            "title_tag": "h1",
+            "title_html": '<span class="text-accent">Electricals</span>',
+            "desc": "Supplying electrical products for residential, commercial and industrial applications.",
             "badges": [
                 ("users", "Wide Product Range"),
-                ("circle-check", "Quality Assured"),
-                ("landmark", "Trusted Brands"),
-                ("box", "Timely Delivery"),
+                ("circle-check", "Product Enquiry Support"),
+                ("landmark", "Commercial &amp; Industrial Supplies"),
+                ("box", "Delivery Enquiries"),
             ],
             "cta_label": "Explore Electricals",
             "cta_href": "pages/electricals.html",
@@ -721,12 +885,12 @@ def build_home_main():
             "loading": "lazy",
             "fetchpriority": "",
             "alt": "Collection of electronics tools and equipment including a soldering station, hot-air rework tool, digital multimeter, solder reel, screwdriver bit set, tweezers, pliers and crimpers",
-            "eyebrow": "Smart Electronics. Reliable Solutions.",
-            "title_html": 'Reliable <span class="text-accent">Electronics Components</span>',
-            "desc": "Quality electronic components, test instruments and tools for automation, control and industrial applications.",
+            "eyebrow": "Smart Electronics. Practical Solutions.",
+            "title_html": '<span class="text-accent">Electronics Components</span>',
+            "desc": "Electronic components, test instruments and tools for automation, control and industrial applications.",
             "badges": [
-                ("chip", "Quality Components"),
-                ("circle-check", "Reliable Performance"),
+                ("chip", "Electronics Components"),
+                ("circle-check", "Product Enquiry Support"),
                 ("grid", "Wide Selection"),
                 ("headset", "Technical Support"),
             ],
@@ -741,19 +905,19 @@ def build_home_main():
             "fetchpriority": "",
             "alt": "Collection of HM UNIQUE hardware and tools including a cordless drill, circular saw, angle grinder, toolbox, wrenches, pliers and screwdrivers",
             "eyebrow": "Built for Every Project.",
-            "title_html": 'Quality <span class="text-accent">Hardware</span>',
-            "desc": "Dependable hand tools, power tools, fasteners and hardware solutions for professional and industrial applications.",
+            "title_html": 'Tools &amp; <span class="text-accent">Hardware</span>',
+            "desc": "Hand tools, power tools, fasteners and hardware for professional and industrial applications.",
             "badges": [
-                ("shield-check", "Durable Products"),
+                ("shield-check", "Product Enquiry Support"),
                 ("grid", "Wide Range"),
                 ("wrench", "Professional Tools"),
-                ("circle-check", "Reliable Quality"),
+                ("circle-check", "Contact Us for Availability"),
             ],
-            "cta_label": "Explore Hardwares",
+            "cta_label": "Explore Hardware",
             "cta_href": "pages/hardwares.html",
         },
         {
-            # Slide 4 keeps its original Industrial & Commercial Equipment
+            # Slide 4 keeps its original Industrial & Commercial Equipments
             # image. (A 2026-10-28 instruction to temporarily reuse the
             # Electronics hero here was SUPERSEDED before release: the
             # Electronics image then in use showed products the client does
@@ -765,14 +929,14 @@ def build_home_main():
             "loading": "lazy",
             "fetchpriority": "",
             "alt": "Collection of HM UNIQUE industrial equipment including an electric motor, pump, control panel, variable frequency drives, safety gear and cabling",
-            "eyebrow": "INDUSTRIAL &amp; COMMERCIAL EQUIPMENT",
-            "title_html": 'Industrial &amp; <span class="text-accent">Commercial Equipment</span>',
+            "eyebrow": "INDUSTRIAL &amp; COMMERCIAL EQUIPMENTS",
+            "title_html": 'Industrial &amp; <span class="text-accent">Commercial Equipments</span>',
             "desc": "Explore our industrial and commercial equipment range and contact us to discuss your requirements.",
             "badges": [
-                ("factory", "Industrial Grade"),
-                ("landmark", "Trusted Products"),
+                ("factory", "Industrial Equipment"),
+                ("landmark", "Commercial &amp; Industrial Supplies"),
                 ("grid", "Wide Applications"),
-                ("headset", "Reliable Support"),
+                ("headset", "Product Enquiry Support"),
             ],
             "cta_label": "Explore Industrial Equipment",
             "cta_href": "pages/industrial-equipment.html",
@@ -826,6 +990,9 @@ def build_home_main():
         # for the mobile nav drawer (see build_mobile_nav()). Once
         # slider.js runs, it owns this state from here via goTo().
         hidden_attrs = ' aria-hidden="true" inert' if index > 0 else ""
+        # The page's single <h1> stays exposed to assistive tech while its slide is
+        # inactive (js/slider.js masks everything else in that slide).
+        persist = " data-slider-persistent-heading" if slide.get("title_tag") == "h1" else ""
         if slide.get("no_image"):
             slide_class = "hero__slide hero__slide--no-image"
             media_html = '<div class="hero__slide-media hero__slide-media--navy" aria-hidden="true"></div>'
@@ -859,7 +1026,7 @@ def build_home_main():
             <div class="container hero__inner">
               <div class="hero__content">
               <span class="eyebrow hero__eyebrow">{slide['eyebrow']}</span>
-              <h1 class="hero__title">{slide['title_html']}</h1>
+              <{slide.get("title_tag","h2")} class="hero__title"{persist}>{slide['title_html']}</{slide.get("title_tag","h2")}>
               <p class="hero__desc">{slide['desc']}</p>{badges_block}
 
               <div class="hero__actions">
@@ -869,7 +1036,7 @@ def build_home_main():
                 </a>
                 <a class="hero__watch-link" href="pages/about.html">
                   <span class="hero__watch-link__icon">{ICONS['play']}</span>
-                  About HM Unique
+                  About HM UNIQUE
                 </a>
               </div>
             </div>
@@ -901,20 +1068,80 @@ def build_home_main():
     categories = [
         ("bolt", "Electricals", "Wires &amp; Cables, Switches, MCBs, Distribution Boards, Lighting &amp; more.", "pages/electricals.html"),
         ("chip", "Electronics Components", "Sensors, Power Supplies, Automation, Test Instruments &amp; more.", "pages/electronics.html"),
-        ("wrench", "Hardwares", "Fasteners, Hand Tools, Power Tools, Safety, Plumbing &amp; more.", "pages/hardwares.html"),
-        ("factory", "Industrial &amp; Commercial Equipment", "Motors, Bearings, Pneumatics, Hydraulics, Welding &amp; more.", "pages/industrial-equipment.html"),
+        ("wrench", "Hardware", "Fasteners, Hand Tools, Power Tools, Safety, Plumbing &amp; more.", "pages/hardwares.html"),
+        ("factory", "Industrial &amp; Commercial Equipments", "Motors, Bearings, Pneumatics, Hydraulics, Welding &amp; more.", "pages/industrial-equipment.html"),
         ("helmet-safety", "Industrial Safety &amp; Packing Materials", "Protective equipment, workplace safety and packing materials.", "pages/industrial-safety-packing.html"),
     ]
+    # Approved card photos (deployment-relative paths, exact file names/casing as uploaded; all
+    # 700x467). A category with no upload keeps its placeholder. Only formats that exist are
+    # listed (AVIF first, then WebP; the JPG is the fallback <img>). Keys match the names above.
+    CARD_IMG_DIR = "assets/images/home/explore_our_product_categories"
+
+    def _card_img(stem, alt):
+        return {
+            "avif": f"{CARD_IMG_DIR}/avif/{stem}.avif",
+            "webp": f"{CARD_IMG_DIR}/webp/{stem}.webp",
+            "jpg": f"{CARD_IMG_DIR}/jpg/{stem}.jpg",
+            "width": 700,
+            "height": 467,
+            "alt": alt,
+        }
+
+    category_card_images = {
+        "Electricals": _card_img(
+            "electricals-category",
+            "Electrical distribution board, circuit breakers, coiled cable, switch and LED bulb.",
+        ),
+        "Electronics Components": _card_img(
+            "electronics-components-category",
+            "Electronic circuit board, power supply, proximity sensor, digital multimeter and small components.",
+        ),
+        "Hardware": _card_img(
+            "hardwares-category",
+            "Cordless drill, spanner, screwdriver, bolts and nuts, and brass fittings.",
+        ),
+        "Industrial &amp; Commercial Equipments": _card_img(
+            "industrial-commercial-equipment",
+            "Electric motor, centrifugal pump, hydraulic cylinder and ball bearings.",
+        ),
+        "Industrial Safety &amp; Packing Materials": _card_img(
+            "industrial-safety-packing-materials-category",
+            "Safety helmet, goggles, gloves, cardboard carton, stretch wrap roll and packing tape.",
+        ),
+    }
+
+    def category_card_media(name):
+        img = category_card_images.get(name)
+        if not img:
+            return img_placeholder(name + ' category image')
+        sources = "".join(
+            f'\n                <source\n                  srcset="{img[ext]}"\n                  type="image/{ext}">'
+            for ext in ("avif", "webp")
+            if img.get(ext)
+        )
+        return (
+            f'<picture>{sources}\n'
+            f'                <img\n'
+            f'                  src="{img["jpg"]}"\n'
+            f'                  width="{img["width"]}"\n'
+            f'                  height="{img["height"]}"\n'
+            f'                  alt="{img["alt"]}"\n'
+            f'                  loading="lazy"\n'
+            f'                  decoding="async"\n'
+            f'                  class="category-card__img">\n'
+            f'              </picture>'
+        )
+
     category_cards_html = "\n".join(
         f"""          <article class="card card--hover category-card" data-animate="fade-up">
             <span class="card__icon">{ICONS[icon]}</span>
             <div class="category-card__media">
-              {img_placeholder(name + ' category image')}
+              {category_card_media(name)}
             </div>
             <h3 class="category-card__title">{name}</h3>
             <p class="category-card__desc">{desc}</p>
             <a class="btn btn--outline btn--sm" href="{href}">
-              Explore Category
+              Explore Category<span class="visually-hidden">: {name}</span>
               {ICONS['arrow-right']}
             </a>
           </article>"""
@@ -926,6 +1153,7 @@ def build_home_main():
         <div class="section-heading section-heading--center" id="product-categories">
           <span class="eyebrow">Our Categories</span>
           <h2 class="section-heading__title" id="categories-heading">Explore Our <span class="text-accent">Product Categories</span></h2>
+          <p class="section-heading__subtitle">HM UNIQUE Technology Enterprises is located in George Town, Chennai. Choose a category to see the product groups listed, then send an enquiry or request a quote.</p>
         </div>
         <div class="grid grid--4 category-grid">
 {category_cards_html}
@@ -936,23 +1164,47 @@ def build_home_main():
     # -------------------------------------------------------------
     # 5. FEATURED PRODUCTS
     # -------------------------------------------------------------
+    # Approved assortment photos (assets/images/home/handpicked_products/{avif,webp,jpg}/<stem>.<ext>,
+    # all 1254x1254). Generic showcase copy only: no brand, stock, performance, specification or
+    # certification claims. Each card links to its main category page.
+    HP_DIR = "assets/images/home/handpicked_products"
     products = [
-        ("Polycab FRLS Copper Cable", "High quality flame retardant electric cables."),
-        ("Schneider iC65N MCB", "Advanced protection &amp; performance."),
-        ("Philips LED Highbay Light", "High efficiency industrial LED lighting."),
-        ("Crompton Industrial Motor", "Energy efficient motor for industrial use."),
-        ("Bosch Professional Drill", "Powerful, durable &amp; built for industrial use."),
+        ("Electrical Supplies", "Wires, circuit protection, switches and lighting supplies.",
+         "electrical_supplies", "Coil of teal electrical wire, a single-pole circuit breaker, a white switch and socket plate and a round LED downlight on a white platform.",
+         "pages/electricals.html"),
+        ("Electronics Components", "Relays, capacitors, resistors and terminal blocks.",
+         "electronics_components", "Clear relay, two black capacitors, three resistors and a green terminal block on a white platform.",
+         "pages/electronics.html"),
+        ("Hardware Tools", "Hand tools for installation, maintenance and workshop tasks.",
+         "hardware_tools", "Hammer, adjustable spanner, pliers, flat screwdriver and a yellow measuring tape arranged on a white surface.",
+         "pages/hardwares.html"),
+        ("Industrial &amp; Commercial Products", "Valves, bearings, couplings, pneumatic components and gauges.",
+         "industrial_commercial_products", "Brass valve with a teal handle, ball bearings, a shaft coupling, a teal-ended pneumatic cylinder and a navy-and-yellow pressure gauge.",
+         "pages/industrial-equipment.html"),
+        ("Industrial Safety &amp; Packing Supplies", "Protective equipment and materials for workplace safety and packing.",
+         "industrial_safety_packing_materials", "Yellow safety helmet, work gloves, clear safety goggles, brown packing tape and a roll of stretch film.",
+         "pages/industrial-safety-packing.html"),
     ]
+
+    def handpicked_picture(stem, alt):
+        return (
+            f'<picture>\n'
+            f'                <source srcset="{HP_DIR}/avif/{stem}.avif" type="image/avif">\n'
+            f'                <source srcset="{HP_DIR}/webp/{stem}.webp" type="image/webp">\n'
+            f'                <img src="{HP_DIR}/jpg/{stem}.jpg" width="1254" height="1254" alt="{alt}" loading="lazy" decoding="async" class="product-card__img">\n'
+            f'              </picture>'
+        )
+
     product_cards_html = "\n".join(
         f"""          <article class="card card--hover product-card" data-animate="fade-up">
             <div class="product-card__media">
-              {img_placeholder(name + ' product image', 'aspect-box--square')}
+              {handpicked_picture(stem, alt)}
             </div>
             <h3 class="product-card__title">{name}</h3>
             <p class="product-card__desc">{desc}</p>
-            <button type="button" class="btn btn--outline btn--block" data-modal-open="quote">View Details</button>
+            <a class="btn btn--outline btn--block" href="{href}">Explore Products</a>
           </article>"""
-        for name, desc in products
+        for name, desc, stem, alt, href in products
     )
 
     featured_html = f"""    <section class="section section--surface" aria-labelledby="featured-heading">
@@ -980,25 +1232,39 @@ def build_home_main():
     # single full-width category card. Each links straight to a group on
     # pages/industrial-safety-packing.html using that page's own group key as
     # the URL fragment (see js/pages/industrial-safety-packing-catalog.js,
-    # which activates the matching tab). Keys in use: "personal-protective-
-    # equipment", "workplace-safety-signage" and "boxes-strapping-packing-
-    # accessories" (the group that carries the "Packing Accessories" label;
-    # the page's other two packing groups are one tab away). Descriptions
-    # are deliberately generic: no product, brand, specification or
-    # certification claim, and they say plainly that the listing is still
-    # being prepared. Images stay placeholders until approved photography
-    # is supplied.
+    # which activates the matching tab). Keys in use: "hand-body-protection"
+    # (the first protective-equipment group), "workplace-safety-signage-fire-safety"
+    # and "cartons-strapping-packing-accessories" (the group that carries the
+    # "Packing Accessories" label; the other two packing groups are one tab away).
+    # Pre-Step-21 fragments still resolve through OLD_KEY_ALIASES in that script. Descriptions
+    # are deliberately generic showcase copy: no product, brand, specification
+    # or certification claim. Images are the approved landscape photos in
+    # assets/images/home/explore_safety_&_packing_supplies/.
     # -------------------------------------------------------------
+    SP_DIR = "assets/images/home/explore_safety_&amp;_packing_supplies"
     safety_packing_groups = [
-        ("helmet-safety", "Personal Protective Equipment", "Protective equipment for industrial and commercial workplaces. Our product listing is being prepared; contact us for availability.", "pages/industrial-safety-packing.html#personal-protective-equipment"),
-        ("triangle-exclamation", "Workplace Safety &amp; Signage", "Safety and signage supplies for workplaces. Our product listing is being prepared; contact us for availability.", "pages/industrial-safety-packing.html#workplace-safety-signage"),
-        ("boxes-stacked", "Packing Materials &amp; Accessories", "Packing materials and accessories for industrial and commercial requirements. Our product listing is being prepared; contact us for availability.", "pages/industrial-safety-packing.html#boxes-strapping-packing-accessories"),
+        ("helmet-safety", "Personal Protective Equipment", "Helmets, gloves, safety eyewear, footwear and reflective workwear.", "pages/industrial-safety-packing.html#hand-body-protection",
+         "personal_protective_equipment", "Yellow safety helmet, grey work gloves, clear safety glasses, black safety shoes and a reflective hi-vis vest."),
+        ("triangle-exclamation", "Workplace Safety &amp; Signage", "Cones, caution signs, barrier tapes and reflective bollards.", "pages/industrial-safety-packing.html#workplace-safety-signage-fire-safety",
+         "workplace_safety_signage", "Orange traffic cone, yellow folding caution sign, black-and-yellow striped barrier tape and a yellow bollard."),
+        ("boxes-stacked", "Packing Materials &amp; Accessories", "Packing tapes, stretch film, bubble wrap, cartons and strapping supplies.", "pages/industrial-safety-packing.html#cartons-strapping-packing-accessories",
+         "packing_materials_accessories", "Cardboard carton, roll of stretch film, bubble wrap, brown packing tape, green packing strap and metal buckles."),
     ]
+
+    def safety_packing_picture(stem, alt):
+        return (
+            f'<picture>\n'
+            f'                <source srcset="{SP_DIR}/avif/{stem}.avif" type="image/avif">\n'
+            f'                <source srcset="{SP_DIR}/webp/{stem}.webp" type="image/webp">\n'
+            f'                <img src="{SP_DIR}/jpg/{stem}.jpg" width="1536" height="1024" alt="{alt}" loading="lazy" decoding="async" class="category-card__img">\n'
+            f'              </picture>'
+        )
+
     safety_packing_cards_html = "\n".join(
         f"""          <article class="card card--hover category-card" data-animate="fade-up">
             <span class="card__icon">{ICONS[icon]}</span>
             <div class="category-card__media">
-              {img_placeholder(name + ' image')}
+              {safety_packing_picture(stem, alt)}
             </div>
             <h3 class="category-card__title">{name}</h3>
             <p class="category-card__desc">{desc}</p>
@@ -1007,7 +1273,7 @@ def build_home_main():
               {ICONS['arrow-right']}
             </a>
           </article>"""
-        for icon, name, desc, href in safety_packing_groups
+        for icon, name, desc, href, stem, alt in safety_packing_groups
     )
 
     safety_packing_html = f"""    <section class="section section--light" aria-labelledby="safety-packing-heading">
@@ -1026,11 +1292,11 @@ def build_home_main():
     # 6. WHY CHOOSE US
     # -------------------------------------------------------------
     why_choose = [
-        ("box", "Quality Products", "We supply only high quality products from trusted manufacturers."),
-        ("diagram-project", "Wide Range", "One-stop solution for Electricals, Electronics, Hardwares, Industrial tools and Industrial Safety &amp; Packing Materials."),
-        ("tag", "Competitive Pricing", "Best value for your money across all products."),
-        ("truck", "Timely Delivery", "Prompt delivery ensuring minimal downtime for your projects."),
-        ("headset", "Expert Support", "Our team is always ready to help you find the right products."),
+        ("box", "Commercial &amp; Industrial Supplies", "Products for commercial and industrial requirements across five categories."),
+        ("diagram-project", "Wide Range", "Electricals, Electronics Components, Hardware, Industrial &amp; Commercial Equipments and Industrial Safety &amp; Packing Materials."),
+        ("tag", "Request a Quotation", "Send us your requirement to request a quotation."),
+        ("truck", "Delivery Enquiries", "Contact our team with your delivery requirements."),
+        ("headset", "Product Enquiry Support", "Our team will respond to your product enquiries."),
     ]
     why_choose_html = "\n".join(
         f"""          <div class="feature-item feature-item--row" data-animate="fade-up">
@@ -1080,7 +1346,7 @@ def build_home_main():
       <div class="container">
         <div class="section-heading section-heading--center">
           <span class="eyebrow">Industries We Serve</span>
-          <h2 class="section-heading__title" id="industries-heading">Powering Industries Across The Nation</h2>
+          <h2 class="section-heading__title" id="industries-heading">Supporting Commercial &amp; Industrial Sectors</h2>
         </div>
         <div class="industries-grid">
 {industries_html}
@@ -1095,14 +1361,14 @@ def build_home_main():
       <div class="container cta-band__inner">
         <div class="cta-band__text">
           <h2 class="cta-band__title" id="cta-heading">Looking for the Right Products for Your Project?</h2>
-          <p>Send us your requirement and our experts will get back to you with the best solution.</p>
+          <p>Send us your requirement and our team will get back to you.</p>
         </div>
         <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
           Request a Quote
           {ICONS['circle-right']}
         </button>
         <div class="cta-band__media">
-          {img_placeholder('Request a quote illustration', 'aspect-box--wide')}
+          {cta_band_picture(0)}
         </div>
       </div>
     </section>"""
@@ -1114,6 +1380,7 @@ def build_home_main():
         safety_packing_html,
         why_choose_section,
         industries_section,
+        build_faq_section("home", 0),
         cta_section,
     ])
 
@@ -1122,7 +1389,7 @@ def build_home_main():
 # CATEGORY PAGE DATA
 # All content below is sourced verbatim from the concept PDF's four
 # category-page screenshots (Electricals/"Wires & Cables", Electronics
-# Components, Hardwares, Industrial & Commercial Equipment). Two
+# Components, Hardware, Industrial & Commercial Equipments). Two
 # deliberate, documented adjustments were made — see
 # documents/PHASE-4-CATEGORY-PAGES-REPORT.md:
 #   1. The Electricals page's H1 is "Electricals" (category-level),
@@ -1142,12 +1409,12 @@ CATEGORIES = {
         "nav_key": "electricals",
         "icon": "bolt",
         "h1": "Electricals",
-        "desc": "Wires &amp; Cables, Switches, MCBs, Distribution Boards, Lighting and more &mdash; high performance electrical products for safe, reliable and efficient connections across industrial and commercial projects.",
+        "desc": "Wires &amp; cables, circuit protection, switches, distribution boards, lighting and more for industrial and commercial projects. Contact HM UNIQUE in George Town, Chennai with your requirement.",
         "trust_badges": [
-            ("shield-check", "Safe &amp; Reliable"),
-            ("award", "Premium Quality"),
+            ("shield-check", "Commercial &amp; Industrial Supplies"),
+            ("award", "Product Enquiry Support"),
             ("grid", "Wide Range"),
-            ("headset", "Expert Support"),
+            ("headset", "Request a Quotation"),
         ],
         "subcategories": [
             ("cable", "Wires &amp; Cables"),
@@ -1164,7 +1431,7 @@ CATEGORIES = {
             ("box", "Electrical Accessories"),
         ],
         "popular_heading": "Popular Wires &amp; Cables",
-        "popular_sub": "Explore our most in-demand wires and cables built for performance and durability.",
+        "popular_sub": "Explore popular wires and cables.",
         "products": [
             ("FRLS Copper Wire H07Z1-K", [
                 ("Voltage Rating", "1100V"), ("Conductor", "Copper"), ("Insulation", "FRLS"),
@@ -1199,12 +1466,12 @@ CATEGORIES = {
         "nav_key": "electronics",
         "icon": "chip",
         "h1": "Electronics Components",
-        "desc": "High quality electronic components for design, prototyping and production.",
+        "desc": "Electronic components for design, prototyping and production, from passive parts and semiconductors to sensors and power supplies. Send HM UNIQUE in Chennai your requirement.",
         "trust_badges": [
-            ("shield-check", "Quality Assured"),
+            ("shield-check", "Product Enquiry Support"),
             ("grid", "Wide Range"),
-            ("award", "RoHS Compliant"),
-            ("headset", "Reliable Supply"),
+            ("award", "Contact Us for Availability"),
+            ("headset", "Commercial &amp; Industrial Supplies"),
         ],
         "subcategories": [
             ("chip", "Passive Components"),
@@ -1220,7 +1487,7 @@ CATEGORIES = {
             ("box", "Other Components"),
         ],
         "popular_heading": "Popular Electronic Components",
-        "popular_sub": "Explore our most in-demand electronic components for your projects and applications.",
+        "popular_sub": "Explore popular electronic components for your projects and applications.",
         "products": [
             ("Metal Film Resistors", [
                 ("Power Rating", "1/4W to 2W"), ("Tolerance", "&plusmn;1% / &plusmn;5%"),
@@ -1259,13 +1526,13 @@ CATEGORIES = {
         "key": "hardwares",
         "nav_key": "hardwares",
         "icon": "wrench",
-        "h1": "Hardwares",
-        "desc": "High quality hardware products for construction, maintenance and industrial applications.",
+        "h1": "Hardware",
+        "desc": "Fasteners, hand and power tools, plumbing fittings and general hardware for construction, maintenance and industrial work. Enquire with HM UNIQUE in Chennai.",
         "trust_badges": [
-            ("award", "Premium Quality"),
+            ("award", "Product Enquiry Support"),
             ("grid", "Wide Range"),
-            ("shield-check", "Corrosion Resistant"),
-            ("headset", "Reliable &amp; Durable"),
+            ("shield-check", "Commercial &amp; Industrial Supplies"),
+            ("headset", "Contact Us for Availability"),
         ],
         "subcategories": [
             ("screw", "Fasteners"),
@@ -1281,7 +1548,7 @@ CATEGORIES = {
             ("box", "Hardware Accessories"),
         ],
         "popular_heading": "Popular Hardware Products",
-        "popular_sub": "Explore our most in-demand hardware products built for strength and reliability.",
+        "popular_sub": "Explore popular hardware products.",
         "products": [
             ("Hex Bolt &amp; Nut", [
                 ("Material", "Mild Steel"), ("Finish", "Zinc Plated"), ("Type", "Hex Head"),
@@ -1315,13 +1582,13 @@ CATEGORIES = {
         "key": "industrial",
         "nav_key": "industrial",
         "icon": "factory",
-        "h1": "Industrial &amp; Commercial Equipment",
-        "desc": "Reliable and efficient equipment for industrial, commercial and facility management applications.",
+        "h1": "Industrial &amp; Commercial Equipments",
+        "desc": "Pumps and motors, bearings, welding, material handling and power backup equipment for industrial, commercial and facility applications. Enquire with HM UNIQUE in Chennai.",
         "trust_badges": [
-            ("award", "High Performance"),
-            ("shield-check", "Reliable &amp; Durable"),
+            ("award", "Commercial &amp; Industrial Supplies"),
+            ("shield-check", "Product Enquiry Support"),
             ("grid", "Wide Range"),
-            ("headset", "After Sales Support"),
+            ("headset", "Contact Us for Availability"),
         ],
         "subcategories": [
             ("box", "Material Handling Equipment"),
@@ -1335,8 +1602,8 @@ CATEGORIES = {
             ("droplet", "Cleaning Equipment"),
             ("box", "Other Industrial Supplies"),
         ],
-        "popular_heading": "Popular Industrial &amp; Commercial Equipment",
-        "popular_sub": "Explore our most in-demand equipment for industrial and commercial use.",
+        "popular_heading": "Popular Industrial &amp; Commercial Equipments",
+        "popular_sub": "Explore popular equipment for industrial and commercial use.",
         "products": [
             ("Hand Pallet Truck", [
                 ("Load Capacity", "2.5 Ton"), ("Min. Fork Height", "85mm"), ("Max Fork Height", "200mm"),
@@ -1363,7 +1630,7 @@ CATEGORIES = {
                 ("Output Voltage", "230V &plusmn;1%"), ("Display", "Digital"), ("Application", "Voltage Regulation"),
             ]),
         ],
-        "catalogue_name": "Industrial &amp; Commercial Equipment Catalogue",
+        "catalogue_name": "Industrial &amp; Commercial Equipments Catalogue",
         "href": "industrial-equipment.html",
     },
     # ---- Fifth category (Step 1: dedicated page only) --------------------
@@ -1379,7 +1646,7 @@ CATEGORIES = {
         "icon": "shield-check",
         "empty_state": True,
         "h1": "Industrial Safety &amp; Packing Materials",
-        "desc": "Safety and packing supplies for industrial and commercial use. Our product listing for this category is being prepared &mdash; contact us to discuss your requirements.",
+        "desc": "Protective equipment, workplace safety supplies and packing materials for industrial and commercial use. Browse the product groups below or contact HM UNIQUE in Chennai.",
         "trust_badges": [],
         "subcategories": [],
         "popular_heading": "Personal Protective Equipment",
@@ -1393,7 +1660,7 @@ CATEGORIES = {
 
 # ---------------------------------------------------------------------
 # DYNAMIC CATALOGUE PAGES (approved implementation)
-# Every category page (Electricals, Electronics, Hardwares, Industrial) is
+# Every category page (Electricals, Electronics, Hardware, Industrial) is
 # driven by its own js/pages/<script>.js: the product grid is rendered
 # client-side from that file's CATALOG object, so the generated page carries
 # an empty [data-catalog-grid] plus the data-catalog-* hooks the script binds
@@ -1402,81 +1669,85 @@ CATEGORIES = {
 # the first tab's initial server-side text, `pdf` is the catalogue PDF
 # basename and `script` the page script.
 # ---------------------------------------------------------------------
+# Sub-category tabs (key, Font Awesome icon, label). The keys/labels/order here MUST equal the
+# CATALOG object in each js/pages/*-catalog.js (check_dynamic_tabs fails the build on drift).
+# "heading"/"desc" are the server-side copy for the first group (the script re-renders them per tab).
+# Safety & Packing has no "pdf": there is no approved catalogue, so that page shows
+# "Catalogue coming soon" instead of any download.
 DYNAMIC_CATALOGS = {
     "electricals": {
         "script": "electricals-catalog.js",
         "pdf": "electricals-catalogue.pdf",
+        "heading": "Wires &amp; Cables",
+        "desc": "Power, control and signal cables and wires for building and industrial wiring.",
         "tabs": [
             ("wires-cables", "fa-plug", "Wires &amp; Cables"),
-            ("switches-sockets", "fa-toggle-on", "Switches &amp; Sockets"),
-            ("mcb-rccb", "fa-bolt", "MCB &amp; RCCB"),
-            ("distribution-boards", "fa-table-cells", "Distribution Boards"),
-            ("lighting-solutions", "fa-lightbulb", "Lighting Solutions"),
-            ("conduits-accessories", "fa-wrench", "Conduits &amp; Accessories"),
-            ("electrical-accessories", "fa-box", "Electrical Accessories"),
+            ("circuit-protection-switchgear", "fa-bolt", "Circuit Protection &amp; Switchgear"),
+            ("contactors-relays-motor-starters", "fa-gears", "Contactors, Relays &amp; Motor Starters"),
+            ("switches-sockets-industrial-plugs", "fa-toggle-on", "Switches, Sockets &amp; Industrial Plugs"),
+            ("distribution-boards-panel-accessories", "fa-table-cells", "Distribution Boards &amp; Panel Accessories"),
+            ("industrial-commercial-lighting", "fa-lightbulb", "Industrial &amp; Commercial Lighting"),
+            ("conduits-cable-trays-wiring-accessories", "fa-grip-lines", "Conduits, Cable Trays &amp; Wiring Accessories"),
         ],
     },
     "electronics": {
         "script": "electronics-catalog.js",
         "pdf": "electronics-catalogue.pdf",
-        "heading": "Popular Passive Components",
-        "desc": "Resistors, capacitors and inductors for reliable circuit design and prototyping.",
+        "heading": "Resistors, Capacitors &amp; Inductors",
+        "desc": "Passive components for circuit design, repair and prototyping.",
         "tabs": [
-            ("passive-components", "fa-microchip", "Passive Components"),
-            ("active-components", "fa-gear", "Active Components"),
-            ("semiconductors", "fa-microchip", "Semiconductors"),
-            ("connectors", "fa-box", "Connectors"),
-            ("sensors", "fa-shield-halved", "Sensors"),
-            ("circuit-protection", "fa-shield-halved", "Circuit Protection"),
-            ("development-boards", "fa-microchip", "Development Boards"),
+            ("resistors-capacitors-inductors", "fa-microchip", "Resistors, Capacitors &amp; Inductors"),
+            ("diodes-transistors-integrated-circuits", "fa-memory", "Diodes, Transistors &amp; Integrated Circuits"),
+            ("relays-switches-electromechanical-components", "fa-toggle-on", "Relays, Switches &amp; Electromechanical Components"),
+            ("connectors-terminal-blocks-cable-assemblies", "fa-plug", "Connectors, Terminal Blocks &amp; Cable Assemblies"),
+            ("sensors-control-modules", "fa-sliders", "Sensors &amp; Control Modules"),
+            ("power-supplies-dc-converters", "fa-battery-full", "Power Supplies &amp; DC Converters"),
+            ("circuit-protection-pcb-accessories", "fa-shield-halved", "Circuit Protection &amp; PCB Accessories"),
         ],
     },
     "hardwares": {
         "script": "hardwares-catalog.js",
         "pdf": "hardwares-catalogue.pdf",
-        "heading": "Popular Fasteners",
-        "desc": "Bolts, nuts, screws and rivets built for strength and reliable, long-lasting joints.",
+        "heading": "Fasteners &amp; Anchors",
+        "desc": "Bolts, nuts, screws, rivets and anchors for fixing and joining.",
         "tabs": [
-            ("fasteners", "fa-screwdriver", "Fasteners"),
+            ("fasteners-anchors", "fa-screwdriver", "Fasteners &amp; Anchors"),
             ("hand-tools", "fa-wrench", "Hand Tools"),
-            ("power-tools", "fa-gear", "Power Tools"),
-            ("plumbing-fittings", "fa-gauge-high", "Plumbing Fittings"),
-            ("pipes-fittings", "fa-plug", "Pipes &amp; Fittings"),
-            ("safety-products", "fa-shield-halved", "Safety Products"),
-            ("hardware-accessories", "fa-box", "Hardware Accessories"),
+            ("power-tools-accessories", "fa-gear", "Power Tools &amp; Accessories"),
+            ("cutting-tools-abrasives", "fa-scissors", "Cutting Tools &amp; Abrasives"),
+            ("pipes-valves-plumbing-fittings", "fa-faucet", "Pipes, Valves &amp; Plumbing Fittings"),
+            ("measuring-inspection-tools", "fa-ruler", "Measuring &amp; Inspection Tools"),
+            ("hinges-locks-general-hardware", "fa-lock", "Hinges, Locks &amp; General Hardware"),
         ],
     },
     "industrial": {
         "script": "industrial-catalog.js",
         "pdf": "industrial-catalogue.pdf",
-        "heading": "Popular Material Handling Equipment",
-        "desc": "Pallet trucks, trolleys and lifting equipment for safe, efficient material movement.",
+        "heading": "Material Handling &amp; Storage Equipment",
+        "desc": "Trucks, trolleys and storage equipment for moving and storing materials.",
         "tabs": [
-            ("material-handling-equipment", "fa-box", "Material Handling Equipment"),
-            ("pumps-motors", "fa-gauge-high", "Pumps &amp; Motors"),
-            ("electrical-enclosures", "fa-table-cells", "Electrical Enclosures"),
-            ("safety-security-equipment", "fa-shield-halved", "Safety &amp; Security Equipment"),
-            ("lighting-solutions", "fa-bolt", "Lighting Solutions"),
-            ("power-backup-stabilizers", "fa-bolt", "Power Backup &amp; Stabilizers"),
-            ("cleaning-equipment", "fa-droplet", "Cleaning Equipment"),
+            ("material-handling-storage-equipment", "fa-dolly", "Material Handling &amp; Storage Equipment"),
+            ("pumps-electric-motors", "fa-gauge-high", "Pumps &amp; Electric Motors"),
+            ("pneumatic-hydraulic-components", "fa-wind", "Pneumatic &amp; Hydraulic Components"),
+            ("bearings-couplings-power-transmission", "fa-gears", "Bearings, Couplings &amp; Power Transmission"),
+            ("welding-equipment-consumables", "fa-fire-flame-curved", "Welding Equipment &amp; Consumables"),
+            ("industrial-cleaning-equipment-supplies", "fa-broom", "Industrial Cleaning Equipment &amp; Supplies"),
+            ("power-backup-ups-voltage-stabilizers", "fa-car-battery", "Power Backup, UPS &amp; Voltage Stabilizers"),
         ],
     },
-    # Provisional grouping labels (NOT verified inventory). No "pdf": there is
-    # no approved catalogue, so the page shows "Catalogue coming soon" instead
-    # of any download.
     "safety-packing": {
         "script": "industrial-safety-packing-catalog.js",
         "pdf": None,
-        "heading": "Personal Protective Equipment",
-        "desc": "Our product listing for this group is being prepared. Contact us for availability and details.",
+        "heading": "Hand &amp; Body Protection",
+        "desc": "Gloves and body protection for workplace tasks.",
         "tabs": [
-            ("personal-protective-equipment", "fa-shield-halved", "Personal Protective Equipment"),
+            ("hand-body-protection", "fa-hand", "Hand &amp; Body Protection"),
             ("safety-footwear-head-protection", "fa-helmet-safety", "Safety Footwear &amp; Head Protection"),
-            ("eye-face-hearing-protection", "fa-glasses", "Eye, Face &amp; Hearing Protection"),
-            ("workplace-safety-signage", "fa-triangle-exclamation", "Workplace Safety &amp; Signage"),
-            ("tapes-adhesives", "fa-tape", "Tapes &amp; Adhesives"),
-            ("wrapping-cushioning-materials", "fa-box-open", "Wrapping &amp; Cushioning Materials"),
-            ("boxes-strapping-packing-accessories", "fa-boxes-stacked", "Boxes, Strapping &amp; Packing Accessories"),
+            ("eye-face-hearing-respiratory-protection", "fa-glasses", "Eye, Face, Hearing &amp; Respiratory Protection"),
+            ("workplace-safety-signage-fire-safety", "fa-triangle-exclamation", "Workplace Safety, Signage &amp; Fire Safety"),
+            ("packing-tapes-adhesives-sealants", "fa-tape", "Packing Tapes, Adhesives &amp; Sealants"),
+            ("stretch-film-bubble-wrap-cushioning", "fa-box-open", "Stretch Film, Bubble Wrap &amp; Cushioning"),
+            ("cartons-strapping-packing-accessories", "fa-boxes-stacked", "Cartons, Strapping &amp; Packing Accessories"),
         ],
     },
 }
@@ -1503,11 +1774,154 @@ def check_dynamic_tabs(cat_key):
 
 PRODUCT_CARDS_PER_GROUP = 9
 
+# ---------------------------------------------------------------------
+# APPROVED PRODUCT DATA (Step 22). product_data.py is the single source for the 315
+# approved product cards. This module renders the first sub-category's cards into each
+# category page, regenerates the `const CATALOG` block of each js/pages/*-catalog.js,
+# and feeds the Product JSON-LD, so initial HTML and JS-rendered states cannot drift.
+# ---------------------------------------------------------------------
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from product_data import PRODUCT_DATA  # noqa: E402
+from product_images import PRODUCT_IMAGES  # noqa: E402
+
+# Step 24: merge the id-keyed image mapping into every product so the server-side cards and the
+# CATALOG written into each catalogue script come from one place.
+for _groups in PRODUCT_DATA.values():
+    for _g in _groups:
+        for _pr in _g["products"]:
+            _pr["image"] = PRODUCT_IMAGES.get(_pr["id"])
+
+
+def _esc(s):
+    return _htmlmod.escape(s, quote=False)
+
+
+def validate_product_data():
+    ids = set()
+    total = 0
+    if list(PRODUCT_DATA) != list(DYNAMIC_CATALOGS):
+        raise SystemExit(f"product_data categories {list(PRODUCT_DATA)} != {list(DYNAMIC_CATALOGS)}")
+    for cat_key, groups in PRODUCT_DATA.items():
+        tabs = DYNAMIC_CATALOGS[cat_key]["tabs"]
+        if len(groups) != 7:
+            raise SystemExit(f"{cat_key}: expected 7 groups, got {len(groups)}")
+        for g, (key, icon, label) in zip(groups, tabs):
+            if (g["key"], g["icon"], _htmlmod.unescape(g["label"])) != (key, icon, _htmlmod.unescape(label)):
+                raise SystemExit(f"{cat_key}: product_data group {g['key']} != tab {key}")
+            if len(g["products"]) != PRODUCT_CARDS_PER_GROUP:
+                raise SystemExit(f"{cat_key}/{key}: expected 9 products, got {len(g['products'])}")
+            for pr in g["products"]:
+                if pr["id"] in ids or pr["id"] != pr["id"].lower() or " " in pr["id"]:
+                    raise SystemExit(f"bad or duplicate product id {pr['id']}")
+                ids.add(pr["id"])
+                total += 1
+                img = pr.get("image")
+                if img:
+                    if not (img["dir"] and img["file"] and img["alt"] and img["width"] > 0 and img["height"] > 0):
+                        raise SystemExit(f"incomplete image mapping for {pr['id']}")
+                    img_root = os.path.join(ROOT, "assets", "images", "products")
+                    for ext, _mime in PRODUCT_IMAGE_FORMATS:
+                        if os.path.isdir(img_root) and not os.path.isfile(os.path.join(img_root, img["dir"], ext, f"{img['file']}.{ext}")):
+                            # Only enforced when the images folder is present (e.g. not in a bare temp copy).
+                            if os.path.isdir(os.path.join(img_root, img["dir"].split("/")[0])):
+                                raise SystemExit(f"missing {ext} image for {pr['id']}: {img['dir']}/{ext}/{img['file']}.{ext}")
+    if total != 315:
+        raise SystemExit(f"expected 315 products, got {total}")
+
+
+def _js(s):
+    return json.dumps(s, ensure_ascii=False)
+
+
+PRODUCT_IMAGE_BASE = "../assets/images/products/"  # category pages live in /pages/
+PRODUCT_IMAGE_FORMATS = (("avif", "image/avif"), ("webp", "image/webp"), ("jpg", "image/jpeg"))
+
+
+def product_image_dir_url(img):
+    """URL-safe folder path: '&' and other reserved characters are percent-encoded."""
+    return _urlquote(img["dir"], safe="/")
+
+
+def product_image_html(pr):
+    """<picture> (AVIF, WebP, JPG fallback) inside the square card image box. Mirrored by
+    renderProductMedia() in each js/pages/*-catalog.js. Returns None when a product has no
+    mapped image (the caller then keeps the placeholder)."""
+    img = pr.get("image")
+    if not img:
+        return None
+    base = PRODUCT_IMAGE_BASE + product_image_dir_url(img)
+    url = lambda ext: f"{base}/{ext}/{img['file']}.{ext}"
+    return f"""<div class="aspect-box aspect-box--square">
+                <picture>
+                  <source srcset="{url('avif')}" type="image/avif">
+                  <source srcset="{url('webp')}" type="image/webp">
+                  <img src="{url('jpg')}" width="{img['width']}" height="{img['height']}" alt="{_esc(img['alt'])}" loading="lazy" decoding="async">
+                </picture>
+              </div>"""
+
+
+def catalog_js_block(cat_key):
+    """The `const CATALOG = {...};` text for one category script."""
+    blocks = []
+    for g in PRODUCT_DATA[cat_key]:
+        b = [f'  {_js(g["key"])}: {{', f'    label: {_js(_esc(g["label"]))},']
+        if cat_key == "electricals":
+            b.append(f'    icon: {_js(g["icon"])},')
+        b += [f'    heading: {_js(_esc(g["label"]))},', f'    description: {_js(_esc(g["intro"]))},', "    products: ["]
+        for pr in g["products"]:
+            b += ["      {", f'        id: {_js(pr["id"])},', f'        name: {_js(_esc(pr["name"]))},', f'        description: {_js(_esc(pr["description"]))},']
+            img = pr.get("image")
+            if img:
+                b.append(f'        image: {{ dir: {_js(product_image_dir_url(img))}, file: {_js(img["file"])}, width: {img["width"]}, height: {img["height"]}, alt: {_js(_esc(img["alt"]))} }},')
+            b.append("        specs: [")
+            b += [f"          [{_js(_esc(a))}, {_js(_esc(v))}]," for a, v in pr["specs"]]
+            b += ["        ],", "      },"]
+        b += ["    ],", "  },"]
+        blocks.append("\n".join(b))
+    return "const CATALOG = {\n" + "\n\n".join(blocks) + "\n};"
+
+
+def sync_catalog_scripts():
+    for cat_key, cfg in DYNAMIC_CATALOGS.items():
+        path = os.path.join(ROOT, "js", "pages", cfg["script"])
+        js = open(path, encoding="utf-8").read()
+        s = js.index("const CATALOG = {")
+        e = js.index("\n};", s) + 3
+        new = js[:s] + catalog_js_block(cat_key) + js[e:]
+        if new != js:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(new)
+            print(f"Wrote {path}")
+
+
+def product_card_html(page_key, group, index):
+    """Server-side mirror of renderProductCard + renderCardSlot in the catalogue scripts."""
+    pr = group["products"][index]
+    specs = "\n".join(
+        f'<li><i class="fa-solid fa-check" aria-hidden="true"></i><span><strong>{_esc(a)}:</strong> {_esc(v)}</span></li>'
+        for a, v in pr["specs"]
+    )
+    name = _esc(pr["name"])
+    media = product_image_html(pr) or f"""<div class="aspect-box aspect-box--square" role="img" aria-label="{name} product image — placeholder, pending final product photography">
+                <div class="img-placeholder"><i class="fa-regular fa-image" aria-hidden="true"></i></div>
+              </div>"""
+    return f"""          <article class="card card--hover product-card" data-slot-id="{page_key}-{group['key']}-{index + 1:02d}" data-product-id="{pr['id']}">
+            <div class="product-card__media">
+              {media}
+            </div>
+            <h3 class="product-card__title">{name}</h3>
+            <p class="product-card__desc">{_esc(pr["description"])}</p>
+            <ul class="card__specs">
+{specs}
+            </ul>
+          </article>"""
+
+
 
 def pending_product_card_html(page_key, group_key, group_label, index):
     """One 'Product details pending' placeholder card (mirror of renderPendingCard in the
     category catalogue scripts). No product name/spec/brand/stock claim/document link; the
-    Request Quote button has no data-product-name so only category + sub-category prefill."""
+    Cards carry no action buttons (enquiries use the page-level Request a Quote control)."""
     plain = group_label.replace("&amp;", "&")
     return f"""          <article class="card card--hover product-card product-card--pending" data-slot-id="{page_key}-{group_key}-{index + 1:02d}">
             <div class="product-card__media">
@@ -1517,18 +1931,62 @@ def pending_product_card_html(page_key, group_key, group_label, index):
             </div>
             <h3 class="product-card__title">Product details pending</h3>
             <p class="product-card__desc">Contact us for product details.</p>
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="contact.html" aria-label="Contact us for {plain} product details">Contact Us</a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote" data-catalog-quote-trigger aria-label="Request a quote for {plain}">Request Quote</button>
-            </div>
           </article>"""
+
+
+
+# ---------------------------------------------------------------------
+# CATEGORY PAGE IMAGES (Step 20). Upper hero = assets/images/products/hero/<stem>.<ext>
+# (700x467 landscape); lower catalogue cover = assets/images/products/catalogue/<stem>.<ext>
+# (1122x1402 portrait booklet). Keyed by build_category_main's cat_key. The catalogue band
+# markup is static (the sub-category tabs never rewrite it), so the cover is stable across tabs.
+# ---------------------------------------------------------------------
+CATEGORY_IMAGES = {
+    "electricals": {
+        "hero": ("electricals-category", "Electrical assortment: cable coil, distribution board, socket plate, circuit breakers and a bulb"),
+        "cover": ("electricals", "Electricals catalogue booklet cover"),
+    },
+    "electronics": {
+        "hero": ("electronics-components-category", "Electronic components: circuit board, power supply, sensor, multimeter and small parts"),
+        "cover": ("electronics_components", "Electronics Components catalogue booklet cover"),
+    },
+    "hardwares": {
+        "hero": ("hardwares-category", "Hardware assortment: cordless drill, spanner, screwdriver, fasteners and brass fittings"),
+        "cover": ("hardwares", "Hardware catalogue booklet cover"),
+    },
+    "industrial": {
+        "hero": ("industrial-commercial-equipment", "Industrial equipment: electric motor, pump, hydraulic cylinder and bearings"),
+        "cover": ("industrial_commercial", "Industrial & Commercial catalogue booklet cover"),
+    },
+    "safety-packing": {
+        "hero": ("industrial-safety-packing-materials-category", "Safety and packing materials: helmet, gloves, safety glasses, carton, stretch film and tape"),
+        "cover": ("safety_packing", "Safety & Packing catalogue booklet cover"),
+    },
+}
+
+
+def category_picture(cat_key, kind):
+    """<picture> (AVIF, WebP, JPG fallback) for a category page. kind: 'hero' (eager) or 'cover' (lazy)."""
+    stem, alt = CATEGORY_IMAGES[cat_key][kind]
+    folder = "hero" if kind == "hero" else "catalogue"
+    w, h = (700, 467) if kind == "hero" else (1122, 1402)
+    base = f"../assets/images/products/{folder}"
+    load = 'loading="eager" fetchpriority="high"' if kind == "hero" else 'loading="lazy"'
+    cls = "category-hero__img" if kind == "hero" else "catalogue-band__img"
+    return (
+        f'<picture>\n'
+        f'            <source srcset="{base}/avif/{stem}.avif" type="image/avif">\n'
+        f'            <source srcset="{base}/webp/{stem}.webp" type="image/webp">\n'
+        f'            <img src="{base}/jpg/{stem}.jpg" width="{w}" height="{h}" alt="{alt}" {load} decoding="async" class="{cls}">\n'
+        f'          </picture>'
+    )
 
 
 
 def build_category_main(cat_key):
     """Builds the shared category-page template, populated with one
     category's data. Every category page (Electricals, Electronics,
-    Hardwares, Industrial & Commercial Equipment) calls this exact
+    Hardware, Industrial & Commercial Equipments) calls this exact
     same function — zero HTML/CSS/JS is duplicated per category, only
     the data passed in differs, per this phase's explicit requirement."""
     cat = CATEGORIES[cat_key]
@@ -1560,7 +2018,7 @@ def build_category_main(cat_key):
           <p class="category-hero__desc">{cat['desc']}</p>
 {badges_block}        </div>
         <div class="category-hero__media">
-          {img_placeholder(cat['h1'] + ' hero image', 'aspect-box--tall')}
+          {category_picture(cat_key, 'hero')}
         </div>
       </div>
     </section>"""
@@ -1587,7 +2045,7 @@ def build_category_main(cat_key):
         )
     tabs_attr = "data-catalog-tabs" if dynamic else "data-tabs"
 
-    tabs_section = f"""    <section class="section--sm section--light" aria-label="Sub-categories">
+    tabs_section = f"""    <section class="section--sm section--light" aria-label="Sub-categories" data-float-avoid=".category-tabs__item">
       <div class="container">
         <div class="category-tabs" {tabs_attr} aria-label="{cat['h1']} sub-categories">
 {tabs_html}
@@ -1612,19 +2070,17 @@ def build_category_main(cat_key):
             </div>
             <h3 class="product-card__title">{name}</h3>
             {specs_list(specs)}
-            <div class="card__actions">
-              <a class="btn btn--outline btn--sm" href="../assets/catalogue/{cat['key']}-catalogue.pdf" download>
-                {ICONS['download']}
-                Download PDF
-              </a>
-              <button type="button" class="btn btn--primary btn--sm" data-modal-open="quote">Request Quote</button>
-            </div>
           </article>"""
         for name, specs in cat["products"]
     )
 
-    popular_heading = DYNAMIC_CATALOGS[cat_key].get("heading", cat["popular_heading"]) if dynamic else cat["popular_heading"]
-    popular_sub = DYNAMIC_CATALOGS[cat_key].get("desc", cat["popular_sub"]) if dynamic else cat["popular_sub"]
+    if dynamic:
+        _first = PRODUCT_DATA[cat_key][0]
+        popular_heading = _esc(_first["label"])
+        popular_sub = _esc(_first["intro"])
+    else:
+        popular_heading = cat["popular_heading"]
+        popular_sub = cat["popular_sub"]
     heading_attr = " data-catalog-heading" if dynamic else ""
     desc_attr = " data-catalog-description" if dynamic else ""
     grid_open = (
@@ -1632,18 +2088,16 @@ def build_category_main(cat_key):
         if dynamic
         else f'<div class="grid grid--3">\n{product_cards_html}\n        </div>'
     )
-    if empty_state:
-        # Server-side copy of the first sub-category's nine placeholder cards
-        # (js/pages/industrial-safety-packing-catalog.js re-renders the same
-        # markup for whichever sub-category is active). Keep both in step.
-        first_key, _first_icon, first_label = DYNAMIC_CATALOGS[cat_key]["tabs"][0]
-        pending_cards = "\n".join(
-            pending_product_card_html(DYNAMIC_CATALOGS[cat_key]["script"].replace("-catalog.js", ""), first_key, first_label, n) for n in range(PRODUCT_CARDS_PER_GROUP)
-        )
-        grid_open = f'''<div class="grid grid--3" data-catalog-grid>
-{pending_cards}
-        </div>'''
-    products_section = f"""    <section class="section section--surface" aria-labelledby="popular-heading">
+    if dynamic:
+        # Server-side copy of the first sub-category's nine cards (the catalogue script
+        # re-renders the same markup for whichever sub-category is active). Both come from
+        # product_data.py.
+        _first = PRODUCT_DATA[cat_key][0]
+        _page = DYNAMIC_CATALOGS[cat_key]["script"].replace("-catalog.js", "")
+        grid_open = '<div class="grid grid--3" data-catalog-grid>\n' + "\n".join(
+            product_card_html(_page, _first, n) for n in range(PRODUCT_CARDS_PER_GROUP)
+        ) + "\n        </div>"
+    products_section = f"""    <section class="section section--surface" aria-labelledby="popular-heading" data-float-avoid=".section-heading__title, .section-heading__subtitle, .product-card__title, .product-card__desc, .card__specs li">
       <div class="container">
         <div class="section-heading section-heading--center">
           <h2 class="section-heading__title" id="popular-heading"{heading_attr}>{popular_heading}</h2>
@@ -1663,7 +2117,7 @@ def build_category_main(cat_key):
         inline_text = "Share your requirements and contact us to discuss them."
     else:
         inline_title_text = f"Looking for more {cat['h1']} products?"
-        inline_text = "We supply hundreds of additional variants from leading brands to match your exact requirements."
+        inline_text = "Looking for a specific product? Contact us with your requirements."
     inline_cta = f"""    <section class="section--sm section--light" aria-label="Request more products">
       <div class="container">
         <div class="inline-cta">
@@ -1686,7 +2140,6 @@ def build_category_main(cat_key):
     catalogue_features = [
         ("file", "Technical Specifications"),
         ("box", "Product Datasheets"),
-        ("shield-check", "Certifications"),
         ("grid", "Complete Product Range"),
     ]
     catalogue_features_html = "\n".join(
@@ -1710,11 +2163,11 @@ def build_category_main(cat_key):
         <div class="cta-band cta-band--catalogue text-on-dark">
           <div class="catalogue-band__inner">
             <div class="catalogue-band__media">
-              {img_placeholder(cat['catalogue_name'] + ' cover', 'aspect-box--square')}
+              {category_picture(cat_key, 'cover')}
             </div>
             <div class="catalogue-band__text">
               <h2 class="catalogue-band__title" id="catalogue-heading"{band_heading_attr}>Download Complete<br />{cat['catalogue_name']}</h2>
-              <p>Browse detailed specifications, technical drawings, certifications and complete product information.</p>
+              <p>Browse detailed specifications, technical drawings and complete product information.</p>
               <div class="catalogue-band__features">
 {catalogue_features_html}
               </div>
@@ -1729,11 +2182,11 @@ def build_category_main(cat_key):
     # STATS STRIP
     # -------------------------------------------------------------
     stats = [
-        ("10,000+", "Products"),
-        ("500+", "Trusted Brands"),
-        ("25+", "Years of Experience"),
-        ("Pan India", "Delivery"),
-        ("100%", "Customer Satisfaction"),
+        ("2019", "Established"),
+        ("100+", "Clients Served"),
+        ("15+", "Product Categories"),
+        ("Enquiries", "Product Enquiry Support"),
+        ("Contact Us", "for Availability"),
     ]
     stats_html = "\n".join(
         f"""          <div class="stat-item">
@@ -1759,7 +2212,7 @@ def build_category_main(cat_key):
         <div class="cta-band cta-band--catalogue text-on-dark">
           <div class="catalogue-band__inner">
             <div class="catalogue-band__media">
-              {img_placeholder(cat['catalogue_name'] + ' cover', 'aspect-box--square')}
+              {category_picture(cat_key, 'cover')}
             </div>
             <div class="catalogue-band__text">
               <h2 class="catalogue-band__title" id="catalogue-heading">Catalogue coming soon&mdash;contact us for details</h2>
@@ -1862,22 +2315,18 @@ def build_download_centre_main():
       </div>
     </section>
 
-    <section class="section--sm" aria-labelledby="download-cta-heading">
-      <div class="container">
-        <div class="cta-band text-on-dark">
-          <div class="cta-band__inner">
-            <div class="cta-band__text">
-              <h2 class="cta-band__title" id="download-cta-heading">Can&rsquo;t Find What You&rsquo;re Looking For?</h2>
-              <p>Reach out to our team and we&rsquo;ll send you the specific documents or specifications you need.</p>
-              <button type="button" class="btn btn--white mt-4" data-modal-open="quote">
-                Request a Quote
-                {DOWNLOAD_ARROW_SVG}
-              </button>
-            </div>
-            <div class="cta-band__media">
-              {_dc_placeholder('Download Centre illustration', 'aspect-box--square')}
-            </div>
-          </div>
+    <section class="cta-band cta-band--full text-on-dark" aria-labelledby="download-cta-heading">
+      <div class="container cta-band__inner">
+        <div class="cta-band__text">
+          <h2 class="cta-band__title" id="download-cta-heading">Can&rsquo;t Find What You&rsquo;re Looking For?</h2>
+          <p>Reach out to our team and we&rsquo;ll send you the specific documents or specifications you need.</p>
+        </div>
+        <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
+          Request a Quote
+          {ICONS['circle-right']}
+        </button>
+        <div class="cta-band__media">
+          {cta_band_picture(1)}
         </div>
       </div>
     </section>"""
@@ -1894,37 +2343,49 @@ def build_download_centre_main():
 
 def build_about_main():
     # Banner
-    banner = f"""    <section class="page-banner text-on-dark" aria-label="About HM UNIQUE">
-      <div class="container page-banner__inner">
-        <span class="eyebrow page-banner__eyebrow">About HM UNIQUE</span>
-        <h1 class="page-banner__title">Building Connections. Powering Industries.</h1>
-        <p class="page-banner__desc">With 7+ years of experience, HM UNIQUE has emerged as a trusted supplier of Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials. Our commitment to quality, reliability and customer satisfaction drives everything we do.</p>
-        <div class="page-banner__badge">
-          <div class="page-banner__badge-item">
-            <div class="page-banner__badge-value">7+</div>
-            <div class="page-banner__badge-label">Years of Experience</div>
-          </div>
-          <div class="page-banner__badge-item">
-            <div class="page-banner__badge-value">2017</div>
-            <div class="page-banner__badge-label">Since</div>
-          </div>
+    # Hero: approved banner artwork (assets/images/about_us/{avif,webp,jpg}/about_us_hero_banner.*,
+    # all 1671x941) behind editable HTML. The artwork is decorative (alt="" + aria-hidden):
+    # the heading, paragraph and statistics carry the meaning. Eager + high priority because it
+    # is the above-the-fold image. Styling is scoped to .about-hero in css/pages/about.css.
+    ABOUT_HERO_DIR = "../assets/images/about_us"
+    banner = f"""    <section class="about-hero text-on-dark" aria-labelledby="about-hero-heading">
+      <picture class="about-hero__media" aria-hidden="true">
+        <source srcset="{ABOUT_HERO_DIR}/avif/about_us_hero_banner.avif" type="image/avif">
+        <source srcset="{ABOUT_HERO_DIR}/webp/about_us_hero_banner.webp" type="image/webp">
+        <img src="{ABOUT_HERO_DIR}/jpg/about_us_hero_banner.jpg" width="1671" height="941" alt="" loading="eager" fetchpriority="high" decoding="async" class="about-hero__img">
+      </picture>
+      <div class="container about-hero__inner">
+        <div class="about-hero__content">
+          <span class="eyebrow about-hero__eyebrow">About HM UNIQUE</span>
+          <h1 class="about-hero__title" id="about-hero-heading">Building <span class="about-hero__accent">Connections.</span> Powering Industries.</h1>
+          <p class="about-hero__desc">Since 2019, HM UNIQUE has supplied {CATEGORY_LIST_HTML} to commercial and industrial customers.</p>
+          <ul class="about-hero__stats" aria-label="HM UNIQUE at a glance">
+            <li class="about-hero__stat about-hero__stat--solid">
+              <span class="about-hero__stat-value">2019</span>
+              <span class="about-hero__stat-label">Established</span>
+            </li>
+            <li class="about-hero__stat about-hero__stat--outline">
+              <span class="about-hero__stat-value">100+</span>
+              <span class="about-hero__stat-label">Clients Served</span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>"""
 
     # Who We Are
     who_images = "\n".join(
-        f"""          {img_placeholder('HM UNIQUE facility photo ' + str(i), 'aspect-box--square')}"""
-        for i in range(1, 5)
+        f"""          {who_we_are_picture(i, 1)}"""
+        for i in range(4)
     )
 
     who_we_are = f"""    <section class="section section--light" aria-labelledby="who-we-are-heading">
       <div class="container who-we-are">
         <div class="who-we-are__text">
           <span class="eyebrow">Who We Are</span>
-          <h2 class="section-heading__title" id="who-we-are-heading">Your Trusted Partner for Quality &amp; Performance</h2>
-          <p class="mt-4">We supply high-quality products that meet the evolving needs of industries, contractors, professionals and businesses.</p>
-          <p class="mt-3">Through strong partnerships with reputed manufacturers and brands, we ensure timely delivery, competitive pricing and unmatched service.</p>
+          <h2 class="section-heading__title" id="who-we-are-heading">Supplies for Industry and Business</h2>
+          <p class="mt-4">We supply products for the needs of industries, contractors, professionals and businesses from our office in George Town, Chennai.</p>
+          <p class="mt-3">Contact our team to discuss your requirements and check product availability.</p>
         </div>
         <div class="who-we-are__media grid grid--2">
 {who_images}
@@ -1934,10 +2395,10 @@ def build_about_main():
 
     # Statistics (4 stats, real PDF data)
     stats = [
-        ("5000+", "Products"),
-        ("1000+", "Happy Clients"),
-        ("7+", "Years of Experience"),
-        ("15+", "Cities Served"),
+        ("2019", "Established"),
+        ("100+", "Clients Served"),
+        ("15+", "Product Categories"),
+        ("Enquiries", "Product Enquiry Support"),
     ]
     stats_html = "\n".join(
         f"""          <div class="stat-item">
@@ -1960,14 +2421,16 @@ def build_about_main():
         <h2 class="visually-hidden" id="vision-mission-heading">Our Vision and Mission</h2>
         <div class="grid grid--2">
           <article class="card">
+            {vision_mission_picture('vision', 1)}
             <span class="card__icon">{ICONS['target']}</span>
             <h3 class="mb-2">Our Vision</h3>
-            <p class="text-body">To be India&rsquo;s most trusted one-stop partner for electrical, electronic, hardware and industrial products &mdash; recognized for quality, reliability and long-term customer relationships.</p>
+            <p class="text-body">To be a dependable one-stop supplier of electrical, electronic, hardware and industrial products, valued for long-term customer relationships.</p>
           </article>
           <article class="card">
+            {vision_mission_picture('mission', 1)}
             <span class="card__icon">{ICONS['compass']}</span>
             <h3 class="mb-2">Our Mission</h3>
-            <p class="text-body">To supply high-quality, certified products with timely delivery and expert support, helping industries and businesses build, operate and grow with confidence.</p>
+            <p class="text-body">To supply products with timely delivery and expert support, helping industries and businesses build, operate and grow with confidence.</p>
           </article>
         </div>
       </div>
@@ -1975,9 +2438,9 @@ def build_about_main():
 
     # Core Values (real PDF data, 5 items)
     values = [
-        ("shield-check", "Quality First", "We source and supply only premium quality products from trusted manufacturers."),
+        ("shield-check", "Quality First", "We aim to supply quality products and to respond to every enquiry with care."),
         ("headset", "Customer Focused", "Customer satisfaction is at the heart of everything we do."),
-        ("handshake", "Reliability", "We are committed to delivering consistent quality and dependable service, every time."),
+        ("handshake", "Reliability", "We aim to provide dependable service and clear communication."),
         ("award", "Integrity", "We conduct our business with honesty, transparency and ethics."),
         ("gear", "Continuous Improvement", "We constantly strive to improve and adapt to serve our customers better."),
     ]
@@ -2003,12 +2466,8 @@ def build_about_main():
 
     # Our Journey / Company Strengths (real PDF timeline data)
     milestones = [
-        ("milestone", "2017", "Company Established", "HM UNIQUE was founded with a vision to provide quality industrial products and reliable service."),
-        ("handshake", "2018", "Building Partnerships", "We expanded our product range and built strong partnerships with trusted manufacturers."),
-        ("gear", "2020", "Growing Stronger", "Strengthened our supply chain and improved infrastructure to ensure faster delivery."),
-        ("grid", "2022", "Expanding Reach", "Served more industries and clients across multiple cities with excellent support."),
-        ("award", "2024", "Commitment to Excellence", "Continued our focus on quality, service and customer satisfaction."),
-        ("target", "Today", "Moving Forward", "Continuing to grow with innovation, trust and a customer-first approach."),
+        ("milestone", "2019", "Company Established", "HM UNIQUE was founded with a vision to provide quality industrial products and reliable service."),
+        ("target", "Today", "Moving Forward", "Continuing to supply products and enquiry support to commercial and industrial customers."),
     ]
     milestones_html = "\n".join(
         f"""          <article class="card milestone" data-animate="fade-up">
@@ -2023,9 +2482,9 @@ def build_about_main():
       <div class="container">
         <div class="section-heading section-heading--center">
           <span class="eyebrow">Our Journey</span>
-          <h2 class="section-heading__title" id="journey-heading">Company Strengths Built Over Time</h2>
+          <h2 class="section-heading__title" id="journey-heading">From 2019 to Today</h2>
         </div>
-        <div class="grid grid--3">
+        <div class="grid grid--3 milestones-grid">
 {milestones_html}
         </div>
       </div>
@@ -2033,11 +2492,11 @@ def build_about_main():
 
     # Why Choose HM UNIQUE (real PDF data, 6 items)
     why_choose = [
-        ("grid", "Wide Product Range", "One-stop solution for Electricals, Electronics, Hardwares, Industrial Tools and Industrial Safety &amp; Packing Materials."),
-        ("tag", "Competitive Pricing", "Best value for your money without compromising on quality."),
-        ("truck", "Timely Delivery", "Efficient logistics and on-time delivery to keep your projects on track."),
-        ("headset", "Expert Support", "Our experienced team is always ready to help you choose the right products."),
-        ("award", "Trusted Brands", "We partner with leading brands to bring reliable and certified products."),
+        ("grid", "Wide Product Range", "Electricals, Electronics Components, Hardware, Industrial &amp; Commercial Equipments and Industrial Safety &amp; Packing Materials."),
+        ("tag", "Request a Quotation", "Send us your requirement to request a quotation."),
+        ("truck", "Delivery Enquiries", "Contact our team with your delivery requirements."),
+        ("headset", "Product Enquiry Support", "Our team will respond to your product enquiries."),
+        ("award", "Commercial &amp; Industrial Supplies", "Products for commercial and industrial requirements across five categories."),
         ("shield-check", "After Sales Support", "We believe in long-term relationships and continuous customer support."),
     ]
     why_choose_html = "\n".join(
@@ -2082,7 +2541,7 @@ def build_about_main():
       <div class="container">
         <div class="section-heading section-heading--center">
           <span class="eyebrow">Industries We Serve</span>
-          <h2 class="section-heading__title" id="about-industries-heading">Powering Industries Across The Nation</h2>
+          <h2 class="section-heading__title" id="about-industries-heading">Supporting Commercial &amp; Industrial Sectors</h2>
         </div>
         <div class="industries-grid">
 {industries_html}
@@ -2095,14 +2554,14 @@ def build_about_main():
       <div class="container cta-band__inner">
         <div class="cta-band__text">
           <h2 class="cta-band__title" id="about-cta-heading">Let&rsquo;s Build Something Great Together</h2>
-          <p>Partner with HM UNIQUE for reliable, exceptional service and lasting business relationships.</p>
+          <p>Contact HM UNIQUE to discuss your commercial and industrial supply requirements.</p>
         </div>
         <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
           Request a Quote
           {ICONS['circle-right']}
         </button>
         <div class="cta-band__media">
-          {img_placeholder('HM UNIQUE team illustration', 'aspect-box--wide')}
+          {cta_band_picture(1)}
         </div>
       </div>
     </section>"""
@@ -2126,17 +2585,16 @@ def build_about_main():
 # ---------------------------------------------------------------------
 
 def build_contact_main():
-    banner = f"""    <section class="page-banner text-on-dark" aria-label="Contact Us">
+    banner = f"""    <section class="page-banner page-banner--contact text-on-dark" aria-label="Contact Us">
       <div class="container page-banner__inner">
         <span class="eyebrow page-banner__eyebrow">Get In Touch</span>
         <h1 class="page-banner__title">Contact Us</h1>
-        <p class="page-banner__desc">We&rsquo;re here to help you find the right products and solutions for your business.</p>
+        <p class="page-banner__desc">Send us your requirement, call or email our team, or find our office on Linghi Chetty Street, George Town, Chennai.</p>
         <div class="page-banner__quicklinks">
           <a class="page-banner__quicklink" href="tel:{PHONE_TEL}">{ICONS['phone']} Call Us: {PHONE_DISPLAY}</a>
-          <a class="page-banner__quicklink" href="tel:{PHONE2_TEL}">{ICONS['phone']} Call Us: {PHONE2_DISPLAY}</a>
-          <a class="page-banner__quicklink" href="mailto:{EMAIL_PRIMARY}">{ICONS['mail']} Email Us: {EMAIL_PRIMARY}</a>
+          <a class="page-banner__quicklink" href="mailto:{EMAIL_PRIMARY}">{ICONS['mail']} Email Us (Primary): {email_html(EMAIL_PRIMARY)}</a>
+          <a class="page-banner__quicklink" href="mailto:{EMAIL_SECONDARY}">{ICONS['mail']} Email Us (Secondary): {email_html(EMAIL_SECONDARY)}</a>
           <span class="page-banner__quicklink">{ICONS['clock']} Mon &ndash; Sat: 9:00 AM &ndash; 9:00 PM</span>
-          <a class="page-banner__quicklink" href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener">{ICONS['whatsapp']} WhatsApp: {WA_DISPLAY}</a>
         </div>
       </div>
     </section>"""
@@ -2175,8 +2633,8 @@ def build_contact_main():
               <label class="form-field__label" for="contact-subject">Subject <span class="required">*</span></label>
               <select class="form-field__control" id="contact-subject" name="subject" data-required>
                 <option value="">Select a subject</option>
-                <option value="general">General Inquiry</option>
-                <option value="product">Product Inquiry</option>
+                <option value="general">General Enquiry</option>
+                <option value="product">Product Enquiry</option>
                 <option value="support">Support</option>
                 <option value="partnership">Partnership</option>
                 <option value="other">Other</option>
@@ -2198,12 +2656,19 @@ def build_contact_main():
               <span class="form-field__error-msg">Please agree to the privacy policy to continue.</span>
             </div>
 
+            <div class="form-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="hp_url" tabindex="-1" autocomplete="off" /></label></div>
+
+            <p class="form-submit-success" data-form-success hidden role="status">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>Your enquiry has been received. Our team will contact you shortly.
+              <span class="form-submit-success__note" data-form-success-note hidden>We couldn’t send a confirmation email, but your enquiry was received.</span>
+            </p>
+
             <p class="form-submit-error" data-form-error hidden role="alert">
               Something went wrong sending your message. Please try again, or call us directly at <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>.
             </p>
 
             <button type="submit" class="btn btn--primary btn--block mt-4">
-              Send Message
+              <span data-submit-label>Send Message</span>
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </form>
@@ -2214,19 +2679,10 @@ def build_contact_main():
             <h3 class="info-card__title">Contact Information</h3>
             <ul class="info-card__list">
               <li>{ICONS['map-pin']}<span>{ADDRESS_LINE1}<br />{ADDRESS_LINE2}<br />{ADDRESS_LINE3}</span></li>
-              <li>{ICONS['phone']}<span><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a><br /><a href="tel:{PHONE2_TEL}">{PHONE2_DISPLAY}</a></span></li>
-              <li>{ICONS['mail']}<span><a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a><br /><a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></span></li>
+              <li>{ICONS['phone']}<span><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></span></li>
+              <li>{ICONS['mail']}<span><a href="mailto:{EMAIL_PRIMARY}">{email_html(EMAIL_PRIMARY)}</a><br /><a href="mailto:{EMAIL_SECONDARY}">{email_html(EMAIL_SECONDARY)}</a></span></li>
               <li>{ICONS['clock']}<span>Monday &ndash; Saturday: 9:00 AM &ndash; 9:00 PM<br />Sunday: Closed</span></li>
             </ul>
-
-            <div class="whatsapp-cta">
-              <span class="whatsapp-cta__icon">{ICONS['whatsapp']}</span>
-              <div class="whatsapp-cta__text">
-                <strong>Chat with us on WhatsApp</strong>
-                <p class="mb-0">Get a quick response to your queries.</p>
-              </div>
-              <a class="btn btn--sm btn--primary" href="https://wa.me/{PHONE_WA}" target="_blank" rel="noopener">Chat Now</a>
-            </div>
           </div>
         </div>"""
 
@@ -2270,14 +2726,14 @@ def build_contact_main():
         </div>
         <article class="card branch-card">
           <div class="branch-card__media">
-            {img_placeholder('HM UNIQUE Chennai branch office', 'aspect-box--wide')}
+            {chennai_branch_figure(1)}
           </div>
           <div class="branch-card__body">
             <h3 class="branch-card__title">HM UNIQUE &ndash; Chennai Branch</h3>
             <ul class="info-card__list">
               <li>{ICONS['map-pin']}<span>{ADDRESS_LINE1}, {ADDRESS_LINE2}, {ADDRESS_LINE3}</span></li>
-              <li>{ICONS['phone']}<span><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a><br /><a href="tel:{PHONE2_TEL}">{PHONE2_DISPLAY}</a></span></li>
-              <li>{ICONS['mail']}<span><a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></span></li>
+              <li>{ICONS['phone']}<span><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></span></li>
+              <li>{ICONS['mail']}<span><a href="mailto:{EMAIL_PRIMARY}">{email_html(EMAIL_PRIMARY)}</a><br /><a href="mailto:{EMAIL_SECONDARY}">{email_html(EMAIL_SECONDARY)}</a></span></li>
               <li>{ICONS['clock']}<span>Mon &ndash; Sat: 9:00 AM &ndash; 9:00 PM</span></li>
             </ul>
           </div>
@@ -2289,14 +2745,14 @@ def build_contact_main():
       <div class="container cta-band__inner">
         <div class="cta-band__text">
           <h2 class="cta-band__title" id="contact-cta-heading">Looking for the Right Products for Your Project?</h2>
-          <p>Talk to our experts and get the best solution for your business.</p>
+          <p>Talk to our team about your requirements.</p>
         </div>
         <button type="button" class="btn btn--white cta-band__action" data-modal-open="quote">
           Request a Quote
           {ICONS['circle-right']}
         </button>
         <div class="cta-band__media">
-          {img_placeholder('Contact HM UNIQUE illustration', 'aspect-box--wide')}
+          {cta_band_picture(1)}
         </div>
       </div>
     </section>"""
@@ -2310,19 +2766,105 @@ def build_contact_main():
     ])
 
 
+
+# ---------------------------------------------------------------------
+# AEO: compact visible FAQ. Every answer uses only information already confirmed on the site
+# (categories, product groups listed, contact details, enquiry fields). No prices, stock, delivery
+# times, warranties or policies are stated. The FAQPage JSON-LD is generated from the same data, so
+# markup and visible text cannot drift apart. (No rich-result outcome is promised.)
+# ---------------------------------------------------------------------
+def _plain(html_text):
+    t = re.sub(r"<[^>]+>", "", html_text)
+    return (t.replace("&amp;", "&").replace("&rsquo;", "\u2019").replace("&mdash;", "\u2014").replace("&ndash;", "\u2013").replace("&nbsp;", " "))
+
+
+def faq_items_for(page_key, depth):
+    """Returns [(question_html, answer_html)] for a page, or [] when the page has no FAQ."""
+    prefix = "" if depth == 0 else "../"
+    page_href = (lambda name: f"{prefix}pages/{name}") if depth == 0 else (lambda name: name)
+    contact = (f"{prefix}pages/contact.html" if depth == 0 else "contact.html")
+    reach = (f'<a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a> or '
+             f'<a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>')
+    if page_key == "home":
+        return [
+            ("What does HM UNIQUE Technology Enterprises supply?",
+             f'HM UNIQUE lists five product categories: <a href="{page_href("electricals.html")}">Electricals</a>, '
+             f'<a href="{page_href("electronics.html")}">Electronics Components</a>, <a href="{page_href("hardwares.html")}">Hardware</a>, '
+             f'<a href="{page_href("industrial-equipment.html")}">Industrial &amp; Commercial Equipments</a> and '
+             f'<a href="{page_href("industrial-safety-packing.html")}">Industrial Safety &amp; Packing Materials</a>. Each category page shows the product groups currently listed.'),
+            ("How do I request a quotation?",
+             f'Select <strong>Request a Quote</strong> on any page, or contact the team at {reach}. Please mention the product name or category, the quantity if you know it, and your city so the team can understand your requirement.'),
+            ("What should I include in an enquiry?",
+             "The product category, the product name if you know it, the quantity if you know it, your city and state, and a phone number and email address so the team can reach you."),
+            ("Does this website show prices, stock or delivery times?",
+             f'No. Prices, stock and delivery details are not listed on this website. <a href="{contact}">Contact our team</a> with your requirement to ask about a quotation and availability.'),
+            ("Where can I find the address and opening hours?",
+             f'The office address, map and opening hours are on the <a href="{contact}">Contact page</a>. HM UNIQUE Technology Enterprises is located in George Town, Chennai.'),
+        ]
+    return []
+
+
+def build_faq_section(page_key, depth):
+    items = faq_items_for(page_key, depth)
+    if not items:
+        return ""
+    body = "\n".join(
+        f"""          <div class="faq__item">
+            <h3 class="faq__question">{q}</h3>
+            <p class="faq__answer">{a}</p>
+          </div>"""
+        for q, a in items
+    )
+    return f"""    <section class="section section--light faq" aria-labelledby="faq-heading">
+      <div class="container">
+        <div class="section-heading section-heading--center">
+          <span class="eyebrow">Common Questions</span>
+          <h2 class="section-heading__title" id="faq-heading">Frequently Asked Questions</h2>
+        </div>
+        <div class="faq__list">
+{body}
+        </div>
+      </div>
+    </section>"""
+
+
+def build_faq_schema(page_key, depth):
+    items = faq_items_for(page_key, depth)
+    if not items:
+        return None
+    return json.dumps({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": _plain(q), "acceptedAnswer": {"@type": "Answer", "text": _plain(a)}}
+            for q, a in items
+        ],
+    }, indent=2, ensure_ascii=False)
+
+
+ORG_ID = SITE_URL + "/#organization"
+WEBSITE_ID = SITE_URL + "/#website"
+MAP_URL = f"https://www.google.com/maps/search/?api=1&query={MAPS_QUERY_ENCODED}"
+
+
 def build_organization_schema():
-    """Organization + LocalBusiness JSON-LD, sitewide (identical on
-    every page — this is the entity graph for the business itself,
-    not page-specific content)."""
+    """Organization + LocalBusiness JSON-LD, sitewide. Only facts that are confirmed and visible on
+    the site are included (name, 2019 founding, address, hours, phones, primary email). No ratings,
+    reviews, prices, service-area, geo coordinates or social profiles are asserted."""
     data = {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
-        "name": "HM UNIQUE",
+        "@id": ORG_ID,
+        "name": "HM UNIQUE Technology Enterprises",
+        "alternateName": "HM UNIQUE",
         "url": SITE_URL,
         "logo": f"{SITE_URL}/assets/logo/web/hm-unique-logo-192.png",
-        "description": "Supplier of Electricals, Electronics Components, Hardwares, Industrial & Commercial Equipment and Industrial Safety & Packing Materials.",
+        "image": f"{SITE_URL}/assets/common/og-default.jpg",
+        "description": f"Supplier of {CATEGORY_LIST_PLAIN}.",
+        "foundingDate": "2019",
         "telephone": PHONE_SCHEMA,
-        "email": "hmunitecenterprises02@gmail.com",
+        "email": EMAIL_PRIMARY,
+        "hasMap": MAP_URL,
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "No.271, Linghi Chetty Street, George Town",
@@ -2338,35 +2880,48 @@ def build_organization_schema():
             "closes": "21:00",
         },
         "contactPoint": [
-            {
-                "@type": "ContactPoint",
-                "telephone": PHONE_SCHEMA,
-                "contactType": "customer service",
-                "email": "hmunitecenterprises02@gmail.com",
-                "areaServed": "IN",
-                "availableLanguage": ["en"],
-            },
-            {
-                "@type": "ContactPoint",
-                "telephone": PHONE2_SCHEMA,
-                "contactType": "customer service",
-                "areaServed": "IN",
-                "availableLanguage": ["en"],
-            },
+            {"@type": "ContactPoint", "telephone": PHONE_SCHEMA, "contactType": "customer service", "email": EMAIL_PRIMARY},
         ],
     }
+    # sameAs lists only owner-confirmed profile URLs (SOCIAL_PROFILES). None are confirmed yet, so
+    # nothing is emitted; it appears automatically once a real URL is added.
+    same_as = [url for _n, _i, url in SOCIAL_PROFILES if url]
+    if same_as:
+        data["sameAs"] = same_as
     return json.dumps(data, indent=2)
 
 
 def build_website_schema():
-    """WebSite JSON-LD, sitewide."""
+    """WebSite JSON-LD, sitewide, linked to the organisation."""
     data = {
         "@context": "https://schema.org",
         "@type": "WebSite",
+        "@id": WEBSITE_ID,
         "name": "HM UNIQUE",
         "url": SITE_URL,
+        "publisher": {"@id": ORG_ID},
     }
     return json.dumps(data, indent=2)
+
+
+WEBPAGE_TYPES = {"about": "AboutPage", "contact": "ContactPage"}
+
+
+def build_webpage_schema(page, canonical_url):
+    """A typed WebPage node (CollectionPage for category pages) tying the page to the site and organisation."""
+    ptype = WEBPAGE_TYPES.get(page["key"], "CollectionPage" if page["key"] in CATEGORIES else "WebPage")
+    data = {
+        "@context": "https://schema.org",
+        "@type": ptype,
+        "@id": canonical_url + "#webpage",
+        "url": canonical_url,
+        "name": _plain(page["title"]),
+        "description": _plain(page["description"]),
+        "isPartOf": {"@id": WEBSITE_ID},
+        "about": {"@id": ORG_ID},
+        "inLanguage": "en-IN",
+    }
+    return json.dumps(data, indent=2, ensure_ascii=False)
 
 
 def build_breadcrumb_schema(breadcrumb, canonical_url):
@@ -2432,13 +2987,28 @@ def build_product_schema(cat):
 def build_schema_scripts(page, depth):
     """Assembles every JSON-LD <script> block for a given page."""
     blocks = [build_organization_schema(), build_website_schema()]
+    blocks.append(build_webpage_schema(page, SITE_URL + page["canonical"]))
+    faq_schema = build_faq_schema(page["key"], depth)
+    if faq_schema:
+        blocks.append(faq_schema)
 
     canonical_url = SITE_URL + page["canonical"]
     breadcrumb_schema = build_breadcrumb_schema(page["breadcrumb"], canonical_url)
     if breadcrumb_schema:
         blocks.append(breadcrumb_schema)
 
-    if page["key"] in CATEGORIES:
+    if page["key"] in PRODUCT_DATA:
+        # Product JSON-LD mirrors the nine cards rendered in the initial HTML.
+        _cat = CATEGORIES[page["key"]]["h1"].replace("&amp;", "&")
+        for pr in PRODUCT_DATA[page["key"]][0]["products"]:
+            blocks.append(json.dumps({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": pr["name"],
+                "description": pr["description"],
+                "category": _cat,
+            }, indent=2, ensure_ascii=False))
+    elif page["key"] in CATEGORIES:
         for product_data in build_product_schema(CATEGORIES[page["key"]]):
             blocks.append(json.dumps(product_data, indent=2))
 
@@ -2471,6 +3041,8 @@ def build_head(page, depth):
         "css/responsive.css",
         f"css/pages/{PAGE_CSS_NAMES.get(page['key'], page['key'])}.css",
     ]
+    if page.get("noindex"):
+        css_files.pop()  # the 404 page has no page-specific stylesheet
     links = "\n  ".join(f'<link rel="stylesheet" href="{rel(f, depth)}" />' for f in css_files)
 
     canonical_url = SITE_URL + page["canonical"]
@@ -2480,13 +3052,18 @@ def build_head(page, depth):
     manifest_href = rel("site.webmanifest", depth)
     browserconfig_href = rel("browserconfig.xml", depth)
 
-    schema_scripts = build_schema_scripts(page, depth)
+    noindex = page.get("noindex", False)
+    schema_scripts = "" if noindex else build_schema_scripts(page, depth)
+    verification_meta = (
+        f'\n  <meta name="google-site-verification" content="{SEARCH_CONSOLE_VERIFICATION}" />'
+        if SEARCH_CONSOLE_VERIFICATION else ""
+    )
 
     return f"""<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{page['title']}</title>
   <meta name="description" content="{page['description']}" />
-  <link rel="canonical" href="{canonical_url}" />
+  {('<meta name="robots" content="noindex, follow" />' if noindex else f'<link rel="canonical" href="{canonical_url}" />')}{verification_meta}
 
   <!-- Favicon package -->
   <link rel="icon" href="{favicon_dir}/favicon.ico" sizes="any" />
@@ -2495,15 +3072,19 @@ def build_head(page, depth):
   <link rel="apple-touch-icon" sizes="180x180" href="{favicon_dir}/apple-touch-icon.png" />
   <link rel="manifest" href="{manifest_href}" />
   <meta name="msapplication-config" content="{browserconfig_href}" />
-  <meta name="theme-color" content="#0e2b3b" />
+  <meta name="theme-color" content="#0c2836" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HM UNIQUE" />
   <meta property="og:title" content="{page['title']}" />
   <meta property="og:description" content="{page['description']}" />
-  <meta property="og:url" content="{canonical_url}" />
+  {'' if noindex else f'<meta property="og:url" content="{canonical_url}" />'}
   <meta property="og:image" content="{og_image}" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="{OG_IMAGE_ALT}" />
   <meta property="og:locale" content="en_IN" />
 
   <!-- Twitter Card -->
@@ -2511,6 +3092,7 @@ def build_head(page, depth):
   <meta name="twitter:title" content="{page['title']}" />
   <meta name="twitter:description" content="{page['description']}" />
   <meta name="twitter:image" content="{og_image}" />
+  <meta name="twitter:image:alt" content="{OG_IMAGE_ALT}" />
 
   <!-- Google Fonts: Plus Jakarta Sans (primary headings), Manrope
        (secondary headings), Inter (body/buttons/nav/labels/specs) —
@@ -2527,6 +3109,77 @@ def build_head(page, depth):
 
   <!-- Structured data (JSON-LD) -->
   {schema_scripts}"""
+
+
+# ---------------------------------------------------------------------
+# 404 page. Written to /404.html, which static hosts (e.g. Cloudflare Pages) serve with a real 404
+# status for unknown URLs. It is NOT in PAGES, so it is never in the sitemap, and it is noindex.
+# A host may serve it from any URL depth, so every relative reference is rewritten root-absolute.
+# ---------------------------------------------------------------------
+NOTFOUND_PAGE = {
+    "key": "notfound",
+    "title": "Page not found | HM UNIQUE",
+    "description": "This page could not be found. Use the links to find HM UNIQUE product categories or contact the team.",
+    "path": "404.html",
+    "depth": 0,
+    "breadcrumb": None,
+    "canonical": "/404.html",
+    "noindex": True,
+}
+
+
+NOTFOUND_LINKS = (
+    ("home", "Home", "index.html"),
+    ("electricals", "Electricals", "pages/electricals.html"),
+    ("electronics", "Electronics Components", "pages/electronics.html"),
+    ("hardwares", "Hardware", "pages/hardwares.html"),
+    ("industrial", "Industrial &amp; Commercial Equipments", "pages/industrial-equipment.html"),
+    ("safety-packing", "Industrial Safety &amp; Packing Materials", "pages/industrial-safety-packing.html"),
+    ("about", "About Us", "pages/about.html"),
+    ("contact", "Contact Us", "pages/contact.html"),
+)
+
+
+def build_notfound_main():
+    links = "\n".join(
+        f'            <li><a href="{path}">{label}</a></li>'
+        for _k, label, path in NOTFOUND_LINKS
+    )
+    return f"""    <section class="section section--light notfound">
+      <div class="container notfound__inner">
+        <p class="eyebrow">Error 404</p>
+        <h1 class="notfound__title">Page not found</h1>
+        <p class="notfound__text">The page you asked for is not on this website, or it has moved. These links may help:</p>
+        <ul class="notfound__links">
+{links}
+        </ul>
+        <p class="notfound__text">Not sure where to look? Call <a href="tel:+919710181944">+91 97101 81944</a> or email <a href="mailto:{EMAIL_PRIMARY}">{EMAIL_PRIMARY}</a>.</p>
+      </div>
+    </section>"""
+
+
+def write_notfound():
+    import re as _re
+    html = build_page(NOTFOUND_PAGE)
+    # make every relative src/href root-absolute (the 404 may be served from any URL depth)
+    def _abs(m):
+        attr, val = m.group(1), m.group(2)
+        if val.startswith(("http:", "https:", "//", "/", "#", "mailto:", "tel:", "data:", "javascript:")):
+            return m.group(0)
+        return f'{attr}="/{val}"'
+    html = _re.sub(r'\b(href|src|content)="([^"]*)"', lambda m: _abs(m) if m.group(1) != "content" or _re.match(r'^(assets|css|js)/', m.group(2)) else m.group(0), html)
+
+    def _srcset(m):
+        parts = []
+        for cand in m.group(1).split(","):
+            cand = cand.strip()
+            parts.append(cand if cand.startswith(("http:", "https:", "/")) else "/" + cand)
+        return 'srcset="' + ", ".join(parts) + '"'
+    html = _re.sub(r'srcset="([^"]*)"', _srcset, html)
+    out_path = os.path.join(ROOT, "404.html")
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"Wrote {out_path}")
 
 
 def build_page(page):
@@ -2560,6 +3213,8 @@ def build_page(page):
         main_content = build_contact_main()
     elif key == "download-centre":
         main_content = build_download_centre_main()
+    elif key == "notfound":
+        main_content = build_notfound_main()
     else:
         main_content = f"    <!-- {PAGE_MAIN_COMMENTS[key]} -->"
 
@@ -2581,7 +3236,9 @@ def build_page(page):
 
 {build_quote_modal()}
 
-{build_thank_you_modal()}
+{build_enquiry_popup()}
+
+{build_enquiry_confirmation()}
 
 {build_floating_actions()}
 
@@ -2601,27 +3258,16 @@ def write_page(page):
 
 
 def build_sitemap():
-    """Generates sitemap.xml from the exact same PAGES data that
-    drives every canonical URL and internal link — guarantees the
-    sitemap can never drift out of sync with the actual site."""
-    from datetime import date
-
-    today = date.today().isoformat()
-    urls = []
-    for p in PAGES:
-        priority = "1.0" if p["key"] == "home" else "0.8"
-        urls.append(
-            f"""  <url>
-    <loc>{SITE_URL}{p['canonical']}</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>{priority}</priority>
-  </url>"""
-        )
+    """Generates sitemap.xml from the exact same PAGES data that drives every canonical URL and
+    internal link, so the sitemap can never drift from the site. <lastmod> is deliberately omitted:
+    the pages are regenerated together, so a build date would not reflect real content changes
+    (and would make regeneration non-reproducible). changefreq/priority are ignored by search
+    engines and are omitted too."""
+    urls = "\n".join(f"  <url>\n    <loc>{SITE_URL}{p['canonical']}</loc>\n  </url>" for p in PAGES)
     xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "\n".join(urls)
+        + urls
         + "\n</urlset>\n"
     )
     out_path = os.path.join(ROOT, "sitemap.xml")
@@ -2631,6 +3277,9 @@ def build_sitemap():
 
 
 if __name__ == "__main__":
+    validate_product_data()
+    sync_catalog_scripts()
     for p in PAGES:
         write_page(p)
+    write_notfound()
     build_sitemap()

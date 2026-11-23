@@ -45,27 +45,34 @@
   white-space: normal;
 }
 
-/* 3. "Can't Find What You're Looking For?" band.
-   This rounded band has no inner container, so its text and media touched
-   the band's edges (the shared .cta-band__inner only pads top and bottom).
-   Give it the same inner padding the catalogue band uses, keep the text
-   column readable beside the media at tablet widths, and let the media sit
-   centred when stacked. */
-.cta-band:not(.cta-band--full) > .cta-band__inner {
-  padding-inline: var(--space-6);
-}
-@media (max-width: 479px) {
-  .cta-band:not(.cta-band--full) > .cta-band__inner {
-    padding-inline: var(--space-5);
-    padding-block: var(--space-6);
+/* 3. "Can't Find What You're Looking For?" band: the same full-width band as the Home, About and
+   Contact pages. Between 768 and 991px the text and button share the left column (button under the
+   text) with the image on the right, exactly as on those pages. */
+@media (min-width: 768px) and (max-width: 991px) {
+  .cta-band--full .cta-band__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+    grid-template-areas:
+      "text media"
+      "action media";
+    column-gap: var(--space-6);
+    row-gap: var(--space-4);
+    align-items: center;
+    justify-content: stretch;
   }
-}
-.cta-band:not(.cta-band--full) .cta-band__text {
-  min-width: 0;
-}
-.cta-band:not(.cta-band--full) .cta-band__text .btn {
-  max-width: 100%;
-  white-space: normal;
+  .cta-band--full .cta-band__text {
+    grid-area: text;
+    max-width: none;
+  }
+  .cta-band--full .cta-band__action {
+    grid-area: action;
+    justify-self: start;
+  }
+  .cta-band--full .cta-band__media {
+    grid-area: media;
+    width: 100%;
+    max-width: none;
+  }
 }
 
 /* 5. Draft / placeholder disclosure. The six PDFs are placeholder documents

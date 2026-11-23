@@ -45,9 +45,7 @@
 }
 
 /* 3. Equal-height cards, bottom-aligned actions, safe text wrapping.
-   .product-card is already a column flex box at height:100%; the action row
-   now takes the leftover space above it so Download/Quote line up across a
-   row without any fixed height that could clip longer content. */
+   .product-card is already a column flex box at height:100%; no fixed height is used, so longer content is never clipped. */
 [data-catalog-grid] .product-card {
   min-width: 0;
 }
@@ -60,9 +58,6 @@
 [data-catalog-grid] .card__specs li {
   min-width: 0;
   overflow-wrap: anywhere;
-}
-[data-catalog-grid] .card__actions {
-  margin-top: auto;
 }
 
 /* 4. Category tab strip: scroll affordance.
@@ -130,14 +125,7 @@
    Accessories"), so tabs are a little wider and may wrap their label; the
    strip itself already scrolls horizontally, never the page.
    ========================================================================== */
-.category-tabs[data-catalog-tabs] .category-tabs__item {
-  width: 112px;
-}
-.category-tabs[data-catalog-tabs] .category-tabs__item span {
-  overflow-wrap: break-word;
-  min-width: 0;
-  max-width: 100%;
-}
+/* Tab sizing is shared (components.css "Sub-category tab strip", Step 22). */
 
 .catalog-empty {
   grid-column: 1 / -1;

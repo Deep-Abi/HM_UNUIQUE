@@ -378,15 +378,16 @@
   }
 }
 
-/* Bottom CTA band. Between 768 and 991 the shared row layout gave the
-   heading whatever width was left after a 232px button and a 320px image
-   (about 130px: six lines of heading), and the image was pinned low and
-   far right. Here the button sits under the text and the image takes its
-   own column. From 992px the original single row is back. */
-@media (min-width: 768px) {
+/* Bottom CTA band (Home). Same layout as the About, Contact and Download Centre bands.
+   Between 768 and 991 the shared row layout gave the heading whatever width was left after
+   a 232px button and a 320px image (about 130px: six lines of heading), so the button sits
+   under the text and the image takes its own column (identical to the other pages'
+   own 768-991 rule). From 992px the shared row applies: text left, button centred in the
+   middle, image right, vertically centred. */
+@media (min-width: 768px) and (max-width: 991px) {
   .cta-band--home .cta-band__inner {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
     grid-template-areas:
       "text media"
       "action media";
@@ -397,25 +398,16 @@
   }
   .cta-band--home .cta-band__text {
     grid-area: text;
-    max-width: 460px;
-    align-self: end;
+    max-width: none;
   }
   .cta-band--home .cta-band__action {
     grid-area: action;
     justify-self: start;
-    align-self: start;
   }
   .cta-band--home .cta-band__media {
     grid-area: media;
+    width: 100%;
     max-width: none;
-  }
-}
-@media (min-width: 992px) {
-  .cta-band--home .cta-band__inner {
-    display: flex;
-  }
-  .cta-band--home .cta-band__media {
-    max-width: 320px;
   }
 }
 
@@ -597,13 +589,13 @@
    Phones: one column. From 552px: two columns, with the odd last card centred
    (flex-wrap + justify-content: center, same pattern as the homepage featured grid).
    From 992px: three columns = three rows of three. Rows stretch to equal height;
-   the actions row sits at the bottom of every card. */
+   cards have no action row, so the last block carries no bottom margin. */
 .grid[data-catalog-grid] .product-card .card__specs,
 .grid[data-catalog-grid] .product-card .product-card__desc {
   flex-grow: 1;
 }
-.grid[data-catalog-grid] .product-card .card__actions {
-  margin-top: auto;
+.grid[data-catalog-grid] .product-card > :last-child {
+  margin-bottom: 0;
 }
 @media (min-width: 552px) {
   .grid[data-catalog-grid] {

@@ -85,6 +85,14 @@ class Slider {
     // never a real destination.
     if (this.realCount > 1 && this.track) {
       const clone = this.slides[0].cloneNode(true);
+      // The visual-only clone must not duplicate the page's single <h1>:
+      // demote any <h1> inside it to an <h2> (same class and content).
+      clone.querySelectorAll("h1").forEach((h) => {
+        const h2 = document.createElement("h2");
+        h2.className = h.className;
+        h2.innerHTML = h.innerHTML;
+        h.replaceWith(h2);
+      });
       clone.setAttribute("aria-hidden", "true");
       clone.inert = true;
       this.track.appendChild(clone);
@@ -106,6 +114,38 @@ class Slider {
   // -------------------------------------------------------------
   // Active-slide / accessibility state
   // -------------------------------------------------------------
+
+  /**
+   * Inactive slide that must keep one heading exposed: the slide and the
+   * heading's ancestors stay in the accessibility tree, every other branch
+   * is made inert + aria-hidden (marked data-slider-masked so it can be undone).
+   */
+  hideAllExcept(slide, keep) {
+    this.revealSlide(slide);
+    slide.inert = false;
+    slide.removeAttribute("aria-hidden");
+    let node = keep;
+    while (node && node !== slide) {
+      const parent = node.parentElement;
+      if (!parent) break;
+      Array.from(parent.children).forEach((child) => {
+        if (child === node) return;
+        child.inert = true;
+        child.setAttribute("aria-hidden", "true");
+        child.setAttribute("data-slider-masked", "");
+      });
+      node = parent;
+    }
+  }
+
+  /** Undo hideAllExcept() on a slide. */
+  revealSlide(slide) {
+    slide.querySelectorAll("[data-slider-masked]").forEach((el) => {
+      el.inert = false;
+      el.removeAttribute("aria-hidden");
+      el.removeAttribute("data-slider-masked");
+    });
+  }
 
   /**
    * Makes `index` (a real slide index, never the clone) the only
@@ -147,16 +187,28 @@ class Slider {
         // whatever the browser's own fallback happens to be.)
         this.root.focus();
       }
-      slide.inert = !isActive;
-      // aria-hidden is an enumerated attribute ("true" / "false"), not a
-      // boolean one: toggleAttribute() would write aria-hidden="" for the
-      // hidden state, which is not the "true" token. Inactive slides (and
-      // the permanent loop clone) get an explicit "true"; the active slide
-      // simply has no aria-hidden.
-      if (isActive) {
-        slide.removeAttribute("aria-hidden");
+      // A real slide may carry ONE persistent heading
+      // ([data-slider-persistent-heading], the page's <h1>). While that
+      // slide is inactive, everything in it stays inert + aria-hidden
+      // EXCEPT that heading and its ancestors, so the page keeps its
+      // single <h1> in the accessibility tree throughout rotation. The
+      // loop clone is never exempt (i >= realCount).
+      const keep = i < this.realCount ? slide.querySelector("[data-slider-persistent-heading]") : null;
+      if (keep && !isActive) {
+        this.hideAllExcept(slide, keep);
       } else {
-        slide.setAttribute("aria-hidden", "true");
+        this.revealSlide(slide);
+        slide.inert = !isActive;
+        // aria-hidden is an enumerated attribute ("true" / "false"), not a
+        // boolean one: toggleAttribute() would write aria-hidden="" for the
+        // hidden state, which is not the "true" token. Inactive slides (and
+        // the permanent loop clone) get an explicit "true"; the active slide
+        // simply has no aria-hidden.
+        if (isActive) {
+          slide.removeAttribute("aria-hidden");
+        } else {
+          slide.setAttribute("aria-hidden", "true");
+        }
       }
     });
 

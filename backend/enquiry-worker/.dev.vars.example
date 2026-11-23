@@ -1,0 +1,4 @@
+# Local testing only (copy to .dev.vars; never commit real values).
+RESEND_API_KEY=
+ENQUIRY_FROM=
+ALLOWED_ORIGINS=http://localhost:8080

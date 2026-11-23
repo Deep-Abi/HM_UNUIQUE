@@ -537,6 +537,12 @@
   background-color: var(--color-surface-light);
 }
 
+/* Step 24: individual product images — square box, whole product visible (contain), centred. */
+.product-card__media .aspect-box > picture > img {
+  object-fit: contain;
+  object-position: center;
+}
+
 .product-card__title {
   margin-bottom: var(--space-2);
 }
@@ -614,6 +620,21 @@
   border-radius: var(--radius-lg);
 }
 
+/* Approved hero assortment photo (700x467, 3:2). Rendered at its own ratio so the whole
+   assortment is always visible (object-fit: contain only guards a future non-3:2 file). */
+.category-hero__media picture {
+  display: block;
+}
+.category-hero__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 700 / 467;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-light);
+}
+
 /* ---------------------------------------------------------------------
    10. SUB-CATEGORY TAB STRIP
    Horizontally scrollable row of icon + label pills. Contained
@@ -679,6 +700,75 @@
 }
 
 /* ---------------------------------------------------------------------
+   Sub-category tab strip (Step 22) — the seven-tab strip on the five
+   product category pages ([data-catalog-tabs]).
+   Mobile/tablet: one horizontally scrolling row inside the strip (the page
+   never scrolls sideways); every tab has a comfortable minimum width, a
+   44px+ touch target and natural word wrapping.
+   Desktop (>= 1100px): the strip becomes a seven-column grid that spans the
+   full container width, aligned with the product section below, with equal
+   tab heights, icons on one line and the active underline on the tab's
+   bottom edge. Words are never broken; labels wrap at spaces only.
+   --------------------------------------------------------------------- */
+.category-tabs[data-catalog-tabs] {
+  gap: var(--space-2);
+  align-items: stretch;
+}
+.category-tabs[data-catalog-tabs] .category-tabs__item {
+  box-sizing: border-box;
+  flex: 0 0 10.5rem;
+  width: 10.5rem;
+  min-height: 5.5rem;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3);
+  border-bottom-width: 3px;
+}
+.category-tabs[data-catalog-tabs] .category-tabs__item i {
+  display: block;
+  height: 1.25rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+.category-tabs[data-catalog-tabs] .category-tabs__item span {
+  font-size: 0.875rem;
+  line-height: 1.3;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+  text-wrap: balance;
+}
+@media (min-width: 600px) {
+  .category-tabs[data-catalog-tabs] .category-tabs__item {
+    flex-basis: 11.5rem;
+    width: 11.5rem;
+  }
+}
+@media (min-width: 1100px) {
+  .category-tabs[data-catalog-tabs] {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    overflow: visible;
+  }
+  .category-tabs[data-catalog-tabs] .category-tabs__item {
+    width: auto;
+    min-width: 0;
+    padding-inline: var(--space-2);
+  }
+  .category-tabs[data-catalog-tabs] .category-tabs__item span {
+    font-size: 0.8125rem;
+  }
+}
+@media (min-width: 1200px) {
+  .category-tabs[data-catalog-tabs] .category-tabs__item {
+    padding-inline: var(--space-3);
+  }
+  .category-tabs[data-catalog-tabs] .category-tabs__item span {
+    font-size: 0.875rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
    11. INLINE CTA ROW
    The compact "Looking for more X?" banner between the product grid
    and the catalogue download band — lighter-weight than the full
@@ -729,6 +819,19 @@
   width: 100%;
   max-width: 200px;
   flex-shrink: 0;
+}
+
+/* Approved booklet cover (1122x1402, portrait): shown whole, never cropped. */
+.catalogue-band__media picture {
+  display: block;
+}
+.catalogue-band__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1122 / 1402;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 .catalogue-band__text {
@@ -1026,6 +1129,10 @@
 }
 .modal__header > div {
   min-width: 0;
+}
+/* display:flex on .modal__header would otherwise override the hidden attribute used while the success panel is shown */
+.modal__header[hidden] {
+  display: none;
 }
 
 .modal__header-icon {
@@ -1483,6 +1590,37 @@ textarea.form-field__control {
 .branch-card__media .aspect-box {
   border-radius: 0;
 }
+/* The branch image is a 16:9 illustration (1672 x 941) shown in a 16:9 box.
+   object-fit: contain guarantees the whole picture is visible at any width
+   (the shared .aspect-box rule uses cover); the box tint only shows if the
+   ratios ever differ. The caption sits under the image, not over it. */
+.branch-card__figure {
+  margin: 0;
+}
+.branch-card__figure .aspect-box {
+  background-color: var(--color-surface-alt);
+}
+.branch-card__figure .aspect-box > picture > img {
+  object-fit: contain;
+}
+.branch-card__caption {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-label);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface-light);
+}
+
+/* E-mail addresses. The markup puts a <wbr> before the "@", so a long address
+   wraps as "name" / "@domain" on a narrow screen. overflow-wrap is only the
+   safety net, so an address can never push the page wider than the screen. */
+a[href^="mailto:"] {
+  overflow-wrap: anywhere;
+  hyphens: none;
+}
+.page-banner__quicklink {
+  min-width: 0;
+}
 .branch-card__body {
   padding: var(--space-5);
 }
@@ -1504,3 +1642,266 @@ textarea.form-field__control {
 .who-we-are__media {
   gap: var(--space-3);
 }
+
+/* ---------------------------------------------------------------------
+   ENQUIRY CONFIRMATION (inline success message + thank-you popup)
+   Shown only after the server has confirmed an enquiry (js/forms.js).
+   --------------------------------------------------------------------- */
+.form-submit-success {
+  display: block;
+  font-size: var(--fs-body-sm);
+  color: var(--color-navy-900);
+  background-color: #e8f6ec;
+  border: 1px solid #b9e3c4;
+  border-left: 4px solid var(--color-success);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-4);
+}
+.form-submit-success[hidden],
+.form-submit-success [hidden] {
+  display: none;
+}
+.form-submit-success i {
+  color: #1e7a37;
+  margin-right: var(--space-2);
+}
+.form-submit-success__note {
+  display: block;
+  margin-top: var(--space-1);
+}
+
+/* Honeypot: present for bots, unreachable for people and assistive tech. */
+.form-hp {
+  position: absolute !important;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.enquiry-popup {
+  position: fixed;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(26rem, calc(100vw - 2rem));
+  z-index: 1000; /* above the Request a Quote dialog (--z-modal 910) */
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) var(--space-4) var(--space-4);
+  color: var(--color-white);
+  background-color: var(--color-navy-900);
+  border-left: 4px solid var(--color-success);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  animation: enquiry-popup-in 0.25s ease-out;
+}
+.enquiry-popup[hidden] {
+  display: none;
+}
+.enquiry-popup__icon {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-success);
+}
+.enquiry-popup__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.enquiry-popup__title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 1.0625rem;
+}
+.enquiry-popup__body {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+  line-height: 1.45;
+}
+.enquiry-popup__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.enquiry-popup__close:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+.enquiry-popup__close:focus-visible {
+  outline: 3px solid var(--color-white);
+  outline-offset: 0;
+}
+@keyframes enquiry-popup-in {
+  from { opacity: 0; transform: translate(-50%, -0.75rem); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .enquiry-popup { animation: none; }
+}
+
+/* ---------------------------------------------------------------------
+   FAQ (compact, always-visible question and answer list)
+   --------------------------------------------------------------------- */
+.faq__list {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 52rem;
+  margin-inline: auto;
+}
+.faq__item {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border, #dbe3ea);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+}
+.faq__question {
+  margin: 0 0 var(--space-2);
+  font-size: 1.0625rem;
+}
+.faq__answer {
+  margin: 0;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+.faq__answer a {
+  text-decoration: underline;
+  font-weight: var(--fw-semibold);
+}
+
+/* ---------------------------------------------------------------------
+   REQUEST A QUOTE — success panel inside the dialog, and the persistent
+   confirmation that stays on the page after the dialog closes
+   (js/quote-success.js). Shown only after the server confirms.
+   --------------------------------------------------------------------- */
+.modal__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 18rem;
+  padding: var(--space-6) var(--space-2);
+  text-align: center;
+}
+.modal__success[hidden] {
+  display: none;
+}
+.modal__success-icon {
+  width: 4.5rem;
+  height: 4.5rem;
+  color: var(--color-success);
+}
+.modal__success-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h3, 1.5rem);
+  color: var(--color-text-heading);
+}
+.modal__success-title:focus {
+  outline: none; /* programmatic focus target only; not a control */
+}
+.modal__success-body {
+  margin: 0;
+  max-width: 28rem;
+}
+.modal__success-note {
+  margin: 0;
+  max-width: 28rem;
+  font-size: var(--fs-body-sm);
+}
+.modal__success-note[hidden] {
+  display: none;
+}
+.modal__success .btn {
+  margin-top: var(--space-2);
+  min-height: 2.75rem;
+}
+
+.enquiry-confirmation {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  /* clears the floating action buttons that sit in the bottom corners */
+  bottom: calc(max(var(--space-3), env(safe-area-inset-bottom)) + 4.5rem);
+  width: min(30rem, calc(100vw - 2rem));
+  z-index: 460; /* above floating buttons (450), below the mobile drawer (600) and dialog (900) */
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) 3.25rem var(--space-4) var(--space-4);
+  color: var(--color-navy-900);
+  background-color: #e8f6ec;
+  border: 1px solid #b9e3c4;
+  border-left: 4px solid var(--color-success);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+.enquiry-confirmation[hidden] {
+  display: none;
+}
+.enquiry-confirmation__icon {
+  flex: none;
+  margin-top: 0.2rem;
+  color: #1e7a37;
+}
+.enquiry-confirmation__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.enquiry-confirmation__title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+}
+.enquiry-confirmation__body {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+  line-height: 1.45;
+}
+.enquiry-confirmation__close {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-navy-900);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.enquiry-confirmation__close:hover {
+  background-color: rgba(11, 35, 56, 0.1);
+}
+.enquiry-confirmation__close:focus-visible {
+  outline: 3px solid var(--color-navy-900);
+  outline-offset: 0;
+}
+
+/* ==========================================================================
+   404 PAGE
+   ========================================================================== */
+.notfound__inner { max-width: 40rem; }
+.notfound__title { margin: 0 0 var(--space-3); color: var(--color-navy-900); }
+.notfound__text { margin: 0 0 var(--space-4); color: var(--color-text-muted); }
+.notfound__links { margin: 0 0 var(--space-5); padding-left: var(--space-5); }
+.notfound__links a { display: inline-block; padding-block: var(--space-1); color: var(--color-teal-brand); }

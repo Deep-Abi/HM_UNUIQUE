@@ -1,30 +1,41 @@
 /**
  * forms.js
- * Client-side validation and submit handling for the Request a Quote
- * modal form and the Contact page form.
+ * Client-side validation and submit handling for the Request a Quote modal form and the
+ * Contact page form.
  *
- * No submission backend/email service is configured for this project
- * yet. This module is intentionally kept truthful about that: with
- * SUBMIT_ENDPOINT left unset, submitForm() never fabricates a success
- * response, the success modal never opens, entered values are never
- * cleared, and the person sees an honest "not sent yet" message instead.
- * Once a real endpoint/email service is approved, set SUBMIT_ENDPOINT
- * and fill in the real submission call inside submitForm() below —
- * nothing else in this file needs to change.
+ * Submission goes to the enquiry Worker configured in js/enquiry-config.js. This module is
+ * strictly truthful about delivery state:
+ *  - with no endpoint configured nothing is sent, no success is shown and entries are kept;
+ *  - success happens ONLY after the server answers {ok:true, accepted:true}. Contact form: thank-you popup
+ *    + persistent inline confirmation. Request a Quote: thank-you inside the dialog, auto-close, then a
+ *    persistent page confirmation (quote-success.js);
+ *  - on any failure the entries are kept and a retry message is shown;
+ *  - repeated submission is blocked while a request is in flight, and one idempotency key is
+ *    reused for retries of the same enquiry so the server can drop duplicates.
  */
 
-import { openModal, closeModal } from "./modal.js";
+import { ENQUIRY_ENDPOINT } from "./enquiry-config.js";
+import { showEnquiryPopup } from "./enquiry-popup.js";
+import { showQuoteSuccess } from "./quote-success.js";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[0-9+\-\s()]{7,15}$/;
 
-const SUBMIT_ENDPOINT = null;
+const REQUEST_TIMEOUT_MS = 20000;
+const PAGE_LOADED_AT = Date.now();
+
+const CONTACT_FALLBACK_HTML =
+  'call us at <a href="tel:+919710181944">+91 97101 81944</a> or email ' +
+  '<a href="mailto:business@hmunique.com">business<wbr>@hmunique.com</a>';
 
 const UNAVAILABLE_MESSAGE_HTML =
   'Online submission isn’t connected yet, so this enquiry has <strong>not</strong> been sent. ' +
-  'Please call us at <a href="tel:+919710181944">+91 97101 81944</a> or email ' +
-  '<a href="mailto:hmunitecenterprises02@gmail.com">hmunitecenterprises02@gmail.com</a> instead — ' +
-  'your details below have been kept so you don’t need to re-enter them.';
+  `Please ${CONTACT_FALLBACK_HTML} instead — your details below have been kept so you don’t need to re-enter them.`;
+const RETRY_MESSAGE_HTML =
+  `We couldn’t send your enquiry just now, so it has <strong>not</strong> been received. Your details have been kept — please try again in a moment, or ${CONTACT_FALLBACK_HTML}.`;
+const RATE_LIMITED_MESSAGE_HTML =
+  `Too many enquiries have been sent from this connection recently. Please wait a few minutes and try again, or ${CONTACT_FALLBACK_HTML}.`;
+const VALIDATION_MESSAGE_HTML = "Please check the highlighted fields and try again. Your other details have been kept.";
 
 /** Finds the error message element associated with a field's `.form-field` wrapper. */
 function getFieldErrorMessage(field) {
@@ -130,32 +141,101 @@ function clearFormErrors(formEl) {
   setSubmitErrorState(formEl, false);
 }
 
+/** Builds the JSON body: all named fields, the consent flag as a boolean and the anti-spam fields. */
+function buildPayload(formEl) {
+  const payload = { form: formEl.dataset.form };
+  new FormData(formEl).forEach((value, key) => {
+    if (typeof value === "string") payload[key] = value;
+  });
+  const consent = formEl.querySelector('input[name="privacy"]');
+  payload.privacy = !!(consent && consent.checked);
+  payload.startedAt = PAGE_LOADED_AT;
+  payload.submissionId = formEl.dataset.submissionId;
+  return payload;
+}
+
+function newSubmissionId() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
 /**
- * Submission is not wired to a real service in this project yet.
- * Returns a truthful, never-fabricated result: `{ ok: false,
- * unavailable: true }` whenever SUBMIT_ENDPOINT is unset, so the caller
- * can tell "not sent" apart from a genuine send failure. Once an
- * approved endpoint exists, fill in the real request here.
+ * Sends the enquiry. Never fabricates success. Returns one of:
+ *  {ok:true, acknowledgement}  – the server confirmed it accepted the enquiry
+ *  {ok:false, unavailable:true} – no endpoint configured, nothing was sent
+ *  {ok:false, kind:"validation", errors} | {kind:"rate_limited"} | {kind:"failed"}
  */
 async function submitForm(formEl) {
-  if (!SUBMIT_ENDPOINT) {
-    return { ok: false, unavailable: true };
-  }
+  if (!ENQUIRY_ENDPOINT) return { ok: false, unavailable: true };
 
-  const formData = new FormData(formEl);
-  const payload = Object.fromEntries(formData.entries());
-  const response = await fetch(SUBMIT_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(ENQUIRY_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildPayload(formEl)),
+      signal: controller.signal,
+    });
+    let data = null;
+    try { data = await response.json(); } catch (e) { data = null; }
+
+    if (response.ok && data && data.ok === true && data.accepted === true) {
+      return { ok: true, acknowledgement: data.acknowledgement || "sent" };
+    }
+    if (response.status === 400 && data && data.code === "validation") {
+      return { ok: false, kind: "validation", errors: data.errors || {} };
+    }
+    if (response.status === 429) return { ok: false, kind: "rate_limited" };
+    return { ok: false, kind: "failed" };
+  } catch (error) {
+    return { ok: false, kind: "failed" }; // network error, timeout or abort
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** Maps server-side field errors onto the form's own inline error states. */
+function applyServerErrors(formEl, errors) {
+  let first = null;
+  Object.keys(errors).forEach((key) => {
+    const name = key === "phone" && formEl.querySelector('[name="mobile"]') ? "mobile" : key;
+    const field = formEl.querySelector(`[name="${name}"]`);
+    if (!field) return;
+    setFieldInvalidState(field, false);
+    first = first || field;
   });
-  return { ok: response.ok };
+  if (first) first.focus();
+  return !!first;
+}
+
+function setSuccessState(formEl, show, acknowledgement) {
+  const el = formEl.querySelector("[data-form-success]");
+  if (!el) return;
+  const note = el.querySelector("[data-form-success-note]");
+  if (note) note.hidden = !(show && acknowledgement === "failed");
+  el.toggleAttribute("hidden", !show);
 }
 
 function setSubmitLoadingState(submitBtn, isLoading) {
   if (!submitBtn) return;
-  submitBtn.disabled = isLoading;
+  // aria-disabled (not the disabled attribute) keeps keyboard focus on the button while a request is
+  // in flight; repeated activation is blocked by the dataset.submitting guard in handleSubmit().
+  submitBtn.setAttribute("aria-disabled", isLoading ? "true" : "false");
   submitBtn.classList.toggle("is-loading", isLoading);
+  submitBtn.setAttribute("aria-busy", isLoading ? "true" : "false");
+  const label = submitBtn.querySelector("[data-submit-label]");
+  if (label) {
+    if (isLoading) {
+      label.dataset.idleText = label.textContent;
+      label.textContent = "Sending…";
+    } else if (label.dataset.idleText) {
+      label.textContent = label.dataset.idleText;
+    }
+  }
 }
 
 // Caches each error element's original (truthful-failure) markup so a
@@ -198,26 +278,42 @@ function handleSubmit(formEl, options) {
     setSubmitLoadingState(submitBtn, true);
     setSubmitErrorState(formEl, false);
 
+    setSuccessState(formEl, false);
+    formEl.setAttribute("aria-busy", "true");
+
     try {
       const result = await submitForm(formEl);
 
       if (result.ok) {
-        // Only a real, confirmed acceptance resets the form and opens
-        // the success modal.
+        // Only a real, server-confirmed acceptance resets the form and shows success.
         clearFormErrors(formEl);
         formEl.reset();
-        if (options.closeModalKey) closeModal(options.closeModalKey);
-        if (options.openModalKey) openModal(options.openModalKey);
+        formEl.dataset.submissionId = newSubmissionId(); // next enquiry gets its own key
+        if (formEl.dataset.form === "quote") {
+          // Request a Quote: thank-you shown inside the existing dialog, which then closes itself
+          // and leaves a persistent confirmation on the page. No second modal, no popup.
+          showQuoteSuccess(result.acknowledgement);
+        } else {
+          // Contact: 5-second popup, with the inline confirmation remaining in the form area.
+          setSuccessState(formEl, true, result.acknowledgement);
+          showEnquiryPopup();
+        }
       } else if (result.unavailable) {
         setSubmitErrorState(formEl, true, UNAVAILABLE_MESSAGE_HTML);
+      } else if (result.kind === "validation") {
+        const shown = applyServerErrors(formEl, result.errors);
+        setSubmitErrorState(formEl, true, shown ? VALIDATION_MESSAGE_HTML : RETRY_MESSAGE_HTML);
+      } else if (result.kind === "rate_limited") {
+        setSubmitErrorState(formEl, true, RATE_LIMITED_MESSAGE_HTML);
       } else {
-        setSubmitErrorState(formEl, true);
+        setSubmitErrorState(formEl, true, RETRY_MESSAGE_HTML);
       }
       // Entered values are left untouched on every non-success path.
     } catch (error) {
-      setSubmitErrorState(formEl, true);
+      setSubmitErrorState(formEl, true, RETRY_MESSAGE_HTML);
     } finally {
       setSubmitLoadingState(submitBtn, false);
+      formEl.removeAttribute("aria-busy");
       formEl.dataset.submitting = "false";
     }
   });
@@ -249,13 +345,8 @@ function handleSubmit(formEl, options) {
 }
 
 export function initForms() {
-  const quoteForm = document.querySelector("[data-form='quote']");
-  if (quoteForm) {
-    handleSubmit(quoteForm, { closeModalKey: "quote", openModalKey: "thank-you" });
-  }
-
-  const contactForm = document.querySelector("[data-form='contact']");
-  if (contactForm) {
-    handleSubmit(contactForm, { openModalKey: "thank-you" });
-  }
+  document.querySelectorAll("[data-form='quote'], [data-form='contact']").forEach((formEl) => {
+    formEl.dataset.submissionId = newSubmissionId();
+    handleSubmit(formEl, {});
+  });
 }

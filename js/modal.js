@@ -1,9 +1,9 @@
 /**
  * modal.js
  * A single generic modal engine (open/close/focus-trap/escape-key/
- * scroll-lock) that both the Request a Quote modal and the Thank You
- * modal are built on top of, per the Phase 1 architecture. No modal
- * behavior is duplicated between the two.
+ * scroll-lock) for the Request a Quote dialog. It announces its lifecycle
+ * with "modal:open" / "modal:close" events on the overlay element, which
+ * quote-success.js uses to show and clean up the post-submission state.
  */
 
 // Broad tag/attribute match only — every exclusion (disabled,
@@ -86,7 +86,8 @@ const backgroundInertOwned = new Set();
 function setBackgroundInert(isInert) {
   if (isInert) {
     Array.from(document.body.children).forEach((el) => {
-      if (el.classList.contains("modal-overlay") || el.tagName === "SCRIPT") return;
+      // The enquiry confirmation popup must stay reachable while a dialog is open.
+      if (el.classList.contains("modal-overlay") || el.tagName === "SCRIPT" || el.hasAttribute("data-enquiry-popup")) return;
       if (!el.inert) {
         el.inert = true;
         backgroundInertOwned.add(el);
@@ -133,6 +134,7 @@ class Modal {
     setBackgroundInert(true);
 
     getVisibleFocusables(this.modal)[0]?.focus();
+    this.overlay.dispatchEvent(new CustomEvent("modal:open"));
   }
 
   close() {
@@ -152,6 +154,7 @@ class Modal {
       this.lastFocusedElement.getClientRects().length > 0;
     if (canRestore) this.lastFocusedElement.focus();
     this.lastFocusedElement = null;
+    this.overlay.dispatchEvent(new CustomEvent("modal:close"));
   }
 
   handleKeydown(event) {

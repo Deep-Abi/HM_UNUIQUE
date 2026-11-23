@@ -158,7 +158,7 @@
      jumps and keyboard focus scrolling never land underneath it;
      responsive.css zeroes it on short viewports where the header
      stops being sticky. */
-  --header-offset: 7.5rem;
+  --header-offset: 9.5rem;  /* static fallback; js/navigation.js replaces it with the measured header height */
 
   /* Space reserved at the bottom of the page / scroll area so the fixed
      floating controls never sit on top of the last line of content. */

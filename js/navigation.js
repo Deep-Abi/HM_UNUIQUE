@@ -317,9 +317,32 @@ function initHeaderScrollState() {
   update();
 }
 
+/**
+ * Keeps --header-offset (the root scroll-padding-top) equal to the header's REAL height, so
+ * anchor jumps, #group links and keyboard focus scrolling land just below it at every width
+ * (the stacked brand makes the header taller than any fixed constant). While the header is not
+ * sticky (short landscape screens) there is nothing to clear, so the offset is 0.
+ */
+function initHeaderOffset() {
+  const header = document.querySelector("[data-site-header]");
+  if (!header) return;
+  const root = document.documentElement;
+  const sync = () => {
+    const sticky = window.getComputedStyle(header).position === "sticky";
+    const px = sticky ? Math.ceil(header.getBoundingClientRect().height) + 8 : 0;
+    root.style.setProperty("--header-offset", `${px}px`);
+  };
+  sync();
+  window.addEventListener("resize", sync, { passive: true });
+  window.addEventListener("load", sync);
+  if (typeof ResizeObserver === "function") new ResizeObserver(sync).observe(header);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync).catch(() => {});
+}
+
 export function initNavigation() {
   initMobileDrawer();
   initProductsDropdown();
   initActiveLinkState();
   initHeaderScrollState();
+  initHeaderOffset();
 }

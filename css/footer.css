@@ -23,49 +23,18 @@
   gap: var(--space-7);
 }
 
-.site-footer__brand .site-logo__name,
-.site-footer__brand .site-logo__tagline {
-  color: var(--color-white);
+/* Footer brand: the logo image only (the name, "Technology Enterprises" and the category
+   list were removed). The white backing keeps the navy artwork readable on the dark footer;
+   it sits flush left and is not stretched. Header and drawer branding are separate rules. */
+.site-footer__logo {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
 }
-
-/* Company name: two-level lockup (footer only — header branding untouched).
-   "HM UNIQUE" is the primary line; "Technology Enterprises" sits beneath
-   it, smaller but readable. Normal word spacing, restrained tracking. */
-.site-footer__brand .site-footer__name {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  letter-spacing: normal;
-  word-spacing: normal;
-  line-height: 1.2;
-}
-
-.site-footer__name-main {
-  font-size: 1.375rem;
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.01em;
-  word-spacing: 0.12em;
-  white-space: nowrap;
-}
-
-.site-footer__name-sub {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: var(--fw-semibold);
-  letter-spacing: 0.01em;
-  word-spacing: normal;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
-}
-
-.site-footer__brand .site-logo__text {
-  gap: 0.35rem;
-  line-height: 1.2;
-}
-
-.site-footer__brand .site-logo__tagline {
-  line-height: 1.5;
-  letter-spacing: 0.04em;
+.site-footer__logo .site-logo__mark img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 
 .site-footer__brand .site-footer__about {

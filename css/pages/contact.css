@@ -38,15 +38,75 @@
   }
 }
 
-/* 3. Contact details are links (tel:, mailto:, WhatsApp). They keep the
-   surrounding text colour; underline on hover/focus shows they are
-   interactive, and long addresses may still break rather than overflow. */
-.page-banner__quicklink[href]:hover,
+/* 3. Contact details in the cards are links (tel:, mailto:). They keep the
+   surrounding text colour; underline on hover shows they are interactive,
+   and long addresses may still break rather than overflow. (The hero's own
+   quick links use the soft teal effect in 3a instead of an underline.) */
 .info-card__list a:hover {
   text-decoration: underline;
 }
 .info-card__list a {
   overflow-wrap: anywhere;
+}
+
+/* 3a. CONTACT HERO quick links ("Call Us", "Email Us") — scoped to .page-banner--contact.
+   A soft translucent-teal pill on hover/focus, a slight lift in colour and a gentle icon
+   nudge instead of an underline. The padding is present in every state (only background,
+   colour and the icon's transform change), so hovering never shifts the layout; the row/column
+   gaps are reduced by the amount of padding added so the row keeps its original rhythm.
+   The destinations (tel:/mailto:) are untouched. */
+.page-banner--contact .page-banner__quicklinks {
+  gap: var(--space-2) var(--space-3);
+  margin-left: calc(-1 * var(--space-3)); /* keeps the text aligned with the heading above */
+}
+.page-banner--contact .page-banner__quicklink {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+}
+.page-banner--contact .page-banner__quicklink[href] {
+  background-color: transparent;
+  text-decoration: none;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+.page-banner--contact .page-banner__quicklink[href]:hover,
+.page-banner--contact .page-banner__quicklink[href]:focus,
+.page-banner--contact .page-banner__quicklink[href]:focus-visible,
+.page-banner--contact .page-banner__quicklink[href]:active {
+  text-decoration: none;
+}
+.page-banner--contact .page-banner__quicklink[href] i,
+.page-banner--contact .page-banner__quicklink[href] svg {
+  transition: transform var(--transition-base), color var(--transition-base);
+}
+.page-banner--contact .page-banner__quicklink[href]:hover,
+.page-banner--contact .page-banner__quicklink[href]:focus-visible {
+  background-color: rgba(15, 150, 160, 0.2); /* --color-teal-500 at 20% on the navy banner */
+  color: var(--color-teal-100);
+}
+.page-banner--contact .page-banner__quicklink[href]:hover i,
+.page-banner--contact .page-banner__quicklink[href]:hover svg,
+.page-banner--contact .page-banner__quicklink[href]:focus-visible i,
+.page-banner--contact .page-banner__quicklink[href]:focus-visible svg {
+  color: var(--color-teal-100);
+  transform: translateX(2px);
+}
+/* Clear keyboard focus: a solid light ring that follows the rounded shape. */
+.page-banner--contact .page-banner__quicklink[href]:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-banner--contact .page-banner__quicklink[href],
+  .page-banner--contact .page-banner__quicklink[href] i,
+  .page-banner--contact .page-banner__quicklink[href] svg {
+    transition: none;
+  }
+  .page-banner--contact .page-banner__quicklink[href]:hover i,
+  .page-banner--contact .page-banner__quicklink[href]:hover svg,
+  .page-banner--contact .page-banner__quicklink[href]:focus-visible i,
+  .page-banner--contact .page-banner__quicklink[href]:focus-visible svg {
+    transform: none; /* colour change remains; the movement is dropped */
+  }
 }
 
 /* 4. CTA band squeeze at 768-991px (same fix as the About page): the text
