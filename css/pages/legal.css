@@ -1,0 +1,56 @@
+/* Privacy Policy and Terms & Conditions: one narrow, readable column.
+   Uses the shared design tokens only. */
+.legal {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+.legal__updated {
+  margin-bottom: var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--fs-body-sm);
+}
+.legal__section + .legal__section {
+  margin-top: var(--space-6);
+}
+.legal h2 {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-h3);
+  scroll-margin-top: var(--space-8);
+}
+.legal p,
+.legal li {
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--color-text-body);
+  overflow-wrap: anywhere;
+}
+.legal p + p,
+.legal p + ul,
+.legal ul + p {
+  margin-top: var(--space-3);
+}
+.legal ul {
+  margin: var(--space-3) 0 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.legal li + li {
+  margin-top: var(--space-2);
+}
+.legal a {
+  color: var(--color-teal-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal a:hover {
+  color: var(--color-navy-900);
+}
+.legal__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  font-weight: 600;
+}

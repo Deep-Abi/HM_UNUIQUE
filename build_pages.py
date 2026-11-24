@@ -148,6 +148,24 @@ PAGES = [
         "description": "HM UNIQUE Download Centre: catalogue, company profile and datasheet documents. The files currently listed are drafts pending approval.",
         "canonical": "/pages/download-centre.html",
     },
+    {
+        "key": "privacy",
+        "title": "Privacy Policy | HM UNIQUE",
+        "path": "pages/privacy-policy.html",
+        "depth": 1,
+        "breadcrumb": [("Home", "../index.html"), ("Privacy Policy", None)],
+        "description": "How HM UNIQUE Technology Enterprises uses the details you send through its enquiry and contact forms, and who to contact with privacy questions.",
+        "canonical": "/pages/privacy-policy.html",
+    },
+    {
+        "key": "terms",
+        "title": "Terms &amp; Conditions | HM UNIQUE",
+        "path": "pages/terms-and-conditions.html",
+        "depth": 1,
+        "breadcrumb": [("Home", "../index.html"), ("Terms &amp; Conditions", None)],
+        "description": "Simple terms for using the HM UNIQUE Technology Enterprises website: product information, enquiries, quotations and use of site content.",
+        "canonical": "/pages/terms-and-conditions.html",
+    },
 ]
 
 NAV_ITEMS = [
@@ -460,8 +478,8 @@ def build_footer(depth):
     <div class="container site-footer__bottom-inner">
       <span>&copy; <span data-current-year></span> HM UNIQUE Technology Enterprises. All Rights Reserved.</span>
       <div class="site-footer__bottom-links">
-        <a aria-disabled="true">Privacy Policy</a>
-        <a aria-disabled="true">Terms &amp; Conditions</a>
+        <a href="{rel('pages/privacy-policy.html', depth)}">Privacy Policy</a>
+        <a href="{rel('pages/terms-and-conditions.html', depth)}">Terms &amp; Conditions</a>
       </div>
     </div>
   </div>
@@ -497,7 +515,7 @@ def build_floating_actions():
 </button>""")
 
 
-def build_quote_modal():
+def build_quote_modal(depth=0):
     return fill_phones("""<div class="modal-overlay" data-modal="quote" aria-hidden="true">
   <div class="modal modal--quote" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
     <button type="button" class="modal__close" data-modal-close aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
@@ -584,7 +602,7 @@ def build_quote_modal():
         <div class="form-field">
           <label class="form-checkbox">
             <input type="checkbox" id="quote-privacy" name="privacy" data-required />
-            <span>I agree to the <a aria-disabled="true">privacy policy</a>.</span>
+            <span>I agree to the <a href="@@PRIVACY_HREF@@" target="_blank" rel="noopener noreferrer">privacy policy<span class="visually-hidden"> (opens in a new tab)</span></a>.</span>
           </label>
           <span class="form-field__error-msg">Please agree to the privacy policy to continue.</span>
         </div>
@@ -627,7 +645,7 @@ def build_quote_modal():
       </div>
     </aside>
   </div>
-</div>""")
+</div>""").replace("@@PRIVACY_HREF@@", rel("pages/privacy-policy.html", depth))
 
 
 def build_enquiry_popup():
@@ -2664,7 +2682,7 @@ def build_contact_main():
             <div class="form-field">
               <label class="form-checkbox">
                 <input type="checkbox" id="contact-privacy" name="privacy" data-required />
-                <span>I agree to the <a aria-disabled="true">privacy policy</a>.</span>
+                <span>I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer">privacy policy<span class="visually-hidden"> (opens in a new tab)</span></a>.</span>
               </label>
               <span class="form-field__error-msg">Please agree to the privacy policy to continue.</span>
             </div>
@@ -3033,6 +3051,8 @@ def build_schema_scripts(page, depth):
 
 # Page-specific stylesheet basenames where they differ from the page key.
 PAGE_CSS_NAMES = {
+    "privacy": "legal",
+    "terms": "legal",
     "industrial": "industrial-equipment",
     "safety-packing": "industrial-safety-packing",
 }
@@ -3195,6 +3215,135 @@ def write_notfound():
     print(f"Wrote {out_path}")
 
 
+# ---------------------------------------------------------------------
+# Privacy Policy and Terms & Conditions (DRAFT content for owner review).
+# Written only from behaviour confirmed in the site code and the enquiry
+# Worker (backend/enquiry-worker/worker.js). If either changes, re-check
+# these pages. Both pages live in /pages, so links are sibling-relative.
+# ---------------------------------------------------------------------
+LEGAL_LAST_UPDATED = "24 November 2026"  # refresh when the owner approves the text
+
+
+def _legal_page(eyebrow, title, intro, sections, other_href, other_label):
+    body = "\n".join(
+        f"""        <section class="legal__section" aria-labelledby="{sid}">
+          <h2 id="{sid}">{heading}</h2>
+{content}
+        </section>"""
+        for sid, heading, content in sections
+    )
+    return f"""    <section class="page-banner text-on-dark" aria-label="{title}">
+      <div class="container page-banner__inner">
+        <span class="eyebrow page-banner__eyebrow">{eyebrow}</span>
+        <h1 class="page-banner__title">{title}</h1>
+        <p class="page-banner__desc">{intro}</p>
+      </div>
+    </section>
+
+    <section class="section section--light">
+      <div class="container">
+        <div class="legal">
+        <p class="legal__updated">Last updated: {LEGAL_LAST_UPDATED}</p>
+{body}
+        <nav class="legal__links" aria-label="Related pages">
+          <a href="../index.html">&larr; Back to home</a>
+          <a href="{other_href}">{other_label}</a>
+          <a href="contact.html">Contact us</a>
+        </nav>
+        </div>
+      </div>
+    </section>"""
+
+
+_MAIL = f'<a href="mailto:{EMAIL_PRIMARY}">{email_html(EMAIL_PRIMARY)}</a>'
+_MAIL2 = f'<a href="mailto:{EMAIL_SECONDARY}">{email_html(EMAIL_SECONDARY)}</a>'
+_TEL = f'<a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>'
+
+
+def build_privacy_main():
+    sections = [
+        ("pp-who", "Who we are", f"""          <p>This website is run by HM UNIQUE Technology Enterprises, {ADDRESS_LINE1}, {ADDRESS_LINE2}, Tamil Nadu. This page explains what happens to the details you send us through the website.</p>"""),
+        ("pp-collect", "What we collect", """          <p>We collect the information you submit, plus technical details needed to process and protect the forms.</p>
+          <p>What you submit can include:</p>
+          <ul>
+            <li>Name, email address and phone number.</li>
+            <li>Company name, if you give it (required on the quote form, optional on the Contact form).</li>
+            <li>City, state, product category, product name and quantity, where the quote form asks for them.</li>
+            <li>Subject (Contact form) and your message or product requirements.</li>
+            <li>Your agreement to this policy.</li>
+          </ul>
+          <p>The forms do not ask for payment or card details. Please do not send them in your message.</p>
+          <p>The technical details the form service receives when you submit a form are: the time the form was open, a random reference for the submission, a hidden anti-spam field, and your IP address (see &ldquo;Spam prevention and short-term records&rdquo; below).</p>"""),
+        ("pp-why", "Why we use it", """          <p>We use your details to:</p>
+          <ul>
+            <li>respond to your enquiry;</li>
+            <li>discuss products with you; and</li>
+            <li>prepare quotations.</li>
+          </ul>
+          <p>We also send you an automatic email to acknowledge that your enquiry was received.</p>"""),
+        ("pp-email", "How your enquiry reaches us", f"""          <p>Each enquiry is emailed to {_MAIL2}, with a copy (CC) to {_MAIL}. When we reply, we use the email address you gave us. These enquiry emails are separate from the short-term anti-spam records described below.</p>
+          <p>You also receive an automatic acknowledgement at that address, sent from our business email address. It is not an order confirmation.</p>"""),
+        ("pp-providers", "Services that handle your details", f"""          <p>We use outside services to run the website and the forms:</p>
+          <ul>
+            <li><strong>Cloudflare</strong> hosts the website and runs the service that receives form submissions.</li>
+            <li><strong>Resend</strong> delivers the notification and acknowledgement emails.</li>
+            <li><strong>Email providers.</strong> Enquiries arrive in email inboxes, and one of them ({_MAIL2}) is a Gmail address.</li>
+          </ul>
+          <p>Some page resources load directly from other companies when you visit: Google Fonts (fonts), Font Awesome through cdnjs (icons), and a Google Maps embed on the <a href="contact.html">Contact page</a>. Your browser contacts them directly, and they receive normal connection details such as your IP address. Google Maps may also set its own cookies. Their handling of your data is covered by their own policies.</p>"""),
+        ("pp-spam", "Spam prevention and short-term records", """          <p>To block spam and duplicate submissions, the form service:</p>
+          <ul>
+            <li>checks a hidden field that real visitors never fill in;</li>
+            <li>checks how long the form was open;</li>
+            <li>counts submissions from your IP address (up to 5 in 10 minutes); and</li>
+            <li>keeps short-lived codes and status records so the same submission is not processed twice.</li>
+          </ul>
+          <p>These records are temporary: the IP counter lasts about 10 minutes, the duplicate-check records last 2 minutes to 24 hours. They hold counters, codes and status, not your message text. These timings apply only to these records, not to the enquiry emails.</p>"""),
+        ("pp-access", "Who can see your enquiry", f"""          <p>Your enquiry is delivered to the two email addresses above ({_MAIL2} and {_MAIL}). The services listed above handle your details while they deliver the email or run the form.</p>"""),
+        ("pp-cookies", "Cookies, analytics and logs", """          <p>The website&rsquo;s own code does not set cookies, does not use browser storage and does not include analytics or advertising scripts.</p>
+          <p>The outside resources mentioned above (fonts, icons and the map) are loaded from other companies and may set cookies or collect connection details themselves.</p>
+          <p>If a form submission fails, the form service may log a reference code and the error message from the email provider. Hosting and service providers may also keep their own technical logs or analytics; those settings are not described on this page.</p>"""),
+        ("pp-contact", "Questions and deletion requests", f"""          <p>To ask a privacy question, or to ask us to correct or delete the details you sent us, email {_MAIL}. Please include the email address you used on the form so we can find your enquiry.</p>"""),
+        ("pp-changes", "Changes to this policy", """          <p>We may update this policy as the website changes. The date at the top shows when it was last updated.</p>"""),
+    ]
+    return _legal_page("Legal", "Privacy Policy",
+        "A short, plain-language explanation of how we use the details you send through our website forms.",
+        sections, "terms-and-conditions.html", "Terms &amp; Conditions")
+
+
+def build_terms_main():
+    sections = [
+        ("tc-about", "About this website", """          <p>This website shows the products HM UNIQUE Technology Enterprises supplies and lets you send us an enquiry. It is not an online shop: there is no cart or online payment.</p>
+          <p>By using the website you accept these terms. If you do not agree, please do not use it.</p>"""),
+        ("tc-products", "Product information", """          <ul>
+            <li>Products shown on the website are not a guarantee of stock or availability.</li>
+            <li>Product images are representative illustrations. The goods supplied may look different.</li>
+            <li>Catalogue availability and product details must be confirmed with our team before you rely on them.</li>
+          </ul>"""),
+        ("tc-quotes", "Enquiries and quotations", """          <ul>
+            <li>Prices, specifications, delivery and other commercial terms must be confirmed in a quotation from us.</li>
+            <li>Submitting a form, or receiving our automatic acknowledgement email, does not confirm an order.</li>
+            <li>An order is only agreed once we confirm it with you directly.</li>
+          </ul>"""),
+        ("tc-content", "Website content", """          <p>The website&rsquo;s name, logo, text, layout and images are protected by the rights of their respective owners. Other companies&rsquo; names, brands, logos and product images belong to their owners. We do not claim ownership of them.</p>
+          <p>You may view, print and share pages for the purpose of making a business enquiry with us. Please do not copy or reuse our content for other commercial purposes without asking us first.</p>"""),
+        ("tc-use", "Using the website", """          <p>Please use the website and its forms honestly. In particular, please do not:</p>
+          <ul>
+            <li>send false, abusive or spam enquiries;</li>
+            <li>try to interfere with the website or the form service; or</li>
+            <li>send other people&rsquo;s details without their permission.</li>
+          </ul>"""),
+        ("tc-links", "Other websites", """          <p>The website includes a Google Maps embed and may link to other sites. We do not control them and are not responsible for their content.</p>"""),
+        ("tc-accuracy", "Accuracy", """          <p>We try to keep the website accurate, but it may contain mistakes or be out of date. Please confirm anything important with us before relying on it.</p>"""),
+        ("tc-privacy", "Your details", """          <p>How we use the details you send us is explained in our <a href="privacy-policy.html">Privacy Policy</a>.</p>"""),
+        ("tc-changes", "Changes to these terms", """          <p>We may update these terms from time to time. The date at the top shows when they were last updated.</p>"""),
+        ("tc-contact", "Contact us", f"""          <p>Questions about these terms? Email {_MAIL} or call {_TEL}.</p>"""),
+    ]
+    return _legal_page("Legal", "Terms &amp; Conditions",
+        "Simple terms for using our website, reading product information and sending enquiries.",
+        sections, "privacy-policy.html", "Privacy Policy")
+
+
+
 def build_page(page):
     depth = page["depth"]
     key = page["key"]
@@ -3228,6 +3377,10 @@ def build_page(page):
         main_content = build_download_centre_main()
     elif key == "notfound":
         main_content = build_notfound_main()
+    elif key == "privacy":
+        main_content = build_privacy_main()
+    elif key == "terms":
+        main_content = build_terms_main()
     else:
         main_content = f"    <!-- {PAGE_MAIN_COMMENTS[key]} -->"
 
@@ -3247,7 +3400,7 @@ def build_page(page):
 
 {build_footer(depth)}
 
-{build_quote_modal()}
+{build_quote_modal(depth)}
 
 {build_enquiry_popup()}
 

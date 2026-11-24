@@ -1297,6 +1297,8 @@ textarea.form-field__control {
 }
 .form-checkbox a {
   color: var(--color-teal-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 /* Matches the .btn[aria-disabled="true"] treatment used elsewhere on
    the site: a link with no destination yet (e.g. the privacy policy,
