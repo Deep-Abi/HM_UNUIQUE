@@ -1,1 +1,7 @@
+name = "hmunique-enquiry"
+main = "worker.js"
+compatibility_date = "2026-01-01"
 
+[vars]
+ALLOWED_ORIGINS = "https://hm-unuique.pages.dev,https://www.hmunique.com,https://hmunique.com"
+ENQUIRY_FROM = "HM UNIQUE <business@hmunique.com>"
