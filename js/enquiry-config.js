@@ -7,4 +7,4 @@
  * while empty, the forms never claim to have sent anything — they show an honest
  * "not connected" message and keep the visitor's entries.
  */
-export const ENQUIRY_ENDPOINT = "";
+export const ENQUIRY_ENDPOINT = "https://hm-unuique.hmunitecenterprises02.workers.dev/api/enquiry";
