@@ -209,6 +209,14 @@
     justify-content: space-between;
     text-align: left;
   }
+  .site-footer__credit-inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-4);
+    text-align: left;
+  }
 }
 
 /* ---------------------------------------------------------------------

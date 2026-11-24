@@ -131,10 +131,7 @@
 
 .site-footer__bottom {
   border-top: 1px solid var(--overlay-white-12);
-  padding-top: var(--space-4);
-  /* Extra bottom space so the fixed floating controls never rest on the
-     copyright / legal line when the page is scrolled to the end. */
-  padding-bottom: calc(var(--space-4) + var(--floating-clearance));
+  padding-block: var(--space-4);
 }
 
 /* Mobile-first: stacked and centered by default; responsive.css
@@ -146,6 +143,49 @@
   text-align: center;
   gap: var(--space-2);
   font-size: var(--fs-label);
+}
+
+/* Developer credit — third footer section, below the copyright / legal row.
+   Typography, colour and hover follow the legal links; no underline,
+   background or animation. Content-sized: 20px above and below (plus the
+   phone safe-area inset at the bottom). No space is reserved for the floating
+   buttons — while one would cover footer text it is eased out of the way by
+   js/floating-avoid.js (opted in via data-float-avoid on the footer). */
+.site-footer__credit-bar {
+  border-top: 1px solid var(--overlay-white-12);
+  padding-top: 1.25rem;
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Mobile-first: stacked and centred; responsive.css switches to a row at Tablet+. */
+.site-footer__credit-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-1);
+  font-size: var(--fs-label);
+}
+
+.site-footer__credit {
+  margin: 0;
+  color: var(--color-text-on-dark-muted);
+}
+.site-footer__credit a,
+.site-footer__credit-cta {
+  color: var(--color-text-on-dark-muted);
+  transition: color var(--transition-fast);
+}
+.site-footer__credit a:hover,
+.site-footer__credit-cta:hover {
+  color: var(--color-white);
+}
+.site-footer__credit a:focus-visible,
+.site-footer__credit-cta:focus-visible {
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 3px;
+  border-radius: 2px;
+  color: var(--color-white);
 }
 
 .site-footer__bottom-links {

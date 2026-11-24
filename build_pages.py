@@ -14,6 +14,12 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # once the real domain is live — search for SITE_URL usage.
 # ---------------------------------------------------------------------
 SITE_URL = "https://www.hmunique.com"
+
+# Footer developer credit (Batch 35). The contact page is contact.html in DeepAbi's own source
+# repo (listed in its sitemap; canonical https://www.deepabi.com/contact.html). Live resolution of
+# the apex host was not testable from the build sandbox — change only these constants if needed.
+DEVELOPER_URL = "https://deepabi.com"
+DEVELOPER_CONTACT_URL = "https://deepabi.com/contact.html"
 OG_IMAGE_ALT = "HM UNIQUE Technology Enterprises, George Town, Chennai: electricals, electronics components, hardware, industrial and commercial equipment, and industrial safety and packing materials."
 
 # ---------------------------------------------------------------------
@@ -404,7 +410,7 @@ def build_footer(depth):
     socials_block = (f'''<div class="site-footer__socials">
           {social_links_html}
         </div>''' if social_links_html.strip() else "")
-    return f"""<footer class="site-footer">
+    return f"""<footer class="site-footer" data-float-avoid=".site-footer__bottom-inner, .site-footer__credit-inner">
   <div class="site-footer__top">
     <div class="container site-footer__grid">
       <div class="site-footer__brand">
@@ -457,6 +463,13 @@ def build_footer(depth):
         <a aria-disabled="true">Privacy Policy</a>
         <a aria-disabled="true">Terms &amp; Conditions</a>
       </div>
+    </div>
+  </div>
+
+  <div class="site-footer__credit-bar">
+    <div class="container site-footer__credit-inner">
+      <p class="site-footer__credit">Website by <a href="{DEVELOPER_URL}" target="_blank" rel="noopener noreferrer">DeepAbi Innovations<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+      <a class="site-footer__credit-cta" href="{DEVELOPER_CONTACT_URL}" target="_blank" rel="noopener noreferrer">Let&rsquo;s Build Together <span aria-hidden="true">&#8599;</span><span class="visually-hidden"> (opens in a new tab)</span></a>
     </div>
   </div>
 </footer>"""

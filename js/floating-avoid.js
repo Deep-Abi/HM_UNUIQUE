@@ -32,6 +32,9 @@ function collectRects(zone, selector) {
     while (walker.nextNode()) {
       const node = walker.currentNode;
       if (!node.nodeValue.trim()) continue;
+      // Screen-reader-only text (.visually-hidden) is clipped to 1px but its text
+      // box still extends under the buttons; it is not visible copy, so skip it.
+      if (node.parentElement && node.parentElement.closest(".visually-hidden")) continue;
       range.selectNodeContents(node);
       for (const r of range.getClientRects()) {
         if (r.width > 1 && r.height > 1) rects.push(r);

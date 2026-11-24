@@ -887,8 +887,9 @@
    fixed and below the drawer (600/599) and modal (900) layers, but are
    now smaller and tighter on small screens (full size returns from
    768px), respect device safe areas, and shrink again on short screens;
-   the page also reserves bottom clearance (see .site-footer__bottom and
-   --floating-clearance) so they never rest on the last line of content. */
+   they are eased out of the way while they would cover opted-in text
+   (see js/floating-avoid.js; the footer's last two rows opt in), and
+   --floating-clearance still sets scroll-padding-bottom for focused targets. */
 .floating-actions {
   position: fixed;
   bottom: max(var(--space-3), env(safe-area-inset-bottom));
