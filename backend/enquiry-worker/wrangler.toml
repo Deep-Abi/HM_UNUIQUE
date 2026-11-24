@@ -5,3 +5,6 @@ compatibility_date = "2026-01-01"
 [vars]
 ALLOWED_ORIGINS = "https://hm-unuique.pages.dev,https://www.hmunique.com,https://hmunique.com"
 ENQUIRY_FROM = "HM UNIQUE <business@hmunique.com>"
+[[kv_namespaces]]
+binding = "ENQUIRY_KV"
+id = "72d6c01421b748099ab921abd521b80f"
